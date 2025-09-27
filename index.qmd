@@ -2,10 +2,10 @@
 title: "PRIMER REPORTE EN QUARTO"
 author: "PATRICIO PORRAS"
 date: "2025-09-27"
-# format: 
-#     html: 
-#         embed-resources: true
-# echo: false
+format: 
+    html: 
+        embed-resources: true
+#echo: false
 ---
 
 # Actividad con **Altair**
