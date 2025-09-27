@@ -1,11 +1,14 @@
 ---
 title: "PRIMER REPORTE EN QUARTO"
 author: "PATRICIO PORRAS"
-date: "2025-09-25"
-format: 
-    html: 
-        embed-resources: true
+date: "2025-09-27"
+# format: 
+#     html: 
+#         embed-resources: true
+# echo: false
 ---
+
+# Actividad con **Altair**
 
 ```{python}
 for i in range(5):
@@ -27,8 +30,10 @@ print(cars.head())
 cars.info()
 ```
 
+## Visualizar gráficos
+
 ```{python}
-alt.Chart(cars).mark_point().encode(
+alt.Chart(cars).mark_point(filled=True).encode(
     x="Miles_per_Gallon", 
     y="Horsepower",
     color="Origin",
@@ -39,10 +44,52 @@ alt.Chart(cars).mark_point().encode(
 
 ```{python}
 alt.Chart(cars).mark_point(filled=True).encode(
-    x="Miles_per_Gallon", 
-    y="Horsepower",
-    color="Origin",
-    tooltip=["Name","Origin", "Miles_per_Gallon", "Horsepower"]
+    x='Miles_per_Gallon', 
+    y='Horsepower',
+    color='Origin',
+    shape='Origin',
+    tooltip=['Name','Origin', 'Miles_per_Gallon', 'Horsepower']
     ).interactive()
-# interactive: zoom, brush
+
+```
+
+## Agregaciones
+
+### Gráfico de barras
+'count()'
+
+```{python}
+# alt.Chart(cars).mark_bar().encode(
+#     alt.X('Origin')
+#     alt.Y('count()')
+#     ).interactive()
+alt.Chart(cars).mark_bar().encode(
+    alt.X('Origin', sort='-y'),
+    alt.Y('count()')
+).interactive()
+```
+
+'mean'
+```{python}
+alt.Chart(cars).mark_bar().encode(
+    alt.X('Origin',sort='-y'),
+    alt.Y('mean(Weight_in_lbs)'),
+    tooltip=['Origin','mean(Weight_in_lbs)']
+).properties(
+    width=200,
+    height=200
+)
+```
+
+### Gráco lineal
+
+
+```{python}
+alt.Chart(cars).mark_line(point=True).encode(
+    alt.X('Year'),
+    alt.Y('mean(Weight_in_lbs)'),
+    alt.Color('Origin')
+).properties(
+    width=600
+).interactive()
 ```
