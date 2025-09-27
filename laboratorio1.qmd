@@ -1,0 +1,83 @@
+---
+title: "Laboratorio 1"
+author: "Patricio Porras"
+date: "2025-09-27"
+#format: 
+#    html: 
+#        embed-resources: true
+echo: false
+---
+
+# Laboratorio 1
+
+
+```{python}
+import pandas as pd
+import altair as alt
+```
+
+```{python}
+data_df = pd.read_csv("mdi_homicidios_intencionales_pm_2014_2024.csv")
+```
+
+```{python}
+data_df.head()
+```
+
+```{python}
+data_df.describe()
+```
+
+
+```{python}
+data_df.info()
+```
+
+
+```{python}
+# Reemplaza "sin dato" por NaN
+data_df["edad"] = data_df["edad"].replace("SIN DATO", pd.NA)
+
+# Convierte la columna a numérica (si no lo está)
+data_df["edad"] = pd.to_numeric(data_df["edad"], errors="coerce")
+
+# Calcula la media ignorando los nulos
+media_edad = data_df["edad"].mean()
+
+# Rellena los nulos con la media
+data_df["edad"] = data_df["edad"].fillna(media_edad)
+
+#data_df["codigo_provincia"] = pd.to_numeric(data_df["codigo_provincia"], errors="0")
+```
+
+```{python}
+data_df.info()
+
+```
+
+```{python}
+alt.Chart(data_df).mark_point(filled=True).encode(
+    x="provincia",
+    y="edad",
+    color="arma",
+    shape="arma",
+    tooltip=["provincia","edad"]
+).interactive()
+```
+
+
+```{python}
+alt.Chart(data_df).mark_bar().encode(
+    alt.X('provincia',sort='-y'),
+    alt.Y('count()')
+)
+```
+
+
+```{python}
+alt.Chart(data_df).mark_line().encode(
+    alt.X('provincia'),
+    alt.Y('mean(edad)'),
+    alt.Color('provincia')
+)
+```

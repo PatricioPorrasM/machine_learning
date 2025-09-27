@@ -12,7 +12,7 @@ echo: false
 
 ```{python}
 for i in range(5):
-    print(f"Elemento {1}")
+    print(f"Elemento {i}")
 ```
 
 ```{python}

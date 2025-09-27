@@ -1,6 +1,6 @@
 project:
   type: website  
-  output-dir: docs  # Cambiar de _site a docs
+  output-dir: docs  # Cambia e directorio de salida de root a docs. En pages, github pages busca el sitio web en docs o en la raiz del repositorio.
  
 website:
   title: "Machine Learning PP"
@@ -10,6 +10,8 @@ website:
         text: Home
       - href: eda.qmd
         text: EDA
+      - href: laboratorio1.qmd
+        text: Laboratorio 1
  
 format:
   html:
