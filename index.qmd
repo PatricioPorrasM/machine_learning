@@ -1,0 +1,48 @@
+---
+title: "PRIMER REPORTE EN QUARTO"
+author: "PATRICIO PORRAS"
+date: "2025-09-25"
+format: 
+    html: 
+        embed-resources: true
+---
+
+```{python}
+for i in range(5):
+    print(f"Elemento {1}")
+```
+
+```{python}
+import altair as alt
+
+from vega_datasets import data
+
+cars = data.cars()
+
+print(cars.head())
+
+```
+
+```{python}
+cars.info()
+```
+
+```{python}
+alt.Chart(cars).mark_point().encode(
+    x="Miles_per_Gallon", 
+    y="Horsepower",
+    color="Origin",
+    tooltip=["Name","Origin", "Miles_per_Gallon", "Horsepower"]
+    ).interactive()
+# interactive: zoom, brush
+```
+
+```{python}
+alt.Chart(cars).mark_point(filled=True).encode(
+    x="Miles_per_Gallon", 
+    y="Horsepower",
+    color="Origin",
+    tooltip=["Name","Origin", "Miles_per_Gallon", "Horsepower"]
+    ).interactive()
+# interactive: zoom, brush
+```
