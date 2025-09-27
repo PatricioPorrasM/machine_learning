@@ -77,7 +77,6 @@ alt.Chart(data_df).mark_bar().encode(
 ```{python}
 alt.Chart(data_df).mark_line().encode(
     alt.X('provincia'),
-    alt.Y('mean(edad)'),
-    alt.Color('provincia')
+    alt.Y('count()')
 )
 ```
