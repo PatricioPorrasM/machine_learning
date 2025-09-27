@@ -1,5 +1,6 @@
 project:
-  type: website
+  type: website  
+  output-dir: docs  # Cambiar de _site a docs
  
 website:
   title: "Machine Learning PP"
