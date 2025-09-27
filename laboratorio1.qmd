@@ -10,6 +10,7 @@ echo: false
 
 # Laboratorio 1
 
+## Carga de datos
 
 ```{python}
 import pandas as pd
@@ -60,15 +61,19 @@ data_df.info()
 
 ```
 
-## Graficar la edad de los homicidios y arma por provincia
+## Graficas
 
 ```{python}
-alt.Chart(data_df).mark_point(filled=True).encode(
-    x="provincia",
-    y="edad",
-    color="arma",
-    shape="arma",
-    tooltip=["provincia","edad"]
+alt.Chart(data_df).mark_point(filled=True, size=80, opacity=0.7).encode(
+    x=alt.X("provincia:N", title="Provincia", sort="-y", axis=alt.Axis(labelAngle=-45)),
+    y=alt.Y("edad:Q", title="Edad de la víctima"),
+    color=alt.Color("arma:N", title="Tipo de arma"),
+    shape=alt.Shape("arma:N", title="Tipo de arma"),
+    tooltip=["provincia", "edad", "arma", "year"]
+).properties(
+    title="Edad de las víctimas de homicidio por provincia y tipo de arma",
+    width=700,
+    height=400
 ).interactive()
 ```
 
