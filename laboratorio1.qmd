@@ -66,9 +66,30 @@ data_df.info()
 
 ```
 
+```{python}
+# Agrupa los datos por provincia y tipo de arma, y cuenta el total de muertes
+df_grouped = data_df.groupby(['provincia', 'arma']).size().reset_index(name='total_muertes')
+```
+
 ## Graficas
 
 ### Edad de las víctimas de homicidio por provincia y tipo de arma
+
+```{python}
+# Gráfico de puntos: total de muertes por tipo de arma y provincia
+alt.Chart(df_grouped).mark_point(filled=True, size=100, opacity=0.8).encode(
+    x=alt.X("provincia:N", title="Provincia", sort="-y", axis=alt.Axis(labelAngle=-45)),
+    y=alt.Y("arma:N", title="Tipo de arma"),
+    size=alt.Size("total_muertes:Q", title="Total de muertes"),
+    color=alt.Color("arma:N", title="Tipo de arma"),
+    tooltip=["provincia", "arma", "total_muertes"]
+).properties(
+    title="Total de muertes por tipo de arma y provincia",
+    width=700,
+    height=400
+).interactive()
+```
+
 
 ```{python}
 alt.Chart(data_df).mark_point(filled=True, size=80, opacity=0.7).encode(
@@ -107,5 +128,23 @@ alt.Chart(data_df).mark_line(point=True).encode(
     tooltip=['provincia', 'year', 'count()']
 ).properties(
     title='Número de homicidios por año y provincia'
+)
+```
+
+
+```{python}
+df_2024 = data_df[data_df["year"] == 2024].copy()
+
+# Extrae el mes de la fecha de infracción
+df_2024["mes"] = df_2024["fecha_infraccion_dt"].dt.month
+
+# Gráfico de líneas: total de homicidios por mes y provincia para 2024
+alt.Chart(df_2024).mark_line(point=True).encode(
+    x=alt.X('mes:O', title='Mes'),
+    y=alt.Y('count():Q', title='Total de homicidios'),
+    color=alt.Color('provincia:N', title='Provincia'),
+    tooltip=['provincia', 'mes', 'count()']
+).properties(
+    title='Total de homicidios por mes y provincia en 2024'
 )
 ```
