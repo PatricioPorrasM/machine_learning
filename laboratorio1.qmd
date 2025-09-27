@@ -51,9 +51,16 @@ data_df["edad"] = data_df["edad"].fillna(media_edad)
 ```
 
 ```{python}
+data_df["fecha_infraccion_dt"] = pd.to_datetime(data_df["fecha_infraccion"], errors="coerce")
+data_df["year"] = data_df["fecha_infraccion_dt"].dt.year
+```
+
+```{python}
 data_df.info()
 
 ```
+
+## Graficar la edad de los homicidios y arma por provincia
 
 ```{python}
 alt.Chart(data_df).mark_point(filled=True).encode(
@@ -65,18 +72,27 @@ alt.Chart(data_df).mark_point(filled=True).encode(
 ).interactive()
 ```
 
+## Número de muertes por provincias
 
 ```{python}
 alt.Chart(data_df).mark_bar().encode(
-    alt.X('provincia',sort='-y'),
-    alt.Y('count()')
+    x=alt.X('provincia:N', sort='-y', title='Provincia'),
+    y=alt.Y('count():Q', title='Total de registros'),
+    color=alt.Color('year:N', title='Año'),
+    tooltip=['provincia', 'year', 'count()']
+).properties(
+    title='Total de registros por año y provincia'
 )
 ```
 
 
 ```{python}
-alt.Chart(data_df).mark_line().encode(
-    alt.X('provincia'),
-    alt.Y('count()')
+alt.Chart(data_df).mark_line(point=True).encode(
+    x=alt.X('year:O', title='Año'),
+    y=alt.Y('count():Q', title='Total de muertes'),
+    color=alt.Color('provincia:N', title='Provincia'),
+    tooltip=['provincia', 'year', 'count()']
+).properties(
+    title='Número de muertes por año y provincia'
 )
 ```
