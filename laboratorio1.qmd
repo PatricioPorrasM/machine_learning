@@ -2,9 +2,9 @@
 title: "Laboratorio 1"
 author: "Patricio Porras"
 date: "2025-09-27"
-#format: 
-#    html: 
-#        embed-resources: true
+format: 
+    html: 
+        embed-resources: true
 echo: false
 ---
 
