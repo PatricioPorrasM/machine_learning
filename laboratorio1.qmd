@@ -4,11 +4,16 @@ author: "Patricio Porras"
 date: "2025-09-27"
 format: 
     html: 
-        embed-resources: true
+        code-fold: true
+        toc: true
+        number-sections: true
+        df-print: paged
+        embed-resources: false
 echo: false
 ---
 
-# Himicidio Intencionales 2014 - 2024
+# Homicidio Intencionales 2014 - 2024
+___
 
 ## Contexto
 
@@ -75,7 +80,11 @@ data_df.info()
 df_grouped = data_df.groupby(['provincia', 'arma']).size().reset_index(name='total_muertes')
 ```
 
+---
+
 ## Graficas
+
+***
 
 ### Edad de las víctimas de homicidio por provincia y tipo de arma
 
@@ -107,7 +116,7 @@ alt.Chart(data_df).mark_bar().encode(
     color=alt.Color('year:N', title='Año'),
     tooltip=['zona', 'year', 'count()']
 ).properties(
-    title='Total de homicidios por año y zona'
+    title='Total de homicidios por año y zona',
     width=600,
     height=350
 )
@@ -124,8 +133,99 @@ alt.Chart(data_df).mark_line(point=True).encode(
     color=alt.Color('provincia:N', title='Provincia'),
     tooltip=['provincia', 'year', 'count()']
 ).properties(
-    title='Total de homicidios por año y provincia'
+    title='Total de homicidios por año y provincia',
     width=600,
     height=350
 )
 ```
+
+***
+
+
+#```{python}
+alt.Chart(data_df).mark_bar().encode(
+    x=alt.X('year:O', title='Año'),
+    y=alt.Y('count():Q', title='Total de homicidios'),
+    tooltip=['year', 'count()']
+).properties(
+    title='Tendencia de homicidios por año'
+)
+#```
+
+
+#```{python}
+alt.Chart(data_df).mark_bar().encode(
+    x=alt.X('provincia:N', sort='-y', title='Provincia', axis=alt.Axis(labelAngle=-45)),
+    y=alt.Y('count():Q', title='Total de homicidios'),
+    tooltip=['provincia', 'count()']
+).properties(
+    title='Total de homicidios por provincia'
+)
+#```
+
+
+#```{python}
+alt.Chart(data_df).mark_bar().encode(
+    x=alt.X('edad:Q', bin=alt.Bin(maxbins=30), title='Edad de la víctima'),
+    y=alt.Y('count():Q', title='Número de víctimas'),
+    tooltip=['edad', 'count()']
+).properties(
+    title='Distribución de edades de las víctimas'
+)
+#```
+
+
+#```{python}
+alt.Chart(data_df).mark_bar().encode(
+    x=alt.X('arma:N', sort='-y', title='Tipo de arma'),
+    y=alt.Y('count():Q', title='Total de homicidios'),
+    color=alt.Color('arma:N', legend=None),
+    tooltip=['arma', 'count()']
+).properties(
+    title='Total de homicidios por tipo de arma'
+)
+#```
+
+
+#```{python}
+data_df["mes"] = data_df["fecha_infraccion_dt"].dt.month
+
+alt.Chart(data_df).mark_line(point=True).encode(
+    x=alt.X('mes:O', title='Mes'),
+    y=alt.Y('count():Q', title='Total de homicidios'),
+    color=alt.Color('year:N', title='Año'),
+    tooltip=['year', 'mes', 'count()']
+).properties(
+    title='Homicidios por mes y año'
+)
+#```
+
+
+#```{python}
+df_edad_prov = data_df.groupby('provincia')['edad'].mean().reset_index()
+
+alt.Chart(df_edad_prov).mark_bar().encode(
+    x=alt.X('provincia:N', sort='-y', title='Provincia', axis=alt.Axis(labelAngle=-45)),
+    y=alt.Y('edad:Q', title='Edad promedio'),
+    tooltip=['provincia', 'edad']
+).properties(
+    title='Edad promedio de víctimas por provincia'
+)
+#```
+
+
+#```{python}
+df_grouped = data_df.groupby(['provincia', 'arma']).size().reset_index(name='total_muertes')
+
+alt.Chart(df_grouped).mark_point(filled=True, size=100, opacity=0.8).encode(
+    x=alt.X("provincia:N", title="Provincia", sort="-y", axis=alt.Axis(labelAngle=-45)),
+    y=alt.Y("arma:N", title="Tipo de arma"),
+    size=alt.Size("total_muertes:Q", title="Total de muertes"),
+    color=alt.Color("arma:N", title="Tipo de arma"),
+    tooltip=["provincia", "arma", "total_muertes"]
+).properties(
+    title="Total de muertes por tipo de arma y provincia",
+    width=700,
+    height=400
+).interactive()
+#```
