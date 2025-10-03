@@ -12,6 +12,8 @@ website:
         text: EDA
       - href: laboratorio1.qmd
         text: Laboratorio 1
+      - href: clasification.qmd
+        text: Clasificaciones
  
 format:
   html:
