@@ -1,20 +1,24 @@
 ---
 title: "Clasification"
+author: "Patricio Porras"
 ---
 
-# 1. Importar librerías
+# CLASIFICACION SIN PIPE
+
+## 1. Importar librerías
 ```{python}
 # 1. Import libraries
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, ConfusionMatrixDisplay
-
+from sklearn.pipeline import Pipeline
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 ```
 
-# 2. Cargar e dataset
+## 2. Cargar e dataset
 
 
 ```{python}
@@ -24,10 +28,10 @@ X = data.data
 y = data.target
 ```
 
-# 3. Split
+## 3. Split
 
 ```{python}
-X_train, X_test, y_train, y_test = train_test_split (X, y, train_size=0.2, random_state=40, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split (X, y, test_size=0.2, random_state=40, stratify=y)
 
 # print("X_train")
 # print(X_train)
@@ -40,21 +44,21 @@ X_train, X_test, y_train, y_test = train_test_split (X, y, train_size=0.2, rando
 
 ```
 
-# 4. Entrenar el modelo
+## 4. Entrenar el modelo
 
 ```{python}
 model = LogisticRegression(max_iter=1000)
 model.fit(X_train, y_train)
 ```
 
-# 5. Predicción
+## 5. Predicción
 
 
 ```{python}
 y_pred = model.predict(X_test)
 ```
 
-# 6. Evaluacióncls
+## 6. Evaluación
 
 
 ```{python}
@@ -69,6 +73,70 @@ print(f"recall = {recall}")
 print(f"f1 = {f1}")
 ```
 
+## 7. Matriz de confusión
 
 ```{python}
+ConfusionMatrixDisplay.from_predictions (y_test, y_pred)
+```
+
+# CLASIFICACION CON PIPE
+
+## 2. Cargar e dataset
+
+```{python}
+data = load_breast_cancer()
+
+X = data.data #features
+y = data.target #target
+```
+
+## 3. Split
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split (X, y, test_size=0.2, random_state=40, stratify=y)
+```
+
+## 4. Construcción del pipeline
+
+```{python}
+steps = [("Escalado", StandardScaler()), 
+        ("Regresión Logística", LogisticRegression(max_iter=10000))]
+pipe = Pipeline(steps)
+```
+
+## 5. entrenar al modelo
+
+
+```{python}
+pipe.fit(X_train, y_train)
+```
+
+## 6. Predicción
+
+
+```{python}
+y_pred_pipe = pipe.predict(X_test)
+```
+
+
+## 7. Evaluación
+
+```{python}
+accuray = accuracy_score(y_test, y_pred_pipe)
+precision = precision_score(y_test, y_pred_pipe)
+recall = recall_score(y_test, y_pred_pipe)
+f1 = f1_score(y_test, y_pred_pipe)
+
+print("Métricas ejecutadas con pipe")
+print(f"accuray = {accuray}")
+print(f"precision = {precision}")
+print(f"recall = {recall}")
+print(f"f1 = {f1}")
+```
+
+
+## 8. Matriz de confusión
+
+```{python}
+ConfusionMatrixDisplay.from_predictions (y_test, y_pred_pipe)
 ```
