@@ -3,3 +3,472 @@ title: "MidTerm Regresión"
 author: "Patricio Porras"
 ---
 
+## Introducción
+
+Este documento presenta un análisis completo de regresión lineal utilizando el dataset `iige003_carapungo.csv`. Utilizaremos Pipeline de scikit-learn para crear un flujo de trabajo robusto y reproducible.
+
+### Columnas
+
+ColdJunc0: Temperatura de la unión fría (referencia para sensores tipo termopar).
+PowerVolt: Voltaje de alimentación del sistema o sensor.
+PowerKind: Tipo de fuente de energía (por ejemplo, solar, batería, red eléctrica).
+WS(ave): Velocidad promedio del viento (Wind Speed average), usualmente en m/s.
+WD(ave): Dirección promedio del viento (Wind Direction average), en grados.
+WS(max): Velocidad máxima del viento registrada en el periodo, en m/s.
+WS(inst_m): Velocidad instantánea máxima del viento (Wind Speed instantaneous max), en m/s.
+WD(inst_m): Dirección instantánea máxima del viento, en grados.
+Solar_rad: Radiación solar, normalmente en W/m².
+TEMP: Temperatura del aire, en °C.
+Humidity: Humedad relativa del aire, en %.
+Rainfall: Precipitación acumulada, en mm.
+Bar_press.: Presión barométrica (atmosférica), en hPa o mbar.
+
+
+## 1. Importar Librerías
+
+Primero importamos todas las librerías necesarias para el análisis.
+
+```{python}
+# Librerías para manipulación de datos
+import pandas as pd
+import numpy as np
+
+# Librerías para visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Librerías de scikit-learn
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+
+# Configuración de estilo para gráficos
+plt.style.use('seaborn-v0_8-darkgrid')
+sns.set_palette("husl")
+```
+
+## 2. Cargar el Dataset
+
+Cargamos el dataset desde el archivo CSV.
+
+```{python}
+# Cargar los datos
+df = pd.read_csv("iige003_carapungo.csv", encoding="latin1")
+
+# Mostrar información básica
+print(f"Dimensiones del dataset: {df.shape}")
+print(f"Número de filas: {df.shape[0]}")
+print(f"Número de columnas: {df.shape[1]}")
+```
+
+
+## 3. Exploración Inicial de los Datos
+
+### 3.1 Primeras filas del dataset
+
+```{python}
+# Visualizar las primeras 5 filas
+df.head()
+```
+
+### 3.2 Información del dataset
+
+```{python}
+# Información general del dataset
+df.info()
+```
+
+### 3.3 Transaformar columnas
+
+```{python}
+cols_to_numeric = df.columns[3:]
+df[cols_to_numeric] = df[cols_to_numeric].apply(pd.to_numeric, errors='coerce')
+```
+
+
+### 3.4 Eliminar columnas que no aportan
+Se elimina las columnas
+
+```{python}
+# Eliminar las tres primeras columnas
+df = df.iloc[:, 3:]
+
+# Eliminar columnas específicas por nombre
+df = df.drop(columns=["WD(most)", "Max_time"], errors="ignore")
+
+```
+
+
+```{python}
+df.info()
+```
+
+### 3.5 Estadísticas descriptivas
+
+```{python}
+df.describe()
+```
+
+### 3.6 Asignar valores medios a los nulos
+
+```{python}
+# Reemplazar valores NaN en columnas numéricas por la media de cada columna
+df = df.fillna(df.mean(numeric_only=True))
+```
+
+### 3.6 Valores nulos
+
+```{python}
+# Verificar valores nulos por columna
+valores_nulos = df.isnull().sum()
+print("Valores nulos por columna:")
+print(valores_nulos)
+print(f"\nTotal de valores nulos: {valores_nulos.sum()}")
+```
+
+
+
+
+## 4. Análisis Exploratorio de Datos (EDA)
+
+### 4.1 Distribución de las variables
+
+Visualizamos la distribución de todas las variables numéricas mediante histogramas.
+
+```{python}
+#| fig-width: 12
+#| fig-height: 8
+#| label: fig-histogramas
+#| fig-cap: "Distribución de las variables numéricas del dataset"
+
+# Crear histogramas para todas las variables numéricas
+df.hist(figsize=(12, 8), bins=20, edgecolor='black')
+plt.tight_layout()
+plt.show()
+```
+
+### 4.2 Matriz de correlación
+
+La matriz de correlación nos ayuda a identificar relaciones lineales entre variables.
+
+```{python}
+#| fig-width: 10
+#| fig-height: 8
+#| label: fig-correlacion
+#| fig-cap: "Matriz de correlación entre variables"
+
+# Crear matriz de correlación
+plt.figure(figsize=(10, 8))
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt='.2f', 
+            square=True, linewidths=0.5, cbar_kws={"shrink": 0.8})
+plt.title('Matriz de Correlación', fontsize=16, pad=20)
+plt.tight_layout()
+plt.show()
+```
+
+### 4.3 Análisis de correlaciones fuertes
+
+```{python}
+# Encontrar correlaciones fuertes (>0.7 o <-0.7)
+corr_matrix = df.corr()
+correlaciones_fuertes = []
+
+for i in range(len(corr_matrix.columns)):
+    for j in range(i+1, len(corr_matrix.columns)):
+        if abs(corr_matrix.iloc[i, j]) > 0.7:
+            correlaciones_fuertes.append({
+                'Variable 1': corr_matrix.columns[i],
+                'Variable 2': corr_matrix.columns[j],
+                'Correlación': corr_matrix.iloc[i, j]
+            })
+
+if correlaciones_fuertes:
+    print("Correlaciones fuertes encontradas (|r| > 0.7):")
+    print(pd.DataFrame(correlaciones_fuertes))
+else:
+    print("No se encontraron correlaciones fuertes (|r| > 0.7)")
+```
+
+## 5. Preparación de los Datos
+
+Separamos las variables independientes (features) de la variable objetivo.
+
+```{python}
+variable_objetivo = 'Rainfall'  
+
+# Separar features (X) y target (y)
+X = df.drop(variable_objetivo, axis=1)
+y = df[variable_objetivo]
+
+print(f"Número de features: {X.shape[1]}")
+print(f"Features utilizadas: {list(X.columns)}")
+```
+
+## 6. División de Datos
+
+Dividimos el dataset en conjuntos de entrenamiento (80%) y prueba (20%).
+
+```{python}
+# Dividir los datos
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print(f"Tamaño del conjunto de entrenamiento: {X_train.shape[0]} muestras")
+print(f"Tamaño del conjunto de prueba: {X_test.shape[0]} muestras")
+print(f"Proporción: {X_train.shape[0]/len(df)*100:.1f}% entrenamiento, {X_test.shape[0]/len(df)*100:.1f}% prueba")
+```
+
+## 7. Creación del Pipeline
+
+Creamos un pipeline que incluye:
+1. **StandardScaler**: Normaliza los datos (media=0, desviación estándar=1)
+2. **LinearRegression**: Aplica el modelo de regresión lineal
+
+```{python}
+# Crear el pipeline
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),      # Paso 1: Normalización
+    ('regressor', LinearRegression())  # Paso 2: Regresión Lineal
+])
+
+print("Pipeline creado con los siguientes pasos:")
+for nombre, paso in pipeline.steps:
+    print(f"  - {nombre}: {paso.__class__.__name__}")
+```
+
+## 8. Entrenamiento del Modelo
+
+Entrenamos el pipeline completo con los datos de entrenamiento.
+
+```{python}
+# Entrenar el pipeline
+pipeline.fit(X_train, y_train)
+print("✓ Modelo entrenado exitosamente")
+```
+
+## 9. Predicciones
+
+Realizamos predicciones con el conjunto de prueba.
+
+```{python}
+# Realizar predicciones
+y_pred = pipeline.predict(X_test)
+
+# Mostrar las primeras 10 predicciones vs valores reales
+comparacion = pd.DataFrame({
+    'Valor Real': y_test.values[:10],
+    'Predicción': y_pred[:10],
+    'Error': y_test.values[:10] - y_pred[:10]
+})
+print("Primeras 10 predicciones:")
+print(comparacion)
+```
+
+## 10. Evaluación del Modelo
+
+### 10.1 Métricas de desempeño
+
+```{python}
+# Calcular métricas
+r2 = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+mae = mean_absolute_error(y_test, y_pred)
+
+# Mostrar resultados
+print("="*60)
+print("MÉTRICAS DE EVALUACIÓN DEL MODELO")
+print("="*60)
+print(f"R² Score:  {r2:.4f}  → Explica el {r2*100:.2f}% de la variabilidad")
+print(f"MSE:       {mse:.4f}  → Error cuadrático medio")
+print(f"RMSE:      {rmse:.4f}  → Raíz del error cuadrático medio")
+print(f"MAE:       {mae:.4f}  → Error absoluto medio")
+print("="*60)
+
+# Interpretación del R²
+if r2 > 0.9:
+    print("Interpretación: Excelente ajuste del modelo")
+elif r2 > 0.7:
+    print("Interpretación: Buen ajuste del modelo")
+elif r2 > 0.5:
+    print("Interpretación: Ajuste moderado del modelo")
+else:
+    print("Interpretación: Ajuste débil del modelo")
+```
+
+### 10.2 Validación cruzada
+
+Evaluamos el modelo con validación cruzada de 5 particiones.
+
+```{python}
+# Validación cruzada
+cv_scores = cross_val_score(pipeline, X_train, y_train, cv=5, scoring='r2')
+
+print("\nVALIDACIÓN CRUZADA (5-fold)")
+print("="*60)
+print(f"R² scores por fold: {cv_scores}")
+print(f"R² promedio: {cv_scores.mean():.4f}")
+print(f"Desviación estándar: {cv_scores.std():.4f}")
+print(f"Rango: [{cv_scores.min():.4f}, {cv_scores.max():.4f}]")
+```
+
+## 11. Visualización de Resultados
+
+### 11.1 Valores reales vs predicciones
+
+Este gráfico muestra qué tan cerca están las predicciones de los valores reales.
+
+```{python}
+#| fig-width: 10
+#| fig-height: 6
+#| label: fig-predicciones
+#| fig-cap: "Comparación entre valores reales y predicciones del modelo"
+
+# Gráfico de dispersión
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.6, edgecolors='k', s=80)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 
+         'r--', lw=3, label='Predicción perfecta')
+plt.xlabel('Valores Reales', fontsize=13)
+plt.ylabel('Predicciones', fontsize=13)
+plt.title('Valores Reales vs Predicciones', fontsize=15, fontweight='bold')
+plt.legend(fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+```
+
+### 11.2 Gráfico de residuos
+
+Los residuos son los errores del modelo (diferencia entre valor real y predicción).
+
+```{python}
+#| fig-width: 10
+#| fig-height: 6
+#| label: fig-residuos
+#| fig-cap: "Análisis de residuos del modelo"
+
+# Calcular residuos
+residuos = y_test - y_pred
+
+# Gráfico de residuos
+plt.figure(figsize=(10, 6))
+plt.scatter(y_pred, residuos, alpha=0.6, edgecolors='k', s=80)
+plt.axhline(y=0, color='r', linestyle='--', lw=3, label='Residuo = 0')
+plt.xlabel('Predicciones', fontsize=13)
+plt.ylabel('Residuos', fontsize=13)
+plt.title('Gráfico de Residuos', fontsize=15, fontweight='bold')
+plt.legend(fontsize=11)
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Estadísticas de residuos
+print(f"Media de residuos: {residuos.mean():.4f} (idealmente cerca de 0)")
+print(f"Desviación estándar de residuos: {residuos.std():.4f}")
+```
+
+### 11.3 Distribución de residuos
+
+```{python}
+#| fig-width: 10
+#| fig-height: 5
+#| label: fig-dist-residuos
+#| fig-cap: "Distribución de los residuos"
+
+# Histograma de residuos
+plt.figure(figsize=(10, 5))
+plt.hist(residuos, bins=30, edgecolor='black', alpha=0.7)
+plt.axvline(x=0, color='r', linestyle='--', lw=2, label='Residuo = 0')
+plt.xlabel('Residuos', fontsize=13)
+plt.ylabel('Frecuencia', fontsize=13)
+plt.title('Distribución de Residuos', fontsize=15, fontweight='bold')
+plt.legend(fontsize=11)
+plt.grid(True, alpha=0.3, axis='y')
+plt.tight_layout()
+plt.show()
+```
+
+## 12. Coeficientes del Modelo
+
+Los coeficientes indican la importancia y dirección del efecto de cada variable.
+
+### 12.1 Tabla de coeficientes
+
+```{python}
+# Extraer el modelo del pipeline
+regressor = pipeline.named_steps['regressor']
+
+# Crear DataFrame con coeficientes
+coef_df = pd.DataFrame({
+    'Variable': X.columns,
+    'Coeficiente': regressor.coef_
+}).sort_values('Coeficiente', key=abs, ascending=False)
+
+print("COEFICIENTES DEL MODELO")
+print("="*60)
+print(f"Intercepto: {regressor.intercept_:.4f}\n")
+print("Coeficientes por variable (ordenados por magnitud):")
+print(coef_df.to_string(index=False))
+```
+
+### 12.2 Visualización de coeficientes
+
+```{python}
+#| fig-width: 10
+#| fig-height: 6
+#| label: fig-coeficientes
+#| fig-cap: "Importancia de las variables según sus coeficientes"
+
+# Gráfico de barras horizontales
+plt.figure(figsize=(10, 6))
+colors = ['green' if x > 0 else 'red' for x in coef_df['Coeficiente']]
+plt.barh(coef_df['Variable'], coef_df['Coeficiente'], color=colors, alpha=0.7)
+plt.xlabel('Coeficiente', fontsize=13)
+plt.ylabel('Variable', fontsize=13)
+plt.title('Importancia de las Variables (Coeficientes)', fontsize=15, fontweight='bold')
+plt.axvline(x=0, color='black', linestyle='-', linewidth=1)
+plt.grid(True, alpha=0.3, axis='x')
+plt.tight_layout()
+plt.show()
+```
+
+### 12.3 Interpretación de coeficientes
+
+```{python}
+print("\nINTERPRETACIÓN DE COEFICIENTES:")
+print("="*60)
+print("Coeficientes positivos → Aumentan el valor de la variable objetivo")
+print("Coeficientes negativos → Disminuyen el valor de la variable objetivo")
+print("Mayor magnitud → Mayor impacto en la predicción\n")
+
+# Variables con mayor impacto
+print("Top 3 variables con mayor impacto (valor absoluto):")
+for idx, row in coef_df.head(3).iterrows():
+    direccion = "aumenta" if row['Coeficiente'] > 0 else "disminuye"
+    print(f"  {row['Variable']}: {direccion} la predicción en {abs(row['Coeficiente']):.4f}")
+```
+
+## 13. Conclusiones
+
+```{python}
+print("RESUMEN DEL ANÁLISIS")
+print("="*60)
+print(f"✓ Dataset: {df.shape[0]} muestras, {df.shape[1]} variables")
+print(f"✓ Modelo: Regresión Lineal con Pipeline")
+print(f"✓ R² Score: {r2:.4f}")
+print(f"✓ RMSE: {rmse:.4f}")
+print(f"✓ Validación cruzada (5-fold): {cv_scores.mean():.4f} ± {cv_scores.std():.4f}")
+print("="*60)
+```
+
+## Notas Importantes
+
+- **Variable objetivo**: Recuerda cambiar `'variable_objetivo'` por el nombre real de tu columna objetivo
+- **Preprocesamiento**: El pipeline incluye StandardScaler para normalizar los datos
+- **Interpretación**: Los coeficientes están en escala estandarizada debido al StandardScaler
+
+---

@@ -21,10 +21,45 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -69,6 +104,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
 
 
 </head>
@@ -127,8 +168,59 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a>
+  <ul class="collapse">
+  <li><a href="#columnas" id="toc-columnas" class="nav-link" data-scroll-target="#columnas">Columnas</a></li>
+  </ul></li>
+  <li><a href="#importar-librerías" id="toc-importar-librerías" class="nav-link" data-scroll-target="#importar-librerías">1. Importar Librerías</a></li>
+  <li><a href="#cargar-el-dataset" id="toc-cargar-el-dataset" class="nav-link" data-scroll-target="#cargar-el-dataset">2. Cargar el Dataset</a></li>
+  <li><a href="#exploración-inicial-de-los-datos" id="toc-exploración-inicial-de-los-datos" class="nav-link" data-scroll-target="#exploración-inicial-de-los-datos">3. Exploración Inicial de los Datos</a>
+  <ul class="collapse">
+  <li><a href="#primeras-filas-del-dataset" id="toc-primeras-filas-del-dataset" class="nav-link" data-scroll-target="#primeras-filas-del-dataset">3.1 Primeras filas del dataset</a></li>
+  <li><a href="#información-del-dataset" id="toc-información-del-dataset" class="nav-link" data-scroll-target="#información-del-dataset">3.2 Información del dataset</a></li>
+  <li><a href="#transaformar-columnas" id="toc-transaformar-columnas" class="nav-link" data-scroll-target="#transaformar-columnas">3.3 Transaformar columnas</a></li>
+  <li><a href="#eliminar-columnas-que-no-aportan" id="toc-eliminar-columnas-que-no-aportan" class="nav-link" data-scroll-target="#eliminar-columnas-que-no-aportan">3.4 Eliminar columnas que no aportan</a></li>
+  <li><a href="#estadísticas-descriptivas" id="toc-estadísticas-descriptivas" class="nav-link" data-scroll-target="#estadísticas-descriptivas">3.5 Estadísticas descriptivas</a></li>
+  <li><a href="#asignar-valores-medios-a-los-nulos" id="toc-asignar-valores-medios-a-los-nulos" class="nav-link" data-scroll-target="#asignar-valores-medios-a-los-nulos">3.6 Asignar valores medios a los nulos</a></li>
+  <li><a href="#valores-nulos" id="toc-valores-nulos" class="nav-link" data-scroll-target="#valores-nulos">3.6 Valores nulos</a></li>
+  </ul></li>
+  <li><a href="#análisis-exploratorio-de-datos-eda" id="toc-análisis-exploratorio-de-datos-eda" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-eda">4. Análisis Exploratorio de Datos (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#distribución-de-las-variables" id="toc-distribución-de-las-variables" class="nav-link" data-scroll-target="#distribución-de-las-variables">4.1 Distribución de las variables</a></li>
+  <li><a href="#matriz-de-correlación" id="toc-matriz-de-correlación" class="nav-link" data-scroll-target="#matriz-de-correlación">4.2 Matriz de correlación</a></li>
+  <li><a href="#análisis-de-correlaciones-fuertes" id="toc-análisis-de-correlaciones-fuertes" class="nav-link" data-scroll-target="#análisis-de-correlaciones-fuertes">4.3 Análisis de correlaciones fuertes</a></li>
+  </ul></li>
+  <li><a href="#preparación-de-los-datos" id="toc-preparación-de-los-datos" class="nav-link" data-scroll-target="#preparación-de-los-datos">5. Preparación de los Datos</a></li>
+  <li><a href="#división-de-datos" id="toc-división-de-datos" class="nav-link" data-scroll-target="#división-de-datos">6. División de Datos</a></li>
+  <li><a href="#creación-del-pipeline" id="toc-creación-del-pipeline" class="nav-link" data-scroll-target="#creación-del-pipeline">7. Creación del Pipeline</a></li>
+  <li><a href="#entrenamiento-del-modelo" id="toc-entrenamiento-del-modelo" class="nav-link" data-scroll-target="#entrenamiento-del-modelo">8. Entrenamiento del Modelo</a></li>
+  <li><a href="#predicciones" id="toc-predicciones" class="nav-link" data-scroll-target="#predicciones">9. Predicciones</a></li>
+  <li><a href="#evaluación-del-modelo" id="toc-evaluación-del-modelo" class="nav-link" data-scroll-target="#evaluación-del-modelo">10. Evaluación del Modelo</a>
+  <ul class="collapse">
+  <li><a href="#métricas-de-desempeño" id="toc-métricas-de-desempeño" class="nav-link" data-scroll-target="#métricas-de-desempeño">10.1 Métricas de desempeño</a></li>
+  <li><a href="#validación-cruzada" id="toc-validación-cruzada" class="nav-link" data-scroll-target="#validación-cruzada">10.2 Validación cruzada</a></li>
+  </ul></li>
+  <li><a href="#visualización-de-resultados" id="toc-visualización-de-resultados" class="nav-link" data-scroll-target="#visualización-de-resultados">11. Visualización de Resultados</a>
+  <ul class="collapse">
+  <li><a href="#valores-reales-vs-predicciones" id="toc-valores-reales-vs-predicciones" class="nav-link" data-scroll-target="#valores-reales-vs-predicciones">11.1 Valores reales vs predicciones</a></li>
+  <li><a href="#gráfico-de-residuos" id="toc-gráfico-de-residuos" class="nav-link" data-scroll-target="#gráfico-de-residuos">11.2 Gráfico de residuos</a></li>
+  <li><a href="#distribución-de-residuos" id="toc-distribución-de-residuos" class="nav-link" data-scroll-target="#distribución-de-residuos">11.3 Distribución de residuos</a></li>
+  </ul></li>
+  <li><a href="#coeficientes-del-modelo" id="toc-coeficientes-del-modelo" class="nav-link" data-scroll-target="#coeficientes-del-modelo">12. Coeficientes del Modelo</a>
+  <ul class="collapse">
+  <li><a href="#tabla-de-coeficientes" id="toc-tabla-de-coeficientes" class="nav-link" data-scroll-target="#tabla-de-coeficientes">12.1 Tabla de coeficientes</a></li>
+  <li><a href="#visualización-de-coeficientes" id="toc-visualización-de-coeficientes" class="nav-link" data-scroll-target="#visualización-de-coeficientes">12.2 Visualización de coeficientes</a></li>
+  <li><a href="#interpretación-de-coeficientes" id="toc-interpretación-de-coeficientes" class="nav-link" data-scroll-target="#interpretación-de-coeficientes">12.3 Interpretación de coeficientes</a></li>
+  </ul></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">13. Conclusiones</a></li>
+  <li><a href="#notas-importantes" id="toc-notas-importantes" class="nav-link" data-scroll-target="#notas-importantes">Notas Importantes</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -158,8 +250,1056 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="introducción" class="level2">
+<h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
+<p>Este documento presenta un análisis completo de regresión lineal utilizando el dataset <code>iige003_carapungo.csv</code>. Utilizaremos Pipeline de scikit-learn para crear un flujo de trabajo robusto y reproducible.</p>
+<section id="columnas" class="level3">
+<h3 class="anchored" data-anchor-id="columnas">Columnas</h3>
+<p>ColdJunc0: Temperatura de la unión fría (referencia para sensores tipo termopar). PowerVolt: Voltaje de alimentación del sistema o sensor. PowerKind: Tipo de fuente de energía (por ejemplo, solar, batería, red eléctrica). WS(ave): Velocidad promedio del viento (Wind Speed average), usualmente en m/s. WD(ave): Dirección promedio del viento (Wind Direction average), en grados. WS(max): Velocidad máxima del viento registrada en el periodo, en m/s. WS(inst_m): Velocidad instantánea máxima del viento (Wind Speed instantaneous max), en m/s. WD(inst_m): Dirección instantánea máxima del viento, en grados. Solar_rad: Radiación solar, normalmente en W/m². TEMP: Temperatura del aire, en °C. Humidity: Humedad relativa del aire, en %. Rainfall: Precipitación acumulada, en mm. Bar_press.: Presión barométrica (atmosférica), en hPa o mbar.</p>
+</section>
+</section>
+<section id="importar-librerías" class="level2">
+<h2 class="anchored" data-anchor-id="importar-librerías">1. Importar Librerías</h2>
+<p>Primero importamos todas las librerías necesarias para el análisis.</p>
+<div id="6f620151" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para manipulación de datos</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para visualización</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías de scikit-learn</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, cross_val_score</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, r2_score, mean_absolute_error</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuración de estilo para gráficos</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'seaborn-v0_8-darkgrid'</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">"husl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="cargar-el-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="cargar-el-dataset">2. Cargar el Dataset</h2>
+<p>Cargamos el dataset desde el archivo CSV.</p>
+<div id="f6d5cf04" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar los datos</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"iige003_carapungo.csv"</span>, encoding<span class="op">=</span><span class="st">"latin1"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar información básica</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Dimensiones del dataset: </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Número de filas: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Número de columnas: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensiones del dataset: (133754, 18)
+Número de filas: 133754
+Número de columnas: 18</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_15844\2803193322.py:2: DtypeWarning: Columns (3,4,6,7,8,10,11,13,14,15,16,17) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv("iige003_carapungo.csv", encoding="latin1")</code></pre>
+</div>
+</div>
+</section>
+<section id="exploración-inicial-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="exploración-inicial-de-los-datos">3. Exploración Inicial de los Datos</h2>
+<section id="primeras-filas-del-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="primeras-filas-del-dataset">3.1 Primeras filas del dataset</h3>
+<div id="81735a34" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar las primeras 5 filas</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
 
 
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">No</th>
+<th data-quarto-table-cell-role="th">Date</th>
+<th data-quarto-table-cell-role="th">Time</th>
+<th data-quarto-table-cell-role="th">ColdJunc0</th>
+<th data-quarto-table-cell-role="th">PowerVolt</th>
+<th data-quarto-table-cell-role="th">PowerKind</th>
+<th data-quarto-table-cell-role="th">WS(ave)</th>
+<th data-quarto-table-cell-role="th">WD(ave)</th>
+<th data-quarto-table-cell-role="th">WS(max)</th>
+<th data-quarto-table-cell-role="th">WD(most)</th>
+<th data-quarto-table-cell-role="th">WS(inst_m)</th>
+<th data-quarto-table-cell-role="th">WD(inst_m)</th>
+<th data-quarto-table-cell-role="th">Max_time</th>
+<th data-quarto-table-cell-role="th">Solar_rad</th>
+<th data-quarto-table-cell-role="th">TEMP</th>
+<th data-quarto-table-cell-role="th">Humidity</th>
+<th data-quarto-table-cell-role="th">Rainfall</th>
+<th data-quarto-table-cell-role="th">Bar_press.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>NaN</td>
+<td>yyyy/mm/dd</td>
+<td>hh:mm:ss</td>
+<td>ßC</td>
+<td>V</td>
+<td>NaN</td>
+<td>m/s</td>
+<td>ß</td>
+<td>m/s</td>
+<td>NaN</td>
+<td>m/s</td>
+<td>ß</td>
+<td>NaN</td>
+<td>kW</td>
+<td>ßC</td>
+<td>%</td>
+<td>mm</td>
+<td>hPa</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>5.0</td>
+<td>2019/05/07</td>
+<td>13:10:00</td>
+<td>24.2</td>
+<td>12.9</td>
+<td>2.0</td>
+<td>0.8</td>
+<td>76</td>
+<td>0.8</td>
+<td>ENE</td>
+<td>2.5</td>
+<td>82</td>
+<td>13:05:31</td>
+<td>0.325</td>
+<td>17.7</td>
+<td>61.65</td>
+<td>0</td>
+<td>743.2</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>6.0</td>
+<td>2019/05/07</td>
+<td>13:20:00</td>
+<td>24.3</td>
+<td>12.9</td>
+<td>2.0</td>
+<td>1.2</td>
+<td>65</td>
+<td>1.2</td>
+<td>ENE</td>
+<td>3.1</td>
+<td>71</td>
+<td>13:14:36</td>
+<td>0.588</td>
+<td>17.7</td>
+<td>64.34</td>
+<td>0</td>
+<td>743.1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>7.0</td>
+<td>2019/05/07</td>
+<td>13:30:00</td>
+<td>25.1</td>
+<td>12.9</td>
+<td>2.0</td>
+<td>0.8</td>
+<td>42</td>
+<td>1.3</td>
+<td>NE</td>
+<td>3.7</td>
+<td>44</td>
+<td>13:22:58</td>
+<td>0.815</td>
+<td>19.2</td>
+<td>57.54</td>
+<td>0</td>
+<td>743.1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>8.0</td>
+<td>2019/05/07</td>
+<td>13:40:00</td>
+<td>25.6</td>
+<td>13.3</td>
+<td>2.0</td>
+<td>0.7</td>
+<td>49</td>
+<td>0.9</td>
+<td>NE</td>
+<td>3.1</td>
+<td>47</td>
+<td>13:32:59</td>
+<td>0.605</td>
+<td>19.4</td>
+<td>65.14</td>
+<td>0</td>
+<td>743.1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="información-del-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="información-del-dataset">3.2 Información del dataset</h3>
+<div id="2488fd4f" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Información general del dataset</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 133754 entries, 0 to 133753
+Data columns (total 18 columns):
+ #   Column      Non-Null Count   Dtype  
+---  ------      --------------   -----  
+ 0   No          133753 non-null  float64
+ 1   Date        133754 non-null  object 
+ 2   Time        133754 non-null  object 
+ 3   ColdJunc0   133754 non-null  object 
+ 4   PowerVolt   133754 non-null  object 
+ 5   PowerKind   133753 non-null  float64
+ 6   WS(ave)     133754 non-null  object 
+ 7   WD(ave)     133754 non-null  object 
+ 8   WS(max)     133754 non-null  object 
+ 9   WD(most)    133753 non-null  object 
+ 10  WS(inst_m)  133754 non-null  object 
+ 11  WD(inst_m)  133754 non-null  object 
+ 12  Max_time    133753 non-null  object 
+ 13  Solar_rad   133754 non-null  object 
+ 14  TEMP        133754 non-null  object 
+ 15  Humidity    133754 non-null  object 
+ 16  Rainfall    133754 non-null  object 
+ 17  Bar_press.  133754 non-null  object 
+dtypes: float64(2), object(16)
+memory usage: 18.4+ MB</code></pre>
+</div>
+</div>
+</section>
+<section id="transaformar-columnas" class="level3">
+<h3 class="anchored" data-anchor-id="transaformar-columnas">3.3 Transaformar columnas</h3>
+<div id="99645a13" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cols_to_numeric <span class="op">=</span> df.columns[<span class="dv">3</span>:]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df[cols_to_numeric] <span class="op">=</span> df[cols_to_numeric].<span class="bu">apply</span>(pd.to_numeric, errors<span class="op">=</span><span class="st">'coerce'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="eliminar-columnas-que-no-aportan" class="level3">
+<h3 class="anchored" data-anchor-id="eliminar-columnas-que-no-aportan">3.4 Eliminar columnas que no aportan</h3>
+<p>Se elimina las columnas</p>
+<div id="24004c6c" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar las tres primeras columnas</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.iloc[:, <span class="dv">3</span>:]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar columnas específicas por nombre</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">"WD(most)"</span>, <span class="st">"Max_time"</span>], errors<span class="op">=</span><span class="st">"ignore"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="fc021fa3" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 133754 entries, 0 to 133753
+Data columns (total 13 columns):
+ #   Column      Non-Null Count   Dtype  
+---  ------      --------------   -----  
+ 0   ColdJunc0   133753 non-null  float64
+ 1   PowerVolt   133753 non-null  float64
+ 2   PowerKind   133753 non-null  float64
+ 3   WS(ave)     133753 non-null  float64
+ 4   WD(ave)     133753 non-null  float64
+ 5   WS(max)     133753 non-null  float64
+ 6   WS(inst_m)  133753 non-null  float64
+ 7   WD(inst_m)  133753 non-null  float64
+ 8   Solar_rad   133753 non-null  float64
+ 9   TEMP        133753 non-null  float64
+ 10  Humidity    133753 non-null  float64
+ 11  Rainfall    133753 non-null  float64
+ 12  Bar_press.  133753 non-null  float64
+dtypes: float64(13)
+memory usage: 13.3 MB</code></pre>
+</div>
+</div>
+</section>
+<section id="estadísticas-descriptivas" class="level3">
+<h3 class="anchored" data-anchor-id="estadísticas-descriptivas">3.5 Estadísticas descriptivas</h3>
+<div id="e2a183f0" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ColdJunc0</th>
+<th data-quarto-table-cell-role="th">PowerVolt</th>
+<th data-quarto-table-cell-role="th">PowerKind</th>
+<th data-quarto-table-cell-role="th">WS(ave)</th>
+<th data-quarto-table-cell-role="th">WD(ave)</th>
+<th data-quarto-table-cell-role="th">WS(max)</th>
+<th data-quarto-table-cell-role="th">WS(inst_m)</th>
+<th data-quarto-table-cell-role="th">WD(inst_m)</th>
+<th data-quarto-table-cell-role="th">Solar_rad</th>
+<th data-quarto-table-cell-role="th">TEMP</th>
+<th data-quarto-table-cell-role="th">Humidity</th>
+<th data-quarto-table-cell-role="th">Rainfall</th>
+<th data-quarto-table-cell-role="th">Bar_press.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">count</th>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.0</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+<td>133753.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">mean</th>
+<td>15.874370</td>
+<td>13.339876</td>
+<td>2.0</td>
+<td>0.322607</td>
+<td>147.440446</td>
+<td>0.418731</td>
+<td>1.668615</td>
+<td>151.121051</td>
+<td>0.174373</td>
+<td>13.485849</td>
+<td>83.733397</td>
+<td>0.009499</td>
+<td>742.666402</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">std</th>
+<td>6.815222</td>
+<td>0.458272</td>
+<td>0.0</td>
+<td>0.482661</td>
+<td>91.021558</td>
+<td>0.560030</td>
+<td>1.675281</td>
+<td>90.558364</td>
+<td>0.276295</td>
+<td>3.702440</td>
+<td>15.835706</td>
+<td>0.110822</td>
+<td>1.609745</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">min</th>
+<td>-1.100000</td>
+<td>12.500000</td>
+<td>2.0</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.200000</td>
+<td>15.680000</td>
+<td>0.000000</td>
+<td>736.900000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25%</th>
+<td>11.000000</td>
+<td>13.000000</td>
+<td>2.0</td>
+<td>0.000000</td>
+<td>61.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>72.000000</td>
+<td>0.000000</td>
+<td>10.900000</td>
+<td>72.530000</td>
+<td>0.000000</td>
+<td>741.600000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">50%</th>
+<td>13.200000</td>
+<td>13.100000</td>
+<td>2.0</td>
+<td>0.100000</td>
+<td>148.000000</td>
+<td>0.200000</td>
+<td>1.300000</td>
+<td>162.000000</td>
+<td>0.002000</td>
+<td>12.600000</td>
+<td>89.910000</td>
+<td>0.000000</td>
+<td>742.700000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">75%</th>
+<td>20.800000</td>
+<td>13.700000</td>
+<td>2.0</td>
+<td>0.500000</td>
+<td>224.000000</td>
+<td>0.700000</td>
+<td>2.500000</td>
+<td>228.000000</td>
+<td>0.265000</td>
+<td>16.100000</td>
+<td>97.590000</td>
+<td>0.000000</td>
+<td>743.800000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">max</th>
+<td>38.200000</td>
+<td>15.000000</td>
+<td>2.0</td>
+<td>5.000000</td>
+<td>360.000000</td>
+<td>5.100000</td>
+<td>25.300000</td>
+<td>355.000000</td>
+<td>1.427000</td>
+<td>26.400000</td>
+<td>99.380000</td>
+<td>9.500000</td>
+<td>748.400000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="asignar-valores-medios-a-los-nulos" class="level3">
+<h3 class="anchored" data-anchor-id="asignar-valores-medios-a-los-nulos">3.6 Asignar valores medios a los nulos</h3>
+<div id="14765f26" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplazar valores NaN en columnas numéricas por la media de cada columna</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.fillna(df.mean(numeric_only<span class="op">=</span><span class="va">True</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="valores-nulos" class="level3">
+<h3 class="anchored" data-anchor-id="valores-nulos">3.6 Valores nulos</h3>
+<div id="c2dc1db9" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar valores nulos por columna</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>valores_nulos <span class="op">=</span> df.isnull().<span class="bu">sum</span>()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Valores nulos por columna:"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(valores_nulos)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Total de valores nulos: </span><span class="sc">{</span>valores_nulos<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Valores nulos por columna:
+ColdJunc0     0
+PowerVolt     0
+PowerKind     0
+WS(ave)       0
+WD(ave)       0
+WS(max)       0
+WS(inst_m)    0
+WD(inst_m)    0
+Solar_rad     0
+TEMP          0
+Humidity      0
+Rainfall      0
+Bar_press.    0
+dtype: int64
+
+Total de valores nulos: 0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-exploratorio-de-datos-eda" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-exploratorio-de-datos-eda">4. Análisis Exploratorio de Datos (EDA)</h2>
+<section id="distribución-de-las-variables" class="level3">
+<h3 class="anchored" data-anchor-id="distribución-de-las-variables">4.1 Distribución de las variables</h3>
+<p>Visualizamos la distribución de todas las variables numéricas mediante histogramas.</p>
+<div id="cell-fig-histogramas" class="cell" data-fig-height="8" data-fig-width="12" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear histogramas para todas las variables numéricas</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df.hist(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">8</span>), bins<span class="op">=</span><span class="dv">20</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-histogramas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-histogramas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-histogramas-output-1.png" width="1142" height="758" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-histogramas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Distribución de las variables numéricas del dataset
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="matriz-de-correlación" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-de-correlación">4.2 Matriz de correlación</h3>
+<p>La matriz de correlación nos ayuda a identificar relaciones lineales entre variables.</p>
+<div id="cell-fig-correlacion" class="cell" data-fig-height="8" data-fig-width="10" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear matriz de correlación</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>sns.heatmap(df.corr(), annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, fmt<span class="op">=</span><span class="st">'.2f'</span>, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>            square<span class="op">=</span><span class="va">True</span>, linewidths<span class="op">=</span><span class="fl">0.5</span>, cbar_kws<span class="op">=</span>{<span class="st">"shrink"</span>: <span class="fl">0.8</span>})</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Matriz de Correlación'</span>, fontsize<span class="op">=</span><span class="dv">16</span>, pad<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-correlacion" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-correlacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-correlacion-output-1.png" width="823" height="758" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-correlacion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Matriz de correlación entre variables
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="análisis-de-correlaciones-fuertes" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-correlaciones-fuertes">4.3 Análisis de correlaciones fuertes</h3>
+<div id="ae07577f" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar correlaciones fuertes (&gt;0.7 o &lt;-0.7)</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> df.corr()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>correlaciones_fuertes <span class="op">=</span> []</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(corr_matrix.columns)):</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(i<span class="op">+</span><span class="dv">1</span>, <span class="bu">len</span>(corr_matrix.columns)):</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(corr_matrix.iloc[i, j]) <span class="op">&gt;</span> <span class="fl">0.7</span>:</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            correlaciones_fuertes.append({</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Variable 1'</span>: corr_matrix.columns[i],</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Variable 2'</span>: corr_matrix.columns[j],</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Correlación'</span>: corr_matrix.iloc[i, j]</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            })</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> correlaciones_fuertes:</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Correlaciones fuertes encontradas (|r| &gt; 0.7):"</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(pd.DataFrame(correlaciones_fuertes))</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"No se encontraron correlaciones fuertes (|r| &gt; 0.7)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Correlaciones fuertes encontradas (|r| &gt; 0.7):
+  Variable 1  Variable 2  Correlación
+0  ColdJunc0   Solar_rad     0.806508
+1  ColdJunc0        TEMP     0.965260
+2  ColdJunc0    Humidity    -0.836064
+3    WS(ave)     WS(max)     0.953437
+4    WS(ave)  WS(inst_m)     0.887367
+5    WD(ave)  WD(inst_m)     0.752963
+6    WS(max)  WS(inst_m)     0.886897
+7  Solar_rad        TEMP     0.758202
+8  Solar_rad    Humidity    -0.712463
+9       TEMP    Humidity    -0.826535</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="preparación-de-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="preparación-de-los-datos">5. Preparación de los Datos</h2>
+<p>Separamos las variables independientes (features) de la variable objetivo.</p>
+<div id="194d0e62" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>variable_objetivo <span class="op">=</span> <span class="st">'Rainfall'</span>  </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Separar features (X) y target (y)</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(variable_objetivo, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[variable_objetivo]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Número de features: </span><span class="sc">{</span>X<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Features utilizadas: </span><span class="sc">{</span><span class="bu">list</span>(X.columns)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Número de features: 12
+Features utilizadas: ['ColdJunc0', 'PowerVolt', 'PowerKind', 'WS(ave)', 'WD(ave)', 'WS(max)', 'WS(inst_m)', 'WD(inst_m)', 'Solar_rad', 'TEMP', 'Humidity', 'Bar_press.']</code></pre>
+</div>
+</div>
+</section>
+<section id="división-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="división-de-datos">6. División de Datos</h2>
+<p>Dividimos el dataset en conjuntos de entrenamiento (80%) y prueba (20%).</p>
+<div id="dbd7fc9a" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dividir los datos</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de entrenamiento: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de prueba: </span><span class="sc">{</span>X_test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Proporción: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="op">/</span><span class="bu">len</span>(df)<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">% entrenamiento, </span><span class="sc">{</span>X_test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="op">/</span><span class="bu">len</span>(df)<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">% prueba"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tamaño del conjunto de entrenamiento: 107003 muestras
+Tamaño del conjunto de prueba: 26751 muestras
+Proporción: 80.0% entrenamiento, 20.0% prueba</code></pre>
+</div>
+</div>
+</section>
+<section id="creación-del-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="creación-del-pipeline">7. Creación del Pipeline</h2>
+<p>Creamos un pipeline que incluye: 1. <strong>StandardScaler</strong>: Normaliza los datos (media=0, desviación estándar=1) 2. <strong>LinearRegression</strong>: Aplica el modelo de regresión lineal</p>
+<div id="7b83f805" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'scaler'</span>, StandardScaler()),      <span class="co"># Paso 1: Normalización</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'regressor'</span>, LinearRegression())  <span class="co"># Paso 2: Regresión Lineal</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Pipeline creado con los siguientes pasos:"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nombre, paso <span class="kw">in</span> pipeline.steps:</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  - </span><span class="sc">{</span>nombre<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>paso<span class="sc">.</span><span class="va">__class__</span><span class="sc">.</span><span class="va">__name__</span><span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pipeline creado con los siguientes pasos:
+  - scaler: StandardScaler
+  - regressor: LinearRegression</code></pre>
+</div>
+</div>
+</section>
+<section id="entrenamiento-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="entrenamiento-del-modelo">8. Entrenamiento del Modelo</h2>
+<p>Entrenamos el pipeline completo con los datos de entrenamiento.</p>
+<div id="47299aa9" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el pipeline</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"✓ Modelo entrenado exitosamente"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Modelo entrenado exitosamente</code></pre>
+</div>
+</div>
+</section>
+<section id="predicciones" class="level2">
+<h2 class="anchored" data-anchor-id="predicciones">9. Predicciones</h2>
+<p>Realizamos predicciones con el conjunto de prueba.</p>
+<div id="c0ba6d7e" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> pipeline.predict(X_test)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar las primeras 10 predicciones vs valores reales</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>comparacion <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Valor Real'</span>: y_test.values[:<span class="dv">10</span>],</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Predicción'</span>: y_pred[:<span class="dv">10</span>],</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Error'</span>: y_test.values[:<span class="dv">10</span>] <span class="op">-</span> y_pred[:<span class="dv">10</span>]</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Primeras 10 predicciones:"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(comparacion)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Primeras 10 predicciones:
+   Valor Real  Predicción     Error
+0         0.0    0.005687 -0.005687
+1         0.0    0.030682 -0.030682
+2         0.0   -0.007404  0.007404
+3         0.0    0.017868 -0.017868
+4         0.0   -0.006223  0.006223
+5         0.0    0.014569 -0.014569
+6         0.0   -0.008298  0.008298
+7         0.0    0.014926 -0.014926
+8         0.0   -0.016371  0.016371
+9         0.0   -0.028041  0.028041</code></pre>
+</div>
+</div>
+</section>
+<section id="evaluación-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="evaluación-del-modelo">10. Evaluación del Modelo</h2>
+<section id="métricas-de-desempeño" class="level3">
+<h3 class="anchored" data-anchor-id="métricas-de-desempeño">10.1 Métricas de desempeño</h3>
+<div id="a61c5c7c" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular métricas</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> r2_score(y_test, y_pred)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> mean_squared_error(y_test, y_pred)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> np.sqrt(mse)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>mae <span class="op">=</span> mean_absolute_error(y_test, y_pred)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar resultados</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"MÉTRICAS DE EVALUACIÓN DEL MODELO"</span>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R² Score:  </span><span class="sc">{</span>r2<span class="sc">:.4f}</span><span class="ss">  → Explica el </span><span class="sc">{</span>r2<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">% de la variabilidad"</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"MSE:       </span><span class="sc">{</span>mse<span class="sc">:.4f}</span><span class="ss">  → Error cuadrático medio"</span>)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RMSE:      </span><span class="sc">{</span>rmse<span class="sc">:.4f}</span><span class="ss">  → Raíz del error cuadrático medio"</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"MAE:       </span><span class="sc">{</span>mae<span class="sc">:.4f}</span><span class="ss">  → Error absoluto medio"</span>)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Interpretación del R²</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> r2 <span class="op">&gt;</span> <span class="fl">0.9</span>:</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Interpretación: Excelente ajuste del modelo"</span>)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> r2 <span class="op">&gt;</span> <span class="fl">0.7</span>:</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Interpretación: Buen ajuste del modelo"</span>)</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> r2 <span class="op">&gt;</span> <span class="fl">0.5</span>:</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Interpretación: Ajuste moderado del modelo"</span>)</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Interpretación: Ajuste débil del modelo"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>============================================================
+MÉTRICAS DE EVALUACIÓN DEL MODELO
+============================================================
+R² Score:  0.0164  → Explica el 1.64% de la variabilidad
+MSE:       0.0136  → Error cuadrático medio
+RMSE:      0.1165  → Raíz del error cuadrático medio
+MAE:       0.0231  → Error absoluto medio
+============================================================
+Interpretación: Ajuste débil del modelo</code></pre>
+</div>
+</div>
+</section>
+<section id="validación-cruzada" class="level3">
+<h3 class="anchored" data-anchor-id="validación-cruzada">10.2 Validación cruzada</h3>
+<p>Evaluamos el modelo con validación cruzada de 5 particiones.</p>
+<div id="f142293a" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Validación cruzada</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>cv_scores <span class="op">=</span> cross_val_score(pipeline, X_train, y_train, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">'r2'</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">VALIDACIÓN CRUZADA (5-fold)"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R² scores por fold: </span><span class="sc">{</span>cv_scores<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R² promedio: </span><span class="sc">{</span>cv_scores<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desviación estándar: </span><span class="sc">{</span>cv_scores<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rango: [</span><span class="sc">{</span>cv_scores<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.4f}</span><span class="ss">, </span><span class="sc">{</span>cv_scores<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.4f}</span><span class="ss">]"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+VALIDACIÓN CRUZADA (5-fold)
+============================================================
+R² scores por fold: [0.01748701 0.01839957 0.01676307 0.01694792 0.0154534 ]
+R² promedio: 0.0170
+Desviación estándar: 0.0010
+Rango: [0.0155, 0.0184]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="visualización-de-resultados" class="level2">
+<h2 class="anchored" data-anchor-id="visualización-de-resultados">11. Visualización de Resultados</h2>
+<section id="valores-reales-vs-predicciones" class="level3">
+<h3 class="anchored" data-anchor-id="valores-reales-vs-predicciones">11.1 Valores reales vs predicciones</h3>
+<p>Este gráfico muestra qué tan cerca están las predicciones de los valores reales.</p>
+<div id="cell-fig-predicciones" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="21">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersión</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test, y_pred, alpha<span class="op">=</span><span class="fl">0.6</span>, edgecolors<span class="op">=</span><span class="st">'k'</span>, s<span class="op">=</span><span class="dv">80</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>plt.plot([y_test.<span class="bu">min</span>(), y_test.<span class="bu">max</span>()], [y_test.<span class="bu">min</span>(), y_test.<span class="bu">max</span>()], </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">'r--'</span>, lw<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'Predicción perfecta'</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Valores Reales'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicciones'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Valores Reales vs Predicciones'</span>, fontsize<span class="op">=</span><span class="dv">15</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-predicciones" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-predicciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-predicciones-output-1.png" width="952" height="567" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-predicciones-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Comparación entre valores reales y predicciones del modelo
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="gráfico-de-residuos" class="level3">
+<h3 class="anchored" data-anchor-id="gráfico-de-residuos">11.2 Gráfico de residuos</h3>
+<p>Los residuos son los errores del modelo (diferencia entre valor real y predicción).</p>
+<div id="cell-fig-residuos" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="22">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular residuos</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>residuos <span class="op">=</span> y_test <span class="op">-</span> y_pred</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de residuos</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_pred, residuos, alpha<span class="op">=</span><span class="fl">0.6</span>, edgecolors<span class="op">=</span><span class="st">'k'</span>, s<span class="op">=</span><span class="dv">80</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>plt.axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, lw<span class="op">=</span><span class="dv">3</span>, label<span class="op">=</span><span class="st">'Residuo = 0'</span>)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Predicciones'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Residuos'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Gráfico de Residuos'</span>, fontsize<span class="op">=</span><span class="dv">15</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Estadísticas de residuos</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media de residuos: </span><span class="sc">{</span>residuos<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss"> (idealmente cerca de 0)"</span>)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Desviación estándar de residuos: </span><span class="sc">{</span>residuos<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-residuos" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-residuos-output-1.png" width="952" height="567" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Análisis de residuos del modelo
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Media de residuos: 0.0006 (idealmente cerca de 0)
+Desviación estándar de residuos: 0.1165</code></pre>
+</div>
+</div>
+</section>
+<section id="distribución-de-residuos" class="level3">
+<h3 class="anchored" data-anchor-id="distribución-de-residuos">11.3 Distribución de residuos</h3>
+<div id="cell-fig-dist-residuos" class="cell" data-fig-height="5" data-fig-width="10" data-execution_count="23">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma de residuos</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>plt.hist(residuos, bins<span class="op">=</span><span class="dv">30</span>, edgecolor<span class="op">=</span><span class="st">'black'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Residuo = 0'</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Residuos'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frecuencia'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribución de Residuos'</span>, fontsize<span class="op">=</span><span class="dv">15</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>, axis<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-dist-residuos" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dist-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-dist-residuos-output-1.png" width="952" height="471" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dist-residuos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Distribución de los residuos
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="coeficientes-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="coeficientes-del-modelo">12. Coeficientes del Modelo</h2>
+<p>Los coeficientes indican la importancia y dirección del efecto de cada variable.</p>
+<section id="tabla-de-coeficientes" class="level3">
+<h3 class="anchored" data-anchor-id="tabla-de-coeficientes">12.1 Tabla de coeficientes</h3>
+<div id="95643a73" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer el modelo del pipeline</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>regressor <span class="op">=</span> pipeline.named_steps[<span class="st">'regressor'</span>]</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear DataFrame con coeficientes</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>coef_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Variable'</span>: X.columns,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Coeficiente'</span>: regressor.coef_</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>}).sort_values(<span class="st">'Coeficiente'</span>, key<span class="op">=</span><span class="bu">abs</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"COEFICIENTES DEL MODELO"</span>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Intercepto: </span><span class="sc">{</span>regressor<span class="sc">.</span>intercept_<span class="sc">:.4f}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Coeficientes por variable (ordenados por magnitud):"</span>)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coef_df.to_string(index<span class="op">=</span><span class="va">False</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>COEFICIENTES DEL MODELO
+============================================================
+Intercepto: 0.0094
+
+Coeficientes por variable (ordenados por magnitud):
+  Variable   Coeficiente
+ ColdJunc0  3.230625e-02
+  Humidity  2.238645e-02
+      TEMP -1.479549e-02
+WS(inst_m)  9.502297e-03
+ Solar_rad -8.718406e-03
+   WS(ave) -5.600328e-03
+   WS(max)  4.435772e-03
+ PowerVolt  1.920716e-03
+Bar_press.  1.853470e-03
+WD(inst_m) -1.283488e-03
+   WD(ave)  1.144717e-03
+ PowerKind -2.081668e-17</code></pre>
+</div>
+</div>
+</section>
+<section id="visualización-de-coeficientes" class="level3">
+<h3 class="anchored" data-anchor-id="visualización-de-coeficientes">12.2 Visualización de coeficientes</h3>
+<div id="cell-fig-coeficientes" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="25">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de barras horizontales</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'green'</span> <span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">'red'</span> <span class="cf">for</span> x <span class="kw">in</span> coef_df[<span class="st">'Coeficiente'</span>]]</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>plt.barh(coef_df[<span class="st">'Variable'</span>], coef_df[<span class="st">'Coeficiente'</span>], color<span class="op">=</span>colors, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Coeficiente'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Variable'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Importancia de las Variables (Coeficientes)'</span>, fontsize<span class="op">=</span><span class="dv">15</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, linewidth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>, axis<span class="op">=</span><span class="st">'x'</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-coeficientes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-coeficientes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="midterm_regresion_files/figure-html/fig-coeficientes-output-1.png" width="951" height="567" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-coeficientes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Importancia de las variables según sus coeficientes
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpretación-de-coeficientes" class="level3">
+<h3 class="anchored" data-anchor-id="interpretación-de-coeficientes">12.3 Interpretación de coeficientes</h3>
+<div id="523a4930" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">INTERPRETACIÓN DE COEFICIENTES:"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Coeficientes positivos → Aumentan el valor de la variable objetivo"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Coeficientes negativos → Disminuyen el valor de la variable objetivo"</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Mayor magnitud → Mayor impacto en la predicción</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Variables con mayor impacto</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Top 3 variables con mayor impacto (valor absoluto):"</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, row <span class="kw">in</span> coef_df.head(<span class="dv">3</span>).iterrows():</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    direccion <span class="op">=</span> <span class="st">"aumenta"</span> <span class="cf">if</span> row[<span class="st">'Coeficiente'</span>] <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">"disminuye"</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>row[<span class="st">'Variable'</span>]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>direccion<span class="sc">}</span><span class="ss"> la predicción en </span><span class="sc">{</span><span class="bu">abs</span>(row[<span class="st">'Coeficiente'</span>])<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+INTERPRETACIÓN DE COEFICIENTES:
+============================================================
+Coeficientes positivos → Aumentan el valor de la variable objetivo
+Coeficientes negativos → Disminuyen el valor de la variable objetivo
+Mayor magnitud → Mayor impacto en la predicción
+
+Top 3 variables con mayor impacto (valor absoluto):
+  ColdJunc0: aumenta la predicción en 0.0323
+  Humidity: aumenta la predicción en 0.0224
+  TEMP: disminuye la predicción en 0.0148</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusiones" class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones">13. Conclusiones</h2>
+<div id="6a97f92a" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"RESUMEN DEL ANÁLISIS"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✓ Dataset: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras, </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> variables"</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✓ Modelo: Regresión Lineal con Pipeline"</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✓ R² Score: </span><span class="sc">{</span>r2<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✓ RMSE: </span><span class="sc">{</span>rmse<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"✓ Validación cruzada (5-fold): </span><span class="sc">{</span>cv_scores<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss"> ± </span><span class="sc">{</span>cv_scores<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>RESUMEN DEL ANÁLISIS
+============================================================
+✓ Dataset: 133754 muestras, 13 variables
+✓ Modelo: Regresión Lineal con Pipeline
+✓ R² Score: 0.0164
+✓ RMSE: 0.1165
+✓ Validación cruzada (5-fold): 0.0170 ± 0.0010
+============================================================</code></pre>
+</div>
+</div>
+</section>
+<section id="notas-importantes" class="level2">
+<h2 class="anchored" data-anchor-id="notas-importantes">Notas Importantes</h2>
+<ul>
+<li><strong>Variable objetivo</strong>: Recuerda cambiar <code>'variable_objetivo'</code> por el nombre real de tu columna objetivo</li>
+<li><strong>Preprocesamiento</strong>: El pipeline incluye StandardScaler para normalizar los datos</li>
+<li><strong>Interpretación</strong>: Los coeficientes están en escala estandarizada debido al StandardScaler</li>
+</ul>
+<hr>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
