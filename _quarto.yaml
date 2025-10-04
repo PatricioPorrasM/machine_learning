@@ -11,13 +11,13 @@ website:
       - href: eda.qmd
         text: EDA
       - href: laboratorio1.qmd
-        text: Laboratorio 1 - PP
+        text: Laboratorio 1
       - href: clasification.qmd
-        text: Clasificaciones - PP       
-      - href: midterm_clasificacin.qmd
-        text: MidTerm Regresión
+        text: Clasificaciones      
       - href: midterm_regresion.qmd
-        text: MidTerm Clasificación
+        text: MidTerm  - Regresión
+      - href: midterm_clasificacion.qmd
+        text: MidTerm - Clasificación
  
 format:
   html:
