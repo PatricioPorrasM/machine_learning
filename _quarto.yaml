@@ -13,7 +13,11 @@ website:
       - href: laboratorio1.qmd
         text: Laboratorio 1
       - href: clasification.qmd
-        text: Clasificaciones
+        text: Clasificaciones        
+      - href: midterm_clasificacin.qmd
+        text: MidTerm Regresión
+      - href: midterm_regresion.qmd
+        text: MidTerm Clasificación
  
 format:
   html:
