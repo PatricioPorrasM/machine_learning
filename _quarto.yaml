@@ -11,9 +11,9 @@ website:
       - href: eda.qmd
         text: EDA
       - href: laboratorio1.qmd
-        text: Laboratorio 1
+        text: Laboratorio 1 - PP
       - href: clasification.qmd
-        text: Clasificaciones        
+        text: Clasificaciones - PP       
       - href: midterm_clasificacin.qmd
         text: MidTerm Regresión
       - href: midterm_regresion.qmd

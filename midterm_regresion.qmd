@@ -9,19 +9,24 @@ Este documento presenta un análisis completo de regresión lineal utilizando el
 
 ### Columnas
 
-ColdJunc0: Temperatura de la unión fría (referencia para sensores tipo termopar).
-PowerVolt: Voltaje de alimentación del sistema o sensor.
-PowerKind: Tipo de fuente de energía (por ejemplo, solar, batería, red eléctrica).
-WS(ave): Velocidad promedio del viento (Wind Speed average), usualmente en m/s.
-WD(ave): Dirección promedio del viento (Wind Direction average), en grados.
-WS(max): Velocidad máxima del viento registrada en el periodo, en m/s.
-WS(inst_m): Velocidad instantánea máxima del viento (Wind Speed instantaneous max), en m/s.
-WD(inst_m): Dirección instantánea máxima del viento, en grados.
-Solar_rad: Radiación solar, normalmente en W/m².
-TEMP: Temperatura del aire, en °C.
-Humidity: Humedad relativa del aire, en %.
-Rainfall: Precipitación acumulada, en mm.
-Bar_press.: Presión barométrica (atmosférica), en hPa o mbar.
+* No: Número secuencial de la observación.
+* Date: Fecha de ka observación.
+* Time: Hora de la observación.
+* ColdJunc0: Temperatura de la unión fría (referencia para sensores tipo termopar). 
+* PowerVolt: Voltaje de alimentación del sistema o sensor. 
+* PowerKind: Tipo de fuente de energía (por ejemplo, solar, batería, red eléctrica). 
+* WS(ave): Velocidad promedio del viento (Wind Speed average), usualmente en m/s. 
+* WD(ave): Dirección promedio del viento (Wind Direction average), en grados. 
+* Max_time: Tiempo (hora/minuto) en el que se registró la velocidad máxima del viento (WS(max)) durante el periodo de medición. 
+* WS(max): Velocidad máxima del viento registrada en el periodo, en m/s. 
+* WD(most): Dirección del viento más frecuente (Wind Direction most), es decir, la dirección en la que el viento sopló la mayor parte del tiempo durante el periodo de medición. 
+* WS(inst_m): Velocidad instantánea máxima del viento (Wind Speed instantaneous max), en m/s. 
+* WD(inst_m): Dirección instantánea máxima del viento, en grados. 
+* Solar_rad: Radiación solar, normalmente en W/m². 
+* TEMP: Temperatura del aire, en °C. 
+* Humidity: Humedad relativa del aire, en %. 
+* Rainfall: Precipitación acumulada, en mm. 
+* Bar_press.: Presión barométrica (atmosférica), en hPa o mbar. 
 
 
 ## 1. Importar Librerías
@@ -89,7 +94,7 @@ df[cols_to_numeric] = df[cols_to_numeric].apply(pd.to_numeric, errors='coerce')
 
 
 ### 3.4 Eliminar columnas que no aportan
-Se elimina las columnas
+Se elimina las columnas que no aportanin fromación.
 
 ```{python}
 # Eliminar las tres primeras columnas

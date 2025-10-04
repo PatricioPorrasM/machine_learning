@@ -256,7 +256,7 @@
     "href": "midterm_regresion.html#cargar-el-dataset",
     "title": "MidTerm Regresión",
     "section": "2. Cargar el Dataset",
-    "text": "2. Cargar el Dataset\nCargamos el dataset desde el archivo CSV.\n\n\nCode\n# Cargar los datos\ndf = pd.read_csv(\"iige003_carapungo.csv\", encoding=\"latin1\")\n\n# Mostrar información básica\nprint(f\"Dimensiones del dataset: {df.shape}\")\nprint(f\"Número de filas: {df.shape[0]}\")\nprint(f\"Número de columnas: {df.shape[1]}\")\n\n\nDimensiones del dataset: (133754, 18)\nNúmero de filas: 133754\nNúmero de columnas: 18\n\n\nC:\\Users\\Lenovo\\AppData\\Local\\Temp\\ipykernel_15844\\2803193322.py:2: DtypeWarning: Columns (3,4,6,7,8,10,11,13,14,15,16,17) have mixed types. Specify dtype option on import or set low_memory=False.\n  df = pd.read_csv(\"iige003_carapungo.csv\", encoding=\"latin1\")"
+    "text": "2. Cargar el Dataset\nCargamos el dataset desde el archivo CSV.\n\n\nCode\n# Cargar los datos\ndf = pd.read_csv(\"iige003_carapungo.csv\", encoding=\"latin1\")\n\n# Mostrar información básica\nprint(f\"Dimensiones del dataset: {df.shape}\")\nprint(f\"Número de filas: {df.shape[0]}\")\nprint(f\"Número de columnas: {df.shape[1]}\")\n\n\nDimensiones del dataset: (133754, 18)\nNúmero de filas: 133754\nNúmero de columnas: 18\n\n\nC:\\Users\\Lenovo\\AppData\\Local\\Temp\\ipykernel_8172\\2803193322.py:2: DtypeWarning: Columns (3,4,6,7,8,10,11,13,14,15,16,17) have mixed types. Specify dtype option on import or set low_memory=False.\n  df = pd.read_csv(\"iige003_carapungo.csv\", encoding=\"latin1\")"
   },
   {
     "objectID": "midterm_regresion.html#exploración-inicial-de-los-datos",
