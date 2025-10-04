@@ -28,6 +28,7 @@ Este documento presenta un análisis completo de regresión lineal utilizando el
 * Rainfall: Precipitación acumulada, en mm. 
 * Bar_press.: Presión barométrica (atmosférica), en hPa o mbar. 
 
+***
 
 ## 1. Importar Librerías
 
@@ -472,8 +473,15 @@ print("="*60)
 
 ## Notas Importantes
 
-- **Variable objetivo**: Recuerda cambiar `'variable_objetivo'` por el nombre real de tu columna objetivo
-- **Preprocesamiento**: El pipeline incluye StandardScaler para normalizar los datos
-- **Interpretación**: Los coeficientes están en escala estandarizada debido al StandardScaler
+- **Variable objetivo**: La variable objetivo es: Rainfall.
+- **Preprocesamiento**: El pipeline incluye StandardScaler para normalizar los datos.
+- **Interpretación**: Los coeficientes están en escala estandarizada debido al StandardScaler.
 
----
+
+### **Interpretación Final** 🧠
+
+* El modelo de regresión lineal desarrollado permite predecir la precipitación acumulada (Rainfall) a partir de variables meteorológicas medidas en la estación. 
+
+* El análisis de los coeficientes revela qué variables tienen mayor impacto en la predicción de la lluvia. Variables como la humedad, la temperatura y la radiación solar suelen ser determinantes en los procesos de precipitación, lo que se refleja en la magnitud y el signo de sus coeficientes.
+
+* En conclusión, el modelo es una herramienta útil para estimar la precipitación a partir de datos meteorológicos, aunque su precisión depende de la calidad y representatividad de los datos. Se recomienda complementar este análisis con modelos más complejos o incorporar más datos para mejorar la capacidad predictiva si es necesario.

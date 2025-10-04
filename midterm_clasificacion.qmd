@@ -2,3 +2,267 @@
 title: "MidTerm Clasificación"
 author: "Patricio Porras"
 ---
+
+## Introducción
+
+En este cuaderno, realizaremos un análisis de clasificación para predecir el índice de estrés académico de los estudiantes utilizando un modelo de **Regresión Logística**. Siguiendo las buenas prácticas de Machine Learning, implementaremos el modelo dentro de un `Pipeline` de Scikit-Learn para estandarizar los datos y entrenar el modelo de forma secuencial y ordenada.
+
+El objetivo es seguir un proceso estructurado:
+1.  Carga y limpieza de datos.
+2.  División de los datos para entrenamiento y prueba.
+3.  Definición y entrenamiento de un pipeline.
+4.  Predicción sobre datos nuevos.
+5.  Evaluación del rendimiento del modelo.
+6.  Interpretación de los resultados.
+
+***
+
+## 1. Importar Librerías
+
+Primero importamos todas las librerías necesarias para el análisis.
+
+```{python}
+# Librerías para manipulación de datos
+import pandas as pd
+import numpy as np
+
+# Librerías para visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Librerías de scikit-learn
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
+# Configuración de estilo para gráficos
+plt.style.use('seaborn-v0_8-darkgrid')
+sns.set_palette("husl")
+```
+
+## 2. Carga el Dataset
+
+Primero, cargamos las librerías necesarias y el conjunto de datos. Realizaremos una exploración básica para entender su estructura, identificar las variables numéricas y categóricas, y prepararlo para el modelo.
+
+```{python}
+
+# Cargar el dataset desde el archivo CSV
+file_path = 'AcademicStressLevel.csv'
+df = pd.read_csv(file_path)
+```
+
+## 3. Exploración Inicial del Dataset
+
+### 3.1 Exploración inicial
+
+```{python}
+# --- Exploración Inicial ---
+print("--- Información General del Dataset ---")
+df.info()
+
+print("\n--- Primeras 5 Filas del Dataset ---")
+print(df.head())
+
+```
+
+### 3.2 renombrado de clumnas
+Se renombra kas columnas para mejor facilidad de manipularlas
+
+```{python}
+# --- Limpieza y Selección de Características ---
+# Limpiar nombres de columnas antes de renombrar
+df.columns = df.columns.str.strip()
+
+# Los nombres de las columnas son largos y contienen espacios. Vamos a renombrarlos.
+column_mapping = {
+    'Your Academic Stage': 'academic_stage',
+    'Peer pressure': 'peer_pressure',
+    'Academic pressure from your home': 'home_pressure',
+    'Study Environment': 'study_environment',
+    'What coping strategy you use as a student?': 'coping_strategy',
+    'Do you have any bad habits like smoking, drinking on a daily basis?': 'bad_habits',
+    'What would you rate the academic  competition in your student life': 'competition_rating',
+    'Rate your academic stress index': 'stress_index'
+}
+df = df.rename(columns=column_mapping)
+
+```
+
+Ver columnas renombradas
+
+```{python}
+print("--- Información General del Dataset renombado ---")
+df.info()
+
+```
+
+### 3.3 Evitar el us de variables categóricas
+```{python}
+
+# Según los lineamientos, debemos evitar el uso de variables categóricas.
+# Identificamos las columnas categóricas a eliminar:
+categorical_cols = ['academic_stage', 'study_environment', 'coping_strategy', 'bad_habits']
+# También eliminamos 'Timestamp' por no ser relevante para el modelo.
+cols_to_drop = categorical_cols + ['Timestamp']
+
+df_cleaned = df.drop(columns=cols_to_drop)
+
+# Verificamos si hay valores nulos
+print(f"\n--- Valores Nulos por Columna (después de limpiar) ---")
+print(df_cleaned.isnull().sum())
+
+# Si hubiera valores nulos, una opción sería eliminarlos.
+# df_cleaned = df_cleaned.dropna()
+
+print("\n--- Dataset Limpio (solo variables numéricas) ---")
+print(df_cleaned.head())
+
+print("\n--- Descripción Estadística del Dataset Limpio ---")
+print(df_cleaned.describe())
+```
+
+**Interpretación de la Exploración:**
+El dataset original contiene una mezcla de variables numéricas y categóricas. Para cumplir con los requisitos, hemos eliminado las columnas categóricas (`academic_stage`, `study_environment`, etc.) y la columna `Timestamp`. Nos quedamos con las siguientes variables numéricas: `peer_pressure`, `home_pressure`, `competition_rating` como nuestras **características (features)**, y `stress_index` como nuestra **variable objetivo (target)**. Afortunadamente, no se encontraron valores nulos en las columnas seleccionadas.
+
+
+## 4\. División en Conjuntos de Entrenamiento y Prueba
+
+Ahora, dividimos nuestro dataset limpio en dos conjuntos: uno para **entrenar** el modelo y otro para **evaluarlo** de manera imparcial. Usaremos una división 80/20, que es un estándar común en la industria.
+
+```{python}
+#| label: division-datos
+#| echo: true
+
+# Definir las características (X) y la variable objetivo (y)
+X = df_cleaned.drop('stress_index', axis=1)
+y = df_cleaned['stress_index']
+
+# Dividir los datos en entrenamiento (80%) y prueba (20%)
+# Usamos random_state para que la división sea reproducible
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+print("--- Dimensiones de los Conjuntos de Datos ---")
+print(f"Forma de X_train: {X_train.shape}")
+print(f"Forma de X_test: {X_test.shape}")
+print(f"Forma de y_train: {y_train.shape}")
+print(f"Forma de y_test: {y_test.shape}")
+```
+
+**Nota:** Se utilizó el parámetro `stratify=y` para asegurar que la proporción de cada clase de estrés sea la misma tanto en el conjunto de entrenamiento como en el de prueba. Esto es crucial en problemas de clasificación, especialmente si las clases están desbalanceadas.
+
+-----
+
+## 5\. Definición y Entrenamiento del Modelo utilizando Pipeline
+
+Aquí creamos el `Pipeline`. Este objeto encapsula una secuencia de transformaciones y un estimador final. Nuestro pipeline constará de dos pasos:
+
+1.  **`StandardScaler`**: Estandariza las características eliminando la media y escalando a la varianza unitaria. Es un paso fundamental para modelos como la Regresión Logística.
+2.  **`LogisticRegression`**: El modelo de clasificación que queremos entrenar.
+
+El `Pipeline` se entrena con una sola llamada al método `.fit()`.
+
+```{python}
+#| label: pipeline-entrenamiento
+#| echo: true
+
+# Definir los pasos del pipeline
+# Paso 1: Escalar los datos
+# Paso 2: Aplicar el modelo de Regresión Logística
+pipeline_steps = [
+    ('scaler', StandardScaler()),
+    ('logreg', LogisticRegression(random_state=42, multi_class='auto', solver='lbfgs'))
+]
+
+# Crear el pipeline
+model_pipeline = Pipeline(pipeline_steps)
+
+# Entrenar el pipeline completo con los datos de entrenamiento
+print("--- Entrenando el Pipeline ---")
+model_pipeline.fit(X_train, y_train)
+print("¡Entrenamiento completado!")
+```
+
+-----
+
+## 6\. Generación de Predicciones
+
+Una vez que el pipeline está entrenado, lo usamos para hacer predicciones sobre el conjunto de prueba (`X_test`). El pipeline se encarga automáticamente de aplicar la misma transformación de escalado que aprendió de los datos de entrenamiento antes de pasar los datos al modelo para la predicción.
+
+```{python}
+#| label: predicciones
+#| echo: true
+
+# Realizar predicciones sobre el conjunto de prueba
+y_pred = model_pipeline.predict(X_test)
+
+# Mostrar algunas predicciones junto con los valores reales
+predictions_df = pd.DataFrame({'Valor Real': y_test, 'Predicción': y_pred})
+print("--- Muestra de Predicciones vs. Valores Reales ---")
+print(predictions_df.head(10))
+```
+
+-----
+
+## 7\. Evaluación del Modelo
+
+Para medir qué tan bien funcionó nuestro modelo, utilizamos métricas de clasificación clave:
+
+  * **Accuracy (Exactitud)**: El porcentaje de predicciones correctas.
+  * **Classification Report**: Un resumen que incluye:
+      * **Precision**: De todas las veces que el modelo predijo una clase, ¿qué porcentaje fue correcto?
+      * **Recall (Sensibilidad)**: De todos los ejemplos reales de una clase, ¿qué porcentaje identificó correctamente el modelo?
+      * **F1-Score**: La media armónica de precisión y recall, útil para clases desbalanceadas.
+  * **Matriz de Confusión**: Una tabla que visualiza el rendimiento, mostrando los verdaderos positivos, falsos positivos, verdaderos negativos y falsos negativos.
+
+<!-- end list -->
+
+```{python}
+#| label: evaluacion
+#| echo: true
+
+# Calcular la exactitud del modelo
+accuracy = accuracy_score(y_test, y_pred)
+print(f"--- Exactitud (Accuracy) del Modelo ---")
+print(f"Accuracy: {accuracy:.4f}")
+
+# Generar el reporte de clasificación
+print("\n--- Reporte de Clasificación ---")
+print(classification_report(y_test, y_pred))
+
+# Generar la matriz de confusión
+print("\n--- Matriz de Confusión ---")
+conf_matrix = confusion_matrix(y_test, y_pred)
+print(conf_matrix)
+```
+
+-----
+
+## 8\. Visualizaciones e Interpretación de Resultados
+
+Una visualización de la matriz de confusión facilita enormemente su interpretación. Usaremos un mapa de calor (`heatmap`) de Seaborn.
+
+```{python}
+#| label: visualizacion
+#| echo: true
+#| fig-cap: "Matriz de Confusión del Modelo de Regresión Logística"
+
+# Visualizar la matriz de confusión con un mapa de calor
+plt.figure(figsize=(10, 7))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=np.unique(y), yticklabels=np.unique(y))
+plt.xlabel('Etiqueta Predicha')
+plt.ylabel('Etiqueta Real')
+plt.title('Matriz de Confusión')
+plt.show()
+```
+
+### **Interpretación Final** 🧠
+
+1.  **Rendimiento General**: La **exactitud (accuracy)** nos da una idea general del porcentaje de predicciones correctas. Sin embargo, en problemas con múltiples clases, no cuenta toda la historia.
+2.  **Reporte de Clasificación**: Analizando el reporte, podemos ver el rendimiento del modelo para cada nivel de estrés. Por ejemplo, podríamos notar que el modelo tiene alta precisión y recall para las clases con más muestras (ej. estrés nivel 3 o 4), pero un rendimiento más bajo para clases menos frecuentes.
+3.  **Matriz de Confusión**: El gráfico nos permite ver exactamente dónde se equivoca el modelo. La diagonal principal (de arriba a la izquierda a abajo a la derecha) muestra las predicciones correctas. Los números fuera de la diagonal son los errores. Por ejemplo, un número alto en la fila "Real 4" y la columna "Predicha 3" indicaría que el modelo tiende a confundir un nivel de estrés real de 4 con uno de 3.
+
+En resumen, el modelo de Regresión Logística implementado a través de un pipeline nos ofrece una base sólida para predecir el estrés académico. Para mejorar los resultados, los siguientes pasos podrían incluir la ingeniería de características o probar modelos más complejos, siempre manteniendo una estructura de trabajo ordenada como la que hemos definido aquí.

@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -127,8 +162,30 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción">Introducción</a></li>
+  <li><a href="#importar-librerías" id="toc-importar-librerías" class="nav-link" data-scroll-target="#importar-librerías">1. Importar Librerías</a></li>
+  <li><a href="#carga-el-dataset" id="toc-carga-el-dataset" class="nav-link" data-scroll-target="#carga-el-dataset">2. Carga el Dataset</a></li>
+  <li><a href="#exploración-inicial-del-dataset" id="toc-exploración-inicial-del-dataset" class="nav-link" data-scroll-target="#exploración-inicial-del-dataset">3. Exploración Inicial del Dataset</a>
+  <ul class="collapse">
+  <li><a href="#exploración-inicial" id="toc-exploración-inicial" class="nav-link" data-scroll-target="#exploración-inicial">3.1 Exploración inicial</a></li>
+  <li><a href="#renombrado-de-clumnas" id="toc-renombrado-de-clumnas" class="nav-link" data-scroll-target="#renombrado-de-clumnas">3.2 renombrado de clumnas</a></li>
+  <li><a href="#evitar-el-us-de-variables-categóricas" id="toc-evitar-el-us-de-variables-categóricas" class="nav-link" data-scroll-target="#evitar-el-us-de-variables-categóricas">3.3 Evitar el us de variables categóricas</a></li>
+  </ul></li>
+  <li><a href="#división-en-conjuntos-de-entrenamiento-y-prueba" id="toc-división-en-conjuntos-de-entrenamiento-y-prueba" class="nav-link" data-scroll-target="#división-en-conjuntos-de-entrenamiento-y-prueba">4. División en Conjuntos de Entrenamiento y Prueba</a></li>
+  <li><a href="#definición-y-entrenamiento-del-modelo-utilizando-pipeline" id="toc-definición-y-entrenamiento-del-modelo-utilizando-pipeline" class="nav-link" data-scroll-target="#definición-y-entrenamiento-del-modelo-utilizando-pipeline">5. Definición y Entrenamiento del Modelo utilizando Pipeline</a></li>
+  <li><a href="#generación-de-predicciones" id="toc-generación-de-predicciones" class="nav-link" data-scroll-target="#generación-de-predicciones">6. Generación de Predicciones</a></li>
+  <li><a href="#evaluación-del-modelo" id="toc-evaluación-del-modelo" class="nav-link" data-scroll-target="#evaluación-del-modelo">7. Evaluación del Modelo</a></li>
+  <li><a href="#visualizaciones-e-interpretación-de-resultados" id="toc-visualizaciones-e-interpretación-de-resultados" class="nav-link" data-scroll-target="#visualizaciones-e-interpretación-de-resultados">8. Visualizaciones e Interpretación de Resultados</a>
+  <ul class="collapse">
+  <li><a href="#interpretación-final" id="toc-interpretación-final" class="nav-link" data-scroll-target="#interpretación-final"><strong>Interpretación Final</strong> 🧠</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -158,8 +215,443 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="introducción" class="level2">
+<h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
+<p>En este cuaderno, realizaremos un análisis de clasificación para predecir el índice de estrés académico de los estudiantes utilizando un modelo de <strong>Regresión Logística</strong>. Siguiendo las buenas prácticas de Machine Learning, implementaremos el modelo dentro de un <code>Pipeline</code> de Scikit-Learn para estandarizar los datos y entrenar el modelo de forma secuencial y ordenada.</p>
+<p>El objetivo es seguir un proceso estructurado: 1. Carga y limpieza de datos. 2. División de los datos para entrenamiento y prueba. 3. Definición y entrenamiento de un pipeline. 4. Predicción sobre datos nuevos. 5. Evaluación del rendimiento del modelo. 6. Interpretación de los resultados.</p>
+<hr>
+</section>
+<section id="importar-librerías" class="level2">
+<h2 class="anchored" data-anchor-id="importar-librerías">1. Importar Librerías</h2>
+<p>Primero importamos todas las librerías necesarias para el análisis.</p>
+<div id="8c92794b" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para manipulación de datos</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para visualización</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías de scikit-learn</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split, cross_val_score</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, r2_score, mean_absolute_error</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix, accuracy_score</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuración de estilo para gráficos</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'seaborn-v0_8-darkgrid'</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">"husl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="carga-el-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="carga-el-dataset">2. Carga el Dataset</h2>
+<p>Primero, cargamos las librerías necesarias y el conjunto de datos. Realizaremos una exploración básica para entender su estructura, identificar las variables numéricas y categóricas, y prepararlo para el modelo.</p>
+<div id="522e6969" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar el dataset desde el archivo CSV</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">'AcademicStressLevel.csv'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(file_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="exploración-inicial-del-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="exploración-inicial-del-dataset">3. Exploración Inicial del Dataset</h2>
+<section id="exploración-inicial" class="level3">
+<h3 class="anchored" data-anchor-id="exploración-inicial">3.1 Exploración inicial</h3>
+<div id="fa5275c9" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Exploración Inicial ---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Información General del Dataset ---"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df.info()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Primeras 5 Filas del Dataset ---"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Información General del Dataset ---
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 140 entries, 0 to 139
+Data columns (total 9 columns):
+ #   Column                                                               Non-Null Count  Dtype 
+---  ------                                                               --------------  ----- 
+ 0   Timestamp                                                            140 non-null    object
+ 1   Your Academic Stage                                                  140 non-null    object
+ 2   Peer pressure                                                        140 non-null    int64 
+ 3   Academic pressure from your home                                     140 non-null    int64 
+ 4   Study Environment                                                    139 non-null    object
+ 5   What coping strategy you use as a student?                           140 non-null    object
+ 6   Do you have any bad habits like smoking, drinking on a daily basis?  140 non-null    object
+ 7   What would you rate the academic  competition in your student life   140 non-null    int64 
+ 8   Rate your academic stress index                                      140 non-null    int64 
+dtypes: int64(4), object(5)
+memory usage: 10.0+ KB
+
+--- Primeras 5 Filas del Dataset ---
+             Timestamp Your Academic Stage  Peer pressure  \
+0  24/07/2025 22:05:39       undergraduate              4   
+1  24/07/2025 22:05:52       undergraduate              3   
+2  24/07/2025 22:06:39       undergraduate              1   
+3  24/07/2025 22:06:45       undergraduate              3   
+4  24/07/2025 22:08:06       undergraduate              3   
+
+   Academic pressure from your home Study Environment  \
+0                                 5             Noisy   
+1                                 4          Peaceful   
+2                                 1          Peaceful   
+3                                 2          Peaceful   
+4                                 3          Peaceful   
+
+          What coping strategy you use as a student?  \
+0  Analyze the situation and handle it with intel...   
+1  Analyze the situation and handle it with intel...   
+2                   Social support (friends, family)   
+3  Analyze the situation and handle it with intel...   
+4  Analyze the situation and handle it with intel...   
+
+  Do you have any bad habits like smoking, drinking on a daily basis?  \
+0                                                 No                    
+1                                                 No                    
+2                                                 No                    
+3                                                 No                    
+4                                                 No                    
+
+   What would you rate the academic  competition in your student life  \
+0                                                  3                    
+1                                                  3                    
+2                                                  2                    
+3                                                  4                    
+4                                                  4                    
+
+   Rate your academic stress index   
+0                                 5  
+1                                 3  
+2                                 4  
+3                                 3  
+4                                 5  </code></pre>
+</div>
+</div>
+</section>
+<section id="renombrado-de-clumnas" class="level3">
+<h3 class="anchored" data-anchor-id="renombrado-de-clumnas">3.2 renombrado de clumnas</h3>
+<p>Se renombra kas columnas para mejor facilidad de manipularlas</p>
+<div id="6501299d" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Limpieza y Selección de Características ---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpiar nombres de columnas antes de renombrar</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> df.columns.<span class="bu">str</span>.strip()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Los nombres de las columnas son largos y contienen espacios. Vamos a renombrarlos.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>column_mapping <span class="op">=</span> {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Your Academic Stage'</span>: <span class="st">'academic_stage'</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Peer pressure'</span>: <span class="st">'peer_pressure'</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Academic pressure from your home'</span>: <span class="st">'home_pressure'</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Study Environment'</span>: <span class="st">'study_environment'</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'What coping strategy you use as a student?'</span>: <span class="st">'coping_strategy'</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Do you have any bad habits like smoking, drinking on a daily basis?'</span>: <span class="st">'bad_habits'</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'What would you rate the academic  competition in your student life'</span>: <span class="st">'competition_rating'</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Rate your academic stress index'</span>: <span class="st">'stress_index'</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.rename(columns<span class="op">=</span>column_mapping)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Ver columnas renombradas</p>
+<div id="29ba453b" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Información General del Dataset renombado ---"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Información General del Dataset renombado ---
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 140 entries, 0 to 139
+Data columns (total 9 columns):
+ #   Column              Non-Null Count  Dtype 
+---  ------              --------------  ----- 
+ 0   Timestamp           140 non-null    object
+ 1   academic_stage      140 non-null    object
+ 2   peer_pressure       140 non-null    int64 
+ 3   home_pressure       140 non-null    int64 
+ 4   study_environment   139 non-null    object
+ 5   coping_strategy     140 non-null    object
+ 6   bad_habits          140 non-null    object
+ 7   competition_rating  140 non-null    int64 
+ 8   stress_index        140 non-null    int64 
+dtypes: int64(4), object(5)
+memory usage: 10.0+ KB</code></pre>
+</div>
+</div>
+</section>
+<section id="evitar-el-us-de-variables-categóricas" class="level3">
+<h3 class="anchored" data-anchor-id="evitar-el-us-de-variables-categóricas">3.3 Evitar el us de variables categóricas</h3>
+<div id="f3d351d4" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Según los lineamientos, debemos evitar el uso de variables categóricas.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Identificamos las columnas categóricas a eliminar:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>categorical_cols <span class="op">=</span> [<span class="st">'academic_stage'</span>, <span class="st">'study_environment'</span>, <span class="st">'coping_strategy'</span>, <span class="st">'bad_habits'</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># También eliminamos 'Timestamp' por no ser relevante para el modelo.</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>cols_to_drop <span class="op">=</span> categorical_cols <span class="op">+</span> [<span class="st">'Timestamp'</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>df_cleaned <span class="op">=</span> df.drop(columns<span class="op">=</span>cols_to_drop)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos si hay valores nulos</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">--- Valores Nulos por Columna (después de limpiar) ---"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_cleaned.isnull().<span class="bu">sum</span>())</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Si hubiera valores nulos, una opción sería eliminarlos.</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># df_cleaned = df_cleaned.dropna()</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Dataset Limpio (solo variables numéricas) ---"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_cleaned.head())</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Descripción Estadística del Dataset Limpio ---"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_cleaned.describe())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Valores Nulos por Columna (después de limpiar) ---
+peer_pressure         0
+home_pressure         0
+competition_rating    0
+stress_index          0
+dtype: int64
+
+--- Dataset Limpio (solo variables numéricas) ---
+   peer_pressure  home_pressure  competition_rating  stress_index
+0              4              5                   3             5
+1              3              4                   3             3
+2              1              1                   2             4
+3              3              2                   4             3
+4              3              3                   4             5
+
+--- Descripción Estadística del Dataset Limpio ---
+       peer_pressure  home_pressure  competition_rating  stress_index
+count     140.000000     140.000000          140.000000    140.000000
+mean        3.071429       3.178571            3.492857      3.721429
+std         1.083844       1.276618            1.028349      1.032339
+min         1.000000       1.000000            1.000000      1.000000
+25%         2.000000       2.000000            3.000000      3.000000
+50%         3.000000       3.000000            4.000000      4.000000
+75%         4.000000       4.000000            4.000000      4.000000
+max         5.000000       5.000000            5.000000      5.000000</code></pre>
+</div>
+</div>
+<p><strong>Interpretación de la Exploración:</strong> El dataset original contiene una mezcla de variables numéricas y categóricas. Para cumplir con los requisitos, hemos eliminado las columnas categóricas (<code>academic_stage</code>, <code>study_environment</code>, etc.) y la columna <code>Timestamp</code>. Nos quedamos con las siguientes variables numéricas: <code>peer_pressure</code>, <code>home_pressure</code>, <code>competition_rating</code> como nuestras <strong>características (features)</strong>, y <code>stress_index</code> como nuestra <strong>variable objetivo (target)</strong>. Afortunadamente, no se encontraron valores nulos en las columnas seleccionadas.</p>
+</section>
+</section>
+<section id="división-en-conjuntos-de-entrenamiento-y-prueba" class="level2">
+<h2 class="anchored" data-anchor-id="división-en-conjuntos-de-entrenamiento-y-prueba">4. División en Conjuntos de Entrenamiento y Prueba</h2>
+<p>Ahora, dividimos nuestro dataset limpio en dos conjuntos: uno para <strong>entrenar</strong> el modelo y otro para <strong>evaluarlo</strong> de manera imparcial. Usaremos una división 80/20, que es un estándar común en la industria.</p>
+<div id="division-datos" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir las características (X) y la variable objetivo (y)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df_cleaned.drop(<span class="st">'stress_index'</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df_cleaned[<span class="st">'stress_index'</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Dividir los datos en entrenamiento (80%) y prueba (20%)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos random_state para que la división sea reproducible</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Dimensiones de los Conjuntos de Datos ---"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de X_train: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de X_test: </span><span class="sc">{</span>X_test<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de y_train: </span><span class="sc">{</span>y_train<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Forma de y_test: </span><span class="sc">{</span>y_test<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Dimensiones de los Conjuntos de Datos ---
+Forma de X_train: (112, 3)
+Forma de X_test: (28, 3)
+Forma de y_train: (112,)
+Forma de y_test: (28,)</code></pre>
+</div>
+</div>
+<p><strong>Nota:</strong> Se utilizó el parámetro <code>stratify=y</code> para asegurar que la proporción de cada clase de estrés sea la misma tanto en el conjunto de entrenamiento como en el de prueba. Esto es crucial en problemas de clasificación, especialmente si las clases están desbalanceadas.</p>
+<hr>
+</section>
+<section id="definición-y-entrenamiento-del-modelo-utilizando-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="definición-y-entrenamiento-del-modelo-utilizando-pipeline">5. Definición y Entrenamiento del Modelo utilizando Pipeline</h2>
+<p>Aquí creamos el <code>Pipeline</code>. Este objeto encapsula una secuencia de transformaciones y un estimador final. Nuestro pipeline constará de dos pasos:</p>
+<ol type="1">
+<li><strong><code>StandardScaler</code></strong>: Estandariza las características eliminando la media y escalando a la varianza unitaria. Es un paso fundamental para modelos como la Regresión Logística.</li>
+<li><strong><code>LogisticRegression</code></strong>: El modelo de clasificación que queremos entrenar.</li>
+</ol>
+<p>El <code>Pipeline</code> se entrena con una sola llamada al método <code>.fit()</code>.</p>
+<div id="pipeline-entrenamiento" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir los pasos del pipeline</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 1: Escalar los datos</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Paso 2: Aplicar el modelo de Regresión Logística</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>pipeline_steps <span class="op">=</span> [</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'scaler'</span>, StandardScaler()),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'logreg'</span>, LogisticRegression(random_state<span class="op">=</span><span class="dv">42</span>, multi_class<span class="op">=</span><span class="st">'auto'</span>, solver<span class="op">=</span><span class="st">'lbfgs'</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>model_pipeline <span class="op">=</span> Pipeline(pipeline_steps)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el pipeline completo con los datos de entrenamiento</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Entrenando el Pipeline ---"</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>model_pipeline.fit(X_train, y_train)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"¡Entrenamiento completado!"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Entrenando el Pipeline ---
+¡Entrenamiento completado!</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Personal\Yachay\machine_learning\.venv-13\Lib\site-packages\sklearn\linear_model\_logistic.py:1272: FutureWarning: 'multi_class' was deprecated in version 1.5 and will be removed in 1.8. From then on, it will always use 'multinomial'. Leave it to its default value to avoid this warning.
+  warnings.warn(</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="generación-de-predicciones" class="level2">
+<h2 class="anchored" data-anchor-id="generación-de-predicciones">6. Generación de Predicciones</h2>
+<p>Una vez que el pipeline está entrenado, lo usamos para hacer predicciones sobre el conjunto de prueba (<code>X_test</code>). El pipeline se encarga automáticamente de aplicar la misma transformación de escalado que aprendió de los datos de entrenamiento antes de pasar los datos al modelo para la predicción.</p>
+<div id="predicciones" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones sobre el conjunto de prueba</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model_pipeline.predict(X_test)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar algunas predicciones junto con los valores reales</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>predictions_df <span class="op">=</span> pd.DataFrame({<span class="st">'Valor Real'</span>: y_test, <span class="st">'Predicción'</span>: y_pred})</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Muestra de Predicciones vs. Valores Reales ---"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(predictions_df.head(<span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Muestra de Predicciones vs. Valores Reales ---
+     Valor Real  Predicción
+124           4           4
+54            4           4
+67            4           4
+20            4           4
+36            3           5
+118           4           3
+136           3           4
+106           5           4
+25            4           4
+64            2           4</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="evaluación-del-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="evaluación-del-modelo">7. Evaluación del Modelo</h2>
+<p>Para medir qué tan bien funcionó nuestro modelo, utilizamos métricas de clasificación clave:</p>
+<ul>
+<li><strong>Accuracy (Exactitud)</strong>: El porcentaje de predicciones correctas.</li>
+<li><strong>Classification Report</strong>: Un resumen que incluye:
+<ul>
+<li><strong>Precision</strong>: De todas las veces que el modelo predijo una clase, ¿qué porcentaje fue correcto?</li>
+<li><strong>Recall (Sensibilidad)</strong>: De todos los ejemplos reales de una clase, ¿qué porcentaje identificó correctamente el modelo?</li>
+<li><strong>F1-Score</strong>: La media armónica de precisión y recall, útil para clases desbalanceadas.</li>
+</ul></li>
+<li><strong>Matriz de Confusión</strong>: Una tabla que visualiza el rendimiento, mostrando los verdaderos positivos, falsos positivos, verdaderos negativos y falsos negativos.</li>
+</ul>
+<!-- end list -->
+<div id="evaluacion" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la exactitud del modelo</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"--- Exactitud (Accuracy) del Modelo ---"</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generar el reporte de clasificación</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Reporte de Clasificación ---"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_pred))</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generar la matriz de confusión</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Matriz de Confusión ---"</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>conf_matrix <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(conf_matrix)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- Exactitud (Accuracy) del Modelo ---
+Accuracy: 0.5357
+
+--- Reporte de Clasificación ---
+              precision    recall  f1-score   support
+
+           1       1.00      1.00      1.00         1
+           2       0.00      0.00      0.00         2
+           3       0.33      0.14      0.20         7
+           4       0.50      0.82      0.62        11
+           5       0.67      0.57      0.62         7
+
+    accuracy                           0.54        28
+   macro avg       0.50      0.51      0.49        28
+weighted avg       0.48      0.54      0.48        28
 
 
+--- Matriz de Confusión ---
+[[1 0 0 0 0]
+ [0 0 0 2 0]
+ [0 0 1 5 1]
+ [0 0 1 9 1]
+ [0 0 1 2 4]]</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Personal\Yachay\machine_learning\.venv-13\Lib\site-packages\sklearn\metrics\_classification.py:1731: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+C:\Personal\Yachay\machine_learning\.venv-13\Lib\site-packages\sklearn\metrics\_classification.py:1731: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+C:\Personal\Yachay\machine_learning\.venv-13\Lib\site-packages\sklearn\metrics\_classification.py:1731: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="visualizaciones-e-interpretación-de-resultados" class="level2">
+<h2 class="anchored" data-anchor-id="visualizaciones-e-interpretación-de-resultados">8. Visualizaciones e Interpretación de Resultados</h2>
+<p>Una visualización de la matriz de confusión facilita enormemente su interpretación. Usaremos un mapa de calor (<code>heatmap</code>) de Seaborn.</p>
+<div id="cell-visualizacion" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar la matriz de confusión con un mapa de calor</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">7</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>sns.heatmap(conf_matrix, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>np.unique(y), yticklabels<span class="op">=</span>np.unique(y))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Etiqueta Predicha'</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Etiqueta Real'</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Matriz de Confusión'</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="visualizacion" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="midterm_clasificacion_files/figure-html/visualizacion-output-1.png" width="724" height="590" class="figure-img"></p>
+<figcaption>Matriz de Confusión del Modelo de Regresión Logística</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="interpretación-final" class="level3">
+<h3 class="anchored" data-anchor-id="interpretación-final"><strong>Interpretación Final</strong> 🧠</h3>
+<ol type="1">
+<li><strong>Rendimiento General</strong>: La <strong>exactitud (accuracy)</strong> nos da una idea general del porcentaje de predicciones correctas. Sin embargo, en problemas con múltiples clases, no cuenta toda la historia.</li>
+<li><strong>Reporte de Clasificación</strong>: Analizando el reporte, podemos ver el rendimiento del modelo para cada nivel de estrés. Por ejemplo, podríamos notar que el modelo tiene alta precisión y recall para las clases con más muestras (ej. estrés nivel 3 o 4), pero un rendimiento más bajo para clases menos frecuentes.</li>
+<li><strong>Matriz de Confusión</strong>: El gráfico nos permite ver exactamente dónde se equivoca el modelo. La diagonal principal (de arriba a la izquierda a abajo a la derecha) muestra las predicciones correctas. Los números fuera de la diagonal son los errores. Por ejemplo, un número alto en la fila “Real 4” y la columna “Predicha 3” indicaría que el modelo tiende a confundir un nivel de estrés real de 4 con uno de 3.</li>
+</ol>
+<p>En resumen, el modelo de Regresión Logística implementado a través de un pipeline nos ofrece una base sólida para predecir el estrés académico. Para mejorar los resultados, los siguientes pasos podrían incluir la ingeniería de características o probar modelos más complejos, siempre manteniendo una estructura de trabajo ordenada como la que hemos definido aquí.</p>
+
+
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

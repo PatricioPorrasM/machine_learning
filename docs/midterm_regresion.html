@@ -218,7 +218,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#interpretación-de-coeficientes" id="toc-interpretación-de-coeficientes" class="nav-link" data-scroll-target="#interpretación-de-coeficientes">12.3 Interpretación de coeficientes</a></li>
   </ul></li>
   <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">13. Conclusiones</a></li>
-  <li><a href="#notas-importantes" id="toc-notas-importantes" class="nav-link" data-scroll-target="#notas-importantes">Notas Importantes</a></li>
+  <li><a href="#notas-importantes" id="toc-notas-importantes" class="nav-link" data-scroll-target="#notas-importantes">Notas Importantes</a>
+  <ul class="collapse">
+  <li><a href="#interpretación-final" id="toc-interpretación-final" class="nav-link" data-scroll-target="#interpretación-final"><strong>Interpretación Final</strong> 🧠</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -275,12 +278,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Rainfall: Precipitación acumulada, en mm.</li>
 <li>Bar_press.: Presión barométrica (atmosférica), en hPa o mbar.</li>
 </ul>
+<hr>
 </section>
 </section>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">1. Importar Librerías</h2>
 <p>Primero importamos todas las librerías necesarias para el análisis.</p>
-<div id="84e7405e" class="cell" data-execution_count="1">
+<div id="0abf6cc6" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para manipulación de datos</span></span>
@@ -307,7 +311,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="cargar-el-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="cargar-el-dataset">2. Cargar el Dataset</h2>
 <p>Cargamos el dataset desde el archivo CSV.</p>
-<div id="7a3c3334" class="cell" data-execution_count="2">
+<div id="148217a2" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar los datos</span></span>
@@ -324,7 +328,7 @@ Número de filas: 133754
 Número de columnas: 18</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_18412\2803193322.py:2: DtypeWarning: Columns (3,4,6,7,8,10,11,13,14,15,16,17) have mixed types. Specify dtype option on import or set low_memory=False.
+<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_19092\2803193322.py:2: DtypeWarning: Columns (3,4,6,7,8,10,11,13,14,15,16,17) have mixed types. Specify dtype option on import or set low_memory=False.
   df = pd.read_csv("iige003_carapungo.csv", encoding="latin1")</code></pre>
 </div>
 </div>
@@ -333,13 +337,13 @@ Número de columnas: 18</code></pre>
 <h2 class="anchored" data-anchor-id="exploración-inicial-de-los-datos">3. Exploración Inicial de los Datos</h2>
 <section id="primeras-filas-del-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="primeras-filas-del-dataset">3.1 Primeras filas del dataset</h3>
-<div id="9cd60025" class="cell" data-execution_count="3">
+<div id="42d83dd1" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar las primeras 5 filas</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="57">
 <div>
 
 
@@ -482,7 +486,7 @@ Número de columnas: 18</code></pre>
 </section>
 <section id="información-del-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="información-del-dataset">3.2 Información del dataset</h3>
-<div id="453fd9d0" class="cell" data-execution_count="4">
+<div id="302375e4" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Información general del dataset</span></span>
@@ -519,7 +523,7 @@ memory usage: 18.4+ MB</code></pre>
 </section>
 <section id="transaformar-columnas" class="level3">
 <h3 class="anchored" data-anchor-id="transaformar-columnas">3.3 Transaformar columnas</h3>
-<div id="0edfc5ae" class="cell" data-execution_count="5">
+<div id="493ea36c" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cols_to_numeric <span class="op">=</span> df.columns[<span class="dv">3</span>:]</span>
@@ -530,7 +534,7 @@ memory usage: 18.4+ MB</code></pre>
 <section id="eliminar-columnas-que-no-aportan" class="level3">
 <h3 class="anchored" data-anchor-id="eliminar-columnas-que-no-aportan">3.4 Eliminar columnas que no aportan</h3>
 <p>Se elimina las columnas que no aportanin fromación.</p>
-<div id="e14a6ade" class="cell" data-execution_count="6">
+<div id="5b598a75" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar las tres primeras columnas</span></span>
@@ -540,7 +544,7 @@ memory usage: 18.4+ MB</code></pre>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">"WD(most)"</span>, <span class="st">"Max_time"</span>], errors<span class="op">=</span><span class="st">"ignore"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="312594e2" class="cell" data-execution_count="7">
+<div id="8c64bf5b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -571,12 +575,12 @@ memory usage: 13.3 MB</code></pre>
 </section>
 <section id="estadísticas-descriptivas" class="level3">
 <h3 class="anchored" data-anchor-id="estadísticas-descriptivas">3.5 Estadísticas descriptivas</h3>
-<div id="384ab723" class="cell" data-execution_count="8">
+<div id="304f110e" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="62">
 <div>
 
 
@@ -737,7 +741,7 @@ memory usage: 13.3 MB</code></pre>
 </section>
 <section id="asignar-valores-medios-a-los-nulos" class="level3">
 <h3 class="anchored" data-anchor-id="asignar-valores-medios-a-los-nulos">3.6 Asignar valores medios a los nulos</h3>
-<div id="dbc24067" class="cell" data-execution_count="9">
+<div id="e7c7a480" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplazar valores NaN en columnas numéricas por la media de cada columna</span></span>
@@ -747,7 +751,7 @@ memory usage: 13.3 MB</code></pre>
 </section>
 <section id="valores-nulos" class="level3">
 <h3 class="anchored" data-anchor-id="valores-nulos">3.6 Valores nulos</h3>
-<div id="56e53a7f" class="cell" data-execution_count="10">
+<div id="6e9104bf" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar valores nulos por columna</span></span>
@@ -835,7 +839,7 @@ Figure&nbsp;2: Matriz de correlación entre variables
 </section>
 <section id="análisis-de-correlaciones-fuertes" class="level3">
 <h3 class="anchored" data-anchor-id="análisis-de-correlaciones-fuertes">4.3 Análisis de correlaciones fuertes</h3>
-<div id="f02a24ae" class="cell" data-execution_count="13">
+<div id="13c197ae" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar correlaciones fuertes (&gt;0.7 o &lt;-0.7)</span></span>
@@ -877,7 +881,7 @@ Figure&nbsp;2: Matriz de correlación entre variables
 <section id="preparación-de-los-datos" class="level2">
 <h2 class="anchored" data-anchor-id="preparación-de-los-datos">5. Preparación de los Datos</h2>
 <p>Separamos las variables independientes (features) de la variable objetivo.</p>
-<div id="722e4ca9" class="cell" data-execution_count="14">
+<div id="e8440af6" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>variable_objetivo <span class="op">=</span> <span class="st">'Rainfall'</span>  </span>
@@ -898,7 +902,7 @@ Features utilizadas: ['ColdJunc0', 'PowerVolt', 'PowerKind', 'WS(ave)', 'WD(ave)
 <section id="división-de-datos" class="level2">
 <h2 class="anchored" data-anchor-id="división-de-datos">6. División de Datos</h2>
 <p>Dividimos el dataset en conjuntos de entrenamiento (80%) y prueba (20%).</p>
-<div id="b089b804" class="cell" data-execution_count="15">
+<div id="a1dfb012" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dividir los datos</span></span>
@@ -920,7 +924,7 @@ Proporción: 80.0% entrenamiento, 20.0% prueba</code></pre>
 <section id="creación-del-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="creación-del-pipeline">7. Creación del Pipeline</h2>
 <p>Creamos un pipeline que incluye: 1. <strong>StandardScaler</strong>: Normaliza los datos (media=0, desviación estándar=1) 2. <strong>LinearRegression</strong>: Aplica el modelo de regresión lineal</p>
-<div id="ee5d1af5" class="cell" data-execution_count="16">
+<div id="9657d074" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline</span></span>
@@ -943,7 +947,7 @@ Proporción: 80.0% entrenamiento, 20.0% prueba</code></pre>
 <section id="entrenamiento-del-modelo" class="level2">
 <h2 class="anchored" data-anchor-id="entrenamiento-del-modelo">8. Entrenamiento del Modelo</h2>
 <p>Entrenamos el pipeline completo con los datos de entrenamiento.</p>
-<div id="947944e7" class="cell" data-execution_count="17">
+<div id="0fbe942f" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el pipeline</span></span>
@@ -958,7 +962,7 @@ Proporción: 80.0% entrenamiento, 20.0% prueba</code></pre>
 <section id="predicciones" class="level2">
 <h2 class="anchored" data-anchor-id="predicciones">9. Predicciones</h2>
 <p>Realizamos predicciones con el conjunto de prueba.</p>
-<div id="8cd106b8" class="cell" data-execution_count="18">
+<div id="d642567c" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones</span></span>
@@ -993,7 +997,7 @@ Proporción: 80.0% entrenamiento, 20.0% prueba</code></pre>
 <h2 class="anchored" data-anchor-id="evaluación-del-modelo">10. Evaluación del Modelo</h2>
 <section id="métricas-de-desempeño" class="level3">
 <h3 class="anchored" data-anchor-id="métricas-de-desempeño">10.1 Métricas de desempeño</h3>
-<div id="670e7b58" class="cell" data-execution_count="19">
+<div id="4961cd29" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular métricas</span></span>
@@ -1038,7 +1042,7 @@ Interpretación: Ajuste débil del modelo</code></pre>
 <section id="validación-cruzada" class="level3">
 <h3 class="anchored" data-anchor-id="validación-cruzada">10.2 Validación cruzada</h3>
 <p>Evaluamos el modelo con validación cruzada de 5 particiones.</p>
-<div id="cd765e90" class="cell" data-execution_count="20">
+<div id="cb87b788" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Validación cruzada</span></span>
@@ -1178,7 +1182,7 @@ Figure&nbsp;5: Distribución de los residuos
 <p>Los coeficientes indican la importancia y dirección del efecto de cada variable.</p>
 <section id="tabla-de-coeficientes" class="level3">
 <h3 class="anchored" data-anchor-id="tabla-de-coeficientes">12.1 Tabla de coeficientes</h3>
-<div id="49e96d91" class="cell" data-execution_count="24">
+<div id="91816927" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extraer el modelo del pipeline</span></span>
@@ -1251,7 +1255,7 @@ Figure&nbsp;6: Importancia de las variables según sus coeficientes
 </section>
 <section id="interpretación-de-coeficientes" class="level3">
 <h3 class="anchored" data-anchor-id="interpretación-de-coeficientes">12.3 Interpretación de coeficientes</h3>
-<div id="100caed5" class="cell" data-execution_count="26">
+<div id="cf508d8a" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">INTERPRETACIÓN DE COEFICIENTES:"</span>)</span>
@@ -1284,7 +1288,7 @@ Top 3 variables con mayor impacto (valor absoluto):
 </section>
 <section id="conclusiones" class="level2">
 <h2 class="anchored" data-anchor-id="conclusiones">13. Conclusiones</h2>
-<div id="8db9be2a" class="cell" data-execution_count="27">
+<div id="2fcc6bf7" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"RESUMEN DEL ANÁLISIS"</span>)</span>
@@ -1311,13 +1315,20 @@ Top 3 variables con mayor impacto (valor absoluto):
 <section id="notas-importantes" class="level2">
 <h2 class="anchored" data-anchor-id="notas-importantes">Notas Importantes</h2>
 <ul>
-<li><strong>Variable objetivo</strong>: Recuerda cambiar <code>'variable_objetivo'</code> por el nombre real de tu columna objetivo</li>
-<li><strong>Preprocesamiento</strong>: El pipeline incluye StandardScaler para normalizar los datos</li>
-<li><strong>Interpretación</strong>: Los coeficientes están en escala estandarizada debido al StandardScaler</li>
+<li><strong>Variable objetivo</strong>: La variable objetivo es: Rainfall.</li>
+<li><strong>Preprocesamiento</strong>: El pipeline incluye StandardScaler para normalizar los datos.</li>
+<li><strong>Interpretación</strong>: Los coeficientes están en escala estandarizada debido al StandardScaler.</li>
 </ul>
-<hr>
+<section id="interpretación-final" class="level3">
+<h3 class="anchored" data-anchor-id="interpretación-final"><strong>Interpretación Final</strong> 🧠</h3>
+<ul>
+<li><p>El modelo de regresión lineal desarrollado permite predecir la precipitación acumulada (Rainfall) a partir de variables meteorológicas medidas en la estación.</p></li>
+<li><p>El análisis de los coeficientes revela qué variables tienen mayor impacto en la predicción de la lluvia. Variables como la humedad, la temperatura y la radiación solar suelen ser determinantes en los procesos de precipitación, lo que se refleja en la magnitud y el signo de sus coeficientes.</p></li>
+<li><p>En conclusión, el modelo es una herramienta útil para estimar la precipitación a partir de datos meteorológicos, aunque su precisión depende de la calidad y representatividad de los datos. Se recomienda complementar este análisis con modelos más complejos o incorporar más datos para mejorar la capacidad predictiva si es necesario.</p></li>
+</ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
