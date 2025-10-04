@@ -26,6 +26,8 @@ data = load_breast_cancer()
 
 X = data.data
 y = data.target
+
+data
 ```
 
 ## 3. Split

@@ -15,7 +15,7 @@ website:
       - href: clasification.qmd
         text: Clasificaciones      
       - href: midterm_regresion.qmd
-        text: MidTerm  - Regresión
+        text: MidTerm - Regresión
       - href: midterm_clasificacion.qmd
         text: MidTerm - Clasificación
  
