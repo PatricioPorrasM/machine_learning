@@ -217,14 +217,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introducción" class="level2">
 <h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
-<p>En este cuaderno, realizaremos un análisis de clasificación para predecir el índice de estrés académico de los estudiantes utilizando un modelo de <strong>Regresión Logística</strong>. Siguiendo las buenas prácticas de Machine Learning, implementaremos el modelo dentro de un <code>Pipeline</code> de Scikit-Learn para estandarizar los datos y entrenar el modelo de forma secuencial y ordenada.</p>
-<p>El objetivo es seguir un proceso estructurado: 1. Carga y limpieza de datos. 2. División de los datos para entrenamiento y prueba. 3. Definición y entrenamiento de un pipeline. 4. Predicción sobre datos nuevos. 5. Evaluación del rendimiento del modelo. 6. Interpretación de los resultados.</p>
+<p>Este documento presenta un análisis completo de regresión lineal utilizando el dataset <code>AcademicStressLevel.csv</code>. Utilizaremos Pipeline de scikit-learn para crear un flujo de trabajo robusto y reproducible.</p>
 <hr>
 </section>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">1. Importar Librerías</h2>
 <p>Primero importamos todas las librerías necesarias para el análisis.</p>
-<div id="8c92794b" class="cell" data-execution_count="1">
+<div id="b27824e4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para manipulación de datos</span></span>
@@ -252,7 +251,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="carga-el-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="carga-el-dataset">2. Carga el Dataset</h2>
 <p>Primero, cargamos las librerías necesarias y el conjunto de datos. Realizaremos una exploración básica para entender su estructura, identificar las variables numéricas y categóricas, y prepararlo para el modelo.</p>
-<div id="522e6969" class="cell" data-execution_count="2">
+<div id="49c681bc" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar el dataset desde el archivo CSV</span></span>
@@ -265,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="exploración-inicial-del-dataset">3. Exploración Inicial del Dataset</h2>
 <section id="exploración-inicial" class="level3">
 <h3 class="anchored" data-anchor-id="exploración-inicial">3.1 Exploración inicial</h3>
-<div id="fa5275c9" class="cell" data-execution_count="3">
+<div id="74006d11" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Exploración Inicial ---</span></span>
@@ -342,7 +341,7 @@ memory usage: 10.0+ KB
 <section id="renombrado-de-clumnas" class="level3">
 <h3 class="anchored" data-anchor-id="renombrado-de-clumnas">3.2 renombrado de clumnas</h3>
 <p>Se renombra kas columnas para mejor facilidad de manipularlas</p>
-<div id="6501299d" class="cell" data-execution_count="4">
+<div id="95053a3e" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Limpieza y Selección de Características ---</span></span>
@@ -364,7 +363,7 @@ memory usage: 10.0+ KB
 </details>
 </div>
 <p>Ver columnas renombradas</p>
-<div id="29ba453b" class="cell" data-execution_count="5">
+<div id="dae1a397" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Información General del Dataset renombado ---"</span>)</span>
@@ -393,7 +392,7 @@ memory usage: 10.0+ KB</code></pre>
 </section>
 <section id="evitar-el-us-de-variables-categóricas" class="level3">
 <h3 class="anchored" data-anchor-id="evitar-el-us-de-variables-categóricas">3.3 Evitar el us de variables categóricas</h3>
-<div id="f3d351d4" class="cell" data-execution_count="6">
+<div id="c495def5" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Según los lineamientos, debemos evitar el uso de variables categóricas.</span></span>

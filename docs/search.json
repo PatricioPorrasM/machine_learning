@@ -347,14 +347,14 @@
     "href": "midterm_clasificacion.html",
     "title": "MidTerm Clasificación",
     "section": "",
-    "text": "En este cuaderno, realizaremos un análisis de clasificación para predecir el índice de estrés académico de los estudiantes utilizando un modelo de Regresión Logística. Siguiendo las buenas prácticas de Machine Learning, implementaremos el modelo dentro de un Pipeline de Scikit-Learn para estandarizar los datos y entrenar el modelo de forma secuencial y ordenada.\nEl objetivo es seguir un proceso estructurado: 1. Carga y limpieza de datos. 2. División de los datos para entrenamiento y prueba. 3. Definición y entrenamiento de un pipeline. 4. Predicción sobre datos nuevos. 5. Evaluación del rendimiento del modelo. 6. Interpretación de los resultados."
+    "text": "Este documento presenta un análisis completo de regresión lineal utilizando el dataset AcademicStressLevel.csv. Utilizaremos Pipeline de scikit-learn para crear un flujo de trabajo robusto y reproducible."
   },
   {
     "objectID": "midterm_clasificacion.html#introducción",
     "href": "midterm_clasificacion.html#introducción",
     "title": "MidTerm Clasificación",
     "section": "",
-    "text": "En este cuaderno, realizaremos un análisis de clasificación para predecir el índice de estrés académico de los estudiantes utilizando un modelo de Regresión Logística. Siguiendo las buenas prácticas de Machine Learning, implementaremos el modelo dentro de un Pipeline de Scikit-Learn para estandarizar los datos y entrenar el modelo de forma secuencial y ordenada.\nEl objetivo es seguir un proceso estructurado: 1. Carga y limpieza de datos. 2. División de los datos para entrenamiento y prueba. 3. Definición y entrenamiento de un pipeline. 4. Predicción sobre datos nuevos. 5. Evaluación del rendimiento del modelo. 6. Interpretación de los resultados."
+    "text": "Este documento presenta un análisis completo de regresión lineal utilizando el dataset AcademicStressLevel.csv. Utilizaremos Pipeline de scikit-learn para crear un flujo de trabajo robusto y reproducible."
   },
   {
     "objectID": "midterm_clasificacion.html#importar-librerías",
