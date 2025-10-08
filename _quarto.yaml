@@ -17,8 +17,11 @@ website:
       - href: midterm_regresion.qmd
         text: MidTerm - Regresión
       - href: midterm_clasificacion.qmd
-        text: MidTerm - Clasificación
- 
+        text: MidTerm - Clasificación 
+      - href: categorical_encoding.qmd
+        text: Categrorical Encoding
+      - href: categorical_pipeline.qmd
+        text: Categorical Pipeline
 format:
   html:
     theme: sketchy

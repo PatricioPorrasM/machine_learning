@@ -1,0 +1,64 @@
+---
+title: "Categorical encoding"
+author: "Patricio Porras"
+---
+
+# Ejemplo de Categorical pipeline
+
+## Importar librerías
+
+```{python}
+print("Importar librerías")
+
+import pandas as pd
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.metrics import classification_report
+```
+
+## Cargar Dataset
+
+```{python}
+print("cargar dataset")
+
+data = fetch_openml('adult', version=2, as_frame=True)
+
+df = data.frame.copy()
+df
+```
+
+
+## Preprocesamiento inicial
+
+
+```{python}
+print("Preprocesamiento inicial")
+df.dropna()
+
+```
+
+## Separación de features y target
+
+
+```{python}
+print("Separación de features y target")
+
+X = df.drop("class", axis=1)
+y = df['class']
+
+```
+
+## Split
+
+```{python}
+print("Split")
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+```
+
+## 

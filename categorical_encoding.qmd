@@ -1,0 +1,97 @@
+---
+title: "Categorical encoding"
+author: "Patricio Porras"
+---
+
+# Ejemplo de Categorical encoding
+
+## Importar librerías
+
+```{python}
+print("Importar librerías")
+
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler, LabelEncoder
+from sklearn.compose import ColumnTransformer
+```
+
+## Dataframe de ejemplo
+
+```{python}
+print("Armar dataframe de ejemlpo")
+
+data = {
+    'size' : ['M', 'S', 'L'], # Categórico ordinal = OrdinalEncoder()
+    'color' : ['green', 'red', 'blue'], # categórico nominal = OneHotencoder()
+    'price' : [10.1, 13.5, 15.6], # numérico continuo: StandarScalar()
+    'label' : ['pantalones', 'camisetas', 'camisetas'] # etiqueta = LabelEncoder()
+}
+
+df = pd.DataFrame(data)
+df
+```
+
+## LabelEncoder(): usar solo en la columna target (`output`)
+
+```{python}
+print("Aplicar LabelEncoder")
+
+df['label_encoded'] = LabelEncoder().fit_transform(df['label'])
+df
+```
+
+## OrdinalEncoder(): Usar en dond elas columnas tengan un orden natural (e.g., S < M < L)
+
+```{python}
+print("Aplicar OrdinalEncoder")
+
+size_order = [['S',  'M', 'L']]
+df['size_encoded'] = OrdinalEncoder(categories=size_order).fit_transform(df[['size']])
+df
+```
+
+## OneHotEncoder(): 
+
+```{python}
+print("Aplicar OneHotEncoder")
+
+color_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+color_encoded = color_encoder.fit_transform(df[['color']])
+
+color_title_encoded = color_encoder.get_feature_names_out(['color'])
+
+df[color_title_encoded] = color_encoded
+
+df
+
+```
+
+## ColumnTransformer
+
+```{python}
+print("Aplicar ColumnTransformer")
+
+categorical_features = ['color']
+ordinal_features = ['size']
+numerical_features = ['price']
+
+size_order = [['S',  'M', 'L']]
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('color_onehot', OneHotEncoder(),   categorical_features),
+        ('size_encoder', OrdinalEncoder(categories=size_order), ordinal_features),
+        ('price_scaler', StandardScaler(), numerical_features)
+    ]
+)
+
+```
+
+## Aplicar el preprocessor
+
+```{python}
+print("Aplicar el preprocessor")
+
+feactures_transformed = preprocessor.fit_transform(df)
+feactures_transformed
+```
