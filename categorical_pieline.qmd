@@ -17,7 +17,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 ```
 
 ## Cargar Dataset
@@ -61,4 +61,124 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 ```
 
-## 
+## Seleccionar las columnas por tipo
+
+```{python}
+print("Seleccionar las columnas por tipo")
+
+education_order = [["Preschool",
+                    "1st-4th",
+                    "5th-6th",
+                    "7th-8th",
+                    "9th",
+                    "10th",
+                    "11th",
+                    "12th",
+                    "HS-grad",
+                    "Some-college",
+                    "Assoc-acdm",
+                    "Assoc-voc",
+                    "Prof-school",
+                    "Bachelors",
+                    "Masters",
+                    "Doctorate"]]
+```
+
+## Categorical columns nominal 
+
+```{python}
+print("Categorical columns nominal ")
+
+education_order
+```
+## Categrical columns nominal
+
+```{python}
+print("Categrical columns nominal")
+
+categorical_columns = X.select_dtypes(include='category').columns.tolist()
+categorical_columns_nominal = [col for col in categorical_columns if col != 'education']
+numerical_columns =  X.select_dtypes(include='number').columns.tolist()
+```
+## Numerical columns
+
+```{python}
+print("Numerical columns")
+
+numerical_columns = X.select_dtypes(include='number').columns.tolist()
+numerical_columns
+
+```
+
+## Column Transformer
+
+### Features Transforms
+
+```{python}
+print("Features Transforms")
+
+processor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numerical_columns),
+        ('edu', OrdinalEncoder(categories=education_order), ['education']), 
+        ('onehot', OneHotEncoder(sparse_output=False, handle_unknown='ignore'), categorical_columns_nominal)
+    ]
+)
+```
+
+### Target Transforms
+
+```{python}
+print("Target Transforms")
+
+label_target_ancoded = LabelEncoder()
+
+y_train_encoded = label_target_ancoded.fit_transform(y_train)
+y_test_encoded = label_target_ancoded.fit_transform(y_test)
+
+```
+
+## Pipeline
+
+```{python}
+print("Pipeline")
+
+pipeline = Pipeline(
+    [
+        ('Preprocesamiento', processor), 
+        ('Clasificación', LogisticRegression(max_iter=10000))
+    ]
+)
+```
+
+## Entrenamiento
+
+```{python}
+print("Entrenamiento")
+
+pipeline.fit(X_train, y_train_encoded)
+```
+
+## Evaluar / Predecir
+
+```{python}
+print("Evaluar / Predecir")
+
+y_pred = pipeline.predict(X_test)
+```
+
+## Evaluar resultados
+
+```{python}
+print("Evaluar resultados")
+
+print(classification_report(y_test_encoded, y_pred, target_names=label_target_ancoded.classes_))
+```
+
+## matriz de confusión
+
+```{python}
+print("matriz de confusión")
+
+ConfusionMatrixDisplay.from_predictions(y_test_encoded, y_pred)
+```
