@@ -22,6 +22,8 @@ website:
         text: Categrorical Encoding
       - href: categorical_pipeline.qmd
         text: Categorical Pipeline
+      - href: ml_text.qmd
+        text: Machine Learning Text
 format:
   html:
     theme: sketchy
