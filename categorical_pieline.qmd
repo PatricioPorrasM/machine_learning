@@ -3,7 +3,7 @@ title: "Categorical encoding"
 author: "Patricio Porras"
 ---
 
-# Ejemplo de Categorical pipeline
+# 1. Carga y Comprensión de datos
 
 ## Importar librerías
 
@@ -20,7 +20,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 ```
 
-## Cargar Dataset
+## Cargar dataset
 
 ```{python}
 print("cargar dataset")
@@ -31,18 +31,16 @@ df = data.frame.copy()
 df
 ```
 
-
-## Preprocesamiento inicial
-
+# 2. Preprocesamiento de datos
 
 ```{python}
 print("Preprocesamiento inicial")
 df.dropna()
-
 ```
 
-## Separación de features y target
+# 3. División de datos
 
+## Separación de features y target
 
 ```{python}
 print("Separación de features y target")
@@ -58,13 +56,16 @@ y = df['class']
 print("Split")
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
 ```
 
 ## Seleccionar las columnas por tipo
 
+Se selecciona las columnas por tipo
+
+### Categorical column ordinal `education`
+
 ```{python}
-print("Seleccionar las columnas por tipo")
+print("Categorical columns ordinal `education`")
 
 education_order = [["Preschool",
                     "1st-4th",
@@ -82,16 +83,11 @@ education_order = [["Preschool",
                     "Bachelors",
                     "Masters",
                     "Doctorate"]]
-```
-
-## Categorical columns nominal 
-
-```{python}
-print("Categorical columns nominal ")
 
 education_order
 ```
-## Categrical columns nominal
+
+### Categrical columns nominal
 
 ```{python}
 print("Categrical columns nominal")
@@ -100,7 +96,8 @@ categorical_columns = X.select_dtypes(include='category').columns.tolist()
 categorical_columns_nominal = [col for col in categorical_columns if col != 'education']
 numerical_columns =  X.select_dtypes(include='number').columns.tolist()
 ```
-## Numerical columns
+
+### Numerical columns
 
 ```{python}
 print("Numerical columns")
@@ -133,10 +130,12 @@ print("Target Transforms")
 
 label_target_ancoded = LabelEncoder()
 
+# Obtener target encoded
 y_train_encoded = label_target_ancoded.fit_transform(y_train)
 y_test_encoded = label_target_ancoded.fit_transform(y_test)
-
 ```
+
+# 4. Entrenamiento del modelo
 
 ## Pipeline
 
@@ -159,7 +158,7 @@ print("Entrenamiento")
 pipeline.fit(X_train, y_train_encoded)
 ```
 
-## Evaluar / Predecir
+# 5. Predicciones
 
 ```{python}
 print("Evaluar / Predecir")
@@ -167,8 +166,9 @@ print("Evaluar / Predecir")
 y_pred = pipeline.predict(X_test)
 ```
 
-## Evaluar resultados
+# 6. Evaluacones del modelo
 
+## Evaluar resultados
 ```{python}
 print("Evaluar resultados")
 

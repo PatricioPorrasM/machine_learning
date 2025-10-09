@@ -3,7 +3,7 @@ title: "Categorical encoding"
 author: "Patricio Porras"
 ---
 
-# Ejemplo de Categorical encoding
+# 1. Carga y Comprensión de datos
 
 ## Importar librerías
 
@@ -31,6 +31,8 @@ df = pd.DataFrame(data)
 df
 ```
 
+# 2. Preprocesamiento de datos
+
 ## LabelEncoder(): usar solo en la columna target (`output`)
 
 ```{python}
@@ -50,7 +52,7 @@ df['size_encoded'] = OrdinalEncoder(categories=size_order).fit_transform(df[['si
 df
 ```
 
-## OneHotEncoder(): 
+## OneHotEncoder(): usar para las columnas categoricas nominales, donde los valores no tienen un orden natural
 
 ```{python}
 print("Aplicar OneHotEncoder")
@@ -63,10 +65,9 @@ color_title_encoded = color_encoder.get_feature_names_out(['color'])
 df[color_title_encoded] = color_encoded
 
 df
-
 ```
 
-## ColumnTransformer
+## Aplicar ColumnTransformer
 
 ```{python}
 print("Aplicar ColumnTransformer")

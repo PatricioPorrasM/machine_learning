@@ -106,7 +106,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
+
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
 
 
 </head>
@@ -162,6 +165,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./categorical_pipeline.qmd"> 
 <span class="menu-text">Categorical Pipeline</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./ml_text.html"> 
+<span class="menu-text">Machine Learning Text</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -178,14 +185,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#ejemplo-de-categorical-encoding" id="toc-ejemplo-de-categorical-encoding" class="nav-link active" data-scroll-target="#ejemplo-de-categorical-encoding">Ejemplo de Categorical encoding</a>
+  <li><a href="#carga-y-comprensión-de-datos" id="toc-carga-y-comprensión-de-datos" class="nav-link active" data-scroll-target="#carga-y-comprensión-de-datos">1. Carga y Comprensión de datos</a>
   <ul class="collapse">
   <li><a href="#importar-librerías" id="toc-importar-librerías" class="nav-link" data-scroll-target="#importar-librerías">Importar librerías</a></li>
   <li><a href="#dataframe-de-ejemplo" id="toc-dataframe-de-ejemplo" class="nav-link" data-scroll-target="#dataframe-de-ejemplo">Dataframe de ejemplo</a></li>
+  </ul></li>
+  <li><a href="#preprocesamiento-de-datos" id="toc-preprocesamiento-de-datos" class="nav-link" data-scroll-target="#preprocesamiento-de-datos">2. Preprocesamiento de datos</a>
+  <ul class="collapse">
   <li><a href="#labelencoder-usar-solo-en-la-columna-target-output" id="toc-labelencoder-usar-solo-en-la-columna-target-output" class="nav-link" data-scroll-target="#labelencoder-usar-solo-en-la-columna-target-output">LabelEncoder(): usar solo en la columna target (<code>output</code>)</a></li>
   <li><a href="#ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l" id="toc-ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l" class="nav-link" data-scroll-target="#ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l">OrdinalEncoder(): Usar en dond elas columnas tengan un orden natural (e.g., S &lt; M &lt; L)</a></li>
-  <li><a href="#onehotencoder" id="toc-onehotencoder" class="nav-link" data-scroll-target="#onehotencoder">OneHotEncoder():</a></li>
-  <li><a href="#columntransformer" id="toc-columntransformer" class="nav-link" data-scroll-target="#columntransformer">ColumnTransformer</a></li>
+  <li><a href="#onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural" id="toc-onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural" class="nav-link" data-scroll-target="#onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural">OneHotEncoder(): usar para las columnas categoricas nominales, donde los valores no tienen un orden natural</a></li>
+  <li><a href="#aplicar-columntransformer" id="toc-aplicar-columntransformer" class="nav-link" data-scroll-target="#aplicar-columntransformer">Aplicar ColumnTransformer</a></li>
   <li><a href="#aplicar-el-preprocessor" id="toc-aplicar-el-preprocessor" class="nav-link" data-scroll-target="#aplicar-el-preprocessor">Aplicar el preprocessor</a></li>
   </ul></li>
   </ul>
@@ -219,11 +229,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="ejemplo-de-categorical-encoding" class="level1">
-<h1>Ejemplo de Categorical encoding</h1>
+<section id="carga-y-comprensión-de-datos" class="level1">
+<h1>1. Carga y Comprensión de datos</h1>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
-<div id="e28c9ffa" class="cell" data-execution_count="1">
+<div id="7f6ffb76" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Importar librerías"</span>)</span>
@@ -239,7 +249,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dataframe-de-ejemplo" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-de-ejemplo">Dataframe de ejemplo</h2>
-<div id="b8cae427" class="cell" data-execution_count="2">
+<div id="4ae626df" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Armar dataframe de ejemlpo"</span>)</span>
@@ -300,9 +310,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+</section>
+<section id="preprocesamiento-de-datos" class="level1">
+<h1>2. Preprocesamiento de datos</h1>
 <section id="labelencoder-usar-solo-en-la-columna-target-output" class="level2">
 <h2 class="anchored" data-anchor-id="labelencoder-usar-solo-en-la-columna-target-output">LabelEncoder(): usar solo en la columna target (<code>output</code>)</h2>
-<div id="241d2222" class="cell" data-execution_count="3">
+<div id="3bba029f" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar LabelEncoder"</span>)</span>
@@ -362,7 +375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l" class="level2">
 <h2 class="anchored" data-anchor-id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l">OrdinalEncoder(): Usar en dond elas columnas tengan un orden natural (e.g., S &lt; M &lt; L)</h2>
-<div id="c3c0cc8b" class="cell" data-execution_count="4">
+<div id="bc1c91de" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OrdinalEncoder"</span>)</span>
@@ -425,9 +438,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="onehotencoder" class="level2">
-<h2 class="anchored" data-anchor-id="onehotencoder">OneHotEncoder():</h2>
-<div id="0082858f" class="cell" data-execution_count="5">
+<section id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural" class="level2">
+<h2 class="anchored" data-anchor-id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural">OneHotEncoder(): usar para las columnas categoricas nominales, donde los valores no tienen un orden natural</h2>
+<div id="973077e6" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OneHotEncoder"</span>)</span>
@@ -507,9 +520,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="columntransformer" class="level2">
-<h2 class="anchored" data-anchor-id="columntransformer">ColumnTransformer</h2>
-<div id="301ae2e1" class="cell" data-execution_count="6">
+<section id="aplicar-columntransformer" class="level2">
+<h2 class="anchored" data-anchor-id="aplicar-columntransformer">Aplicar ColumnTransformer</h2>
+<div id="475c3cc0" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar ColumnTransformer"</span>)</span>
@@ -535,7 +548,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aplicar-el-preprocessor" class="level2">
 <h2 class="anchored" data-anchor-id="aplicar-el-preprocessor">Aplicar el preprocessor</h2>
-<div id="30eb77ac" class="cell" data-execution_count="7">
+<div id="92465800" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar el preprocessor"</span>)</span>

@@ -165,6 +165,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./categorical_pipeline.qmd"> 
 <span class="menu-text">Categorical Pipeline</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./ml_text.html"> 
+<span class="menu-text">Machine Learning Text</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -181,25 +185,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#ejemplo-de-categorical-pipeline" id="toc-ejemplo-de-categorical-pipeline" class="nav-link active" data-scroll-target="#ejemplo-de-categorical-pipeline">Ejemplo de Categorical pipeline</a>
+  <li><a href="#carga-y-comprensión-de-datos" id="toc-carga-y-comprensión-de-datos" class="nav-link active" data-scroll-target="#carga-y-comprensión-de-datos">1. Carga y Comprensión de datos</a>
   <ul class="collapse">
   <li><a href="#importar-librerías" id="toc-importar-librerías" class="nav-link" data-scroll-target="#importar-librerías">Importar librerías</a></li>
-  <li><a href="#cargar-dataset" id="toc-cargar-dataset" class="nav-link" data-scroll-target="#cargar-dataset">Cargar Dataset</a></li>
-  <li><a href="#preprocesamiento-inicial" id="toc-preprocesamiento-inicial" class="nav-link" data-scroll-target="#preprocesamiento-inicial">Preprocesamiento inicial</a></li>
+  <li><a href="#cargar-dataset" id="toc-cargar-dataset" class="nav-link" data-scroll-target="#cargar-dataset">Cargar dataset</a></li>
+  </ul></li>
+  <li><a href="#preprocesamiento-de-datos" id="toc-preprocesamiento-de-datos" class="nav-link" data-scroll-target="#preprocesamiento-de-datos">2. Preprocesamiento de datos</a></li>
+  <li><a href="#división-de-datos" id="toc-división-de-datos" class="nav-link" data-scroll-target="#división-de-datos">3. División de datos</a>
+  <ul class="collapse">
   <li><a href="#separación-de-features-y-target" id="toc-separación-de-features-y-target" class="nav-link" data-scroll-target="#separación-de-features-y-target">Separación de features y target</a></li>
   <li><a href="#split" id="toc-split" class="nav-link" data-scroll-target="#split">Split</a></li>
-  <li><a href="#seleccionar-las-columnas-por-tipo" id="toc-seleccionar-las-columnas-por-tipo" class="nav-link" data-scroll-target="#seleccionar-las-columnas-por-tipo">Seleccionar las columnas por tipo</a></li>
-  <li><a href="#categorical-columns-nominal" id="toc-categorical-columns-nominal" class="nav-link" data-scroll-target="#categorical-columns-nominal">Categorical columns nominal</a></li>
+  <li><a href="#seleccionar-las-columnas-por-tipo" id="toc-seleccionar-las-columnas-por-tipo" class="nav-link" data-scroll-target="#seleccionar-las-columnas-por-tipo">Seleccionar las columnas por tipo</a>
+  <ul class="collapse">
+  <li><a href="#categorical-column-ordinal-education" id="toc-categorical-column-ordinal-education" class="nav-link" data-scroll-target="#categorical-column-ordinal-education">Categorical column ordinal <code>education</code></a></li>
   <li><a href="#categrical-columns-nominal" id="toc-categrical-columns-nominal" class="nav-link" data-scroll-target="#categrical-columns-nominal">Categrical columns nominal</a></li>
   <li><a href="#numerical-columns" id="toc-numerical-columns" class="nav-link" data-scroll-target="#numerical-columns">Numerical columns</a></li>
+  </ul></li>
   <li><a href="#column-transformer" id="toc-column-transformer" class="nav-link" data-scroll-target="#column-transformer">Column Transformer</a>
   <ul class="collapse">
   <li><a href="#features-transforms" id="toc-features-transforms" class="nav-link" data-scroll-target="#features-transforms">Features Transforms</a></li>
   <li><a href="#target-transforms" id="toc-target-transforms" class="nav-link" data-scroll-target="#target-transforms">Target Transforms</a></li>
   </ul></li>
+  </ul></li>
+  <li><a href="#entrenamiento-del-modelo" id="toc-entrenamiento-del-modelo" class="nav-link" data-scroll-target="#entrenamiento-del-modelo">4. Entrenamiento del modelo</a>
+  <ul class="collapse">
   <li><a href="#pipeline" id="toc-pipeline" class="nav-link" data-scroll-target="#pipeline">Pipeline</a></li>
   <li><a href="#entrenamiento" id="toc-entrenamiento" class="nav-link" data-scroll-target="#entrenamiento">Entrenamiento</a></li>
-  <li><a href="#evaluar-predecir" id="toc-evaluar-predecir" class="nav-link" data-scroll-target="#evaluar-predecir">Evaluar / Predecir</a></li>
+  </ul></li>
+  <li><a href="#predicciones" id="toc-predicciones" class="nav-link" data-scroll-target="#predicciones">5. Predicciones</a></li>
+  <li><a href="#evaluacones-del-modelo" id="toc-evaluacones-del-modelo" class="nav-link" data-scroll-target="#evaluacones-del-modelo">6. Evaluacones del modelo</a>
+  <ul class="collapse">
   <li><a href="#evaluar-resultados" id="toc-evaluar-resultados" class="nav-link" data-scroll-target="#evaluar-resultados">Evaluar resultados</a></li>
   <li><a href="#matriz-de-confusión" id="toc-matriz-de-confusión" class="nav-link" data-scroll-target="#matriz-de-confusión">matriz de confusión</a></li>
   </ul></li>
@@ -234,11 +249,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="ejemplo-de-categorical-pipeline" class="level1">
-<h1>Ejemplo de Categorical pipeline</h1>
+<section id="carga-y-comprensión-de-datos" class="level1">
+<h1>1. Carga y Comprensión de datos</h1>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
-<div id="6c2e759b" class="cell" data-execution_count="1">
+<div id="9f16947b" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Importar librerías"</span>)</span>
@@ -258,8 +273,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="cargar-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="cargar-dataset">Cargar Dataset</h2>
-<div id="4cd51bb1" class="cell" data-execution_count="2">
+<h2 class="anchored" data-anchor-id="cargar-dataset">Cargar dataset</h2>
+<div id="d665a1b6" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"cargar dataset"</span>)</span>
@@ -504,9 +519,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="preprocesamiento-inicial" class="level2">
-<h2 class="anchored" data-anchor-id="preprocesamiento-inicial">Preprocesamiento inicial</h2>
-<div id="cdc6922a" class="cell" data-execution_count="3">
+</section>
+<section id="preprocesamiento-de-datos" class="level1">
+<h1>2. Preprocesamiento de datos</h1>
+<div id="4fb9e46c" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Preprocesamiento inicial"</span>)</span>
@@ -747,9 +763,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+<section id="división-de-datos" class="level1">
+<h1>3. División de datos</h1>
 <section id="separación-de-features-y-target" class="level2">
 <h2 class="anchored" data-anchor-id="separación-de-features-y-target">Separación de features y target</h2>
-<div id="37c9e780" class="cell" data-execution_count="4">
+<div id="31d212e9" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Separación de features y target"</span>)</span>
@@ -764,7 +782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="split" class="level2">
 <h2 class="anchored" data-anchor-id="split">Split</h2>
-<div id="559562c8" class="cell" data-execution_count="5">
+<div id="e4e7d1dc" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Split"</span>)</span>
@@ -778,10 +796,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="seleccionar-las-columnas-por-tipo" class="level2">
 <h2 class="anchored" data-anchor-id="seleccionar-las-columnas-por-tipo">Seleccionar las columnas por tipo</h2>
-<div id="990c267a" class="cell" data-execution_count="6">
+<p>Se selecciona las columnas por tipo</p>
+<section id="categorical-column-ordinal-education" class="level3">
+<h3 class="anchored" data-anchor-id="categorical-column-ordinal-education">Categorical column ordinal <code>education</code></h3>
+<div id="638d99aa" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Seleccionar las columnas por tipo"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Categorical columns ordinal `education`"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>education_order <span class="op">=</span> [[<span class="st">"Preschool"</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"1st-4th"</span>,</span>
@@ -798,26 +819,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Prof-school"</span>,</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Bachelors"</span>,</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Masters"</span>,</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Doctorate"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Doctorate"</span>]]</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>education_order</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Seleccionar las columnas por tipo</code></pre>
+<pre><code>Categorical columns ordinal `education`</code></pre>
 </div>
-</div>
-</section>
-<section id="categorical-columns-nominal" class="level2">
-<h2 class="anchored" data-anchor-id="categorical-columns-nominal">Categorical columns nominal</h2>
-<div id="063b5af2" class="cell" data-execution_count="7">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Categorical columns nominal "</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>education_order</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Categorical columns nominal </code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>[['Preschool',
   '1st-4th',
   '5th-6th',
@@ -837,36 +846,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="categrical-columns-nominal" class="level2">
-<h2 class="anchored" data-anchor-id="categrical-columns-nominal">Categrical columns nominal</h2>
-<div id="2823ea0e" class="cell" data-execution_count="8">
+<section id="categrical-columns-nominal" class="level3">
+<h3 class="anchored" data-anchor-id="categrical-columns-nominal">Categrical columns nominal</h3>
+<div id="7b70f153" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Categrical columns nominal"</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>categorical_columns <span class="op">=</span> X.select_dtypes(include<span class="op">=</span><span class="st">'category'</span>).columns.tolist()</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>categorical_columns_nominal <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> categorical_columns <span class="cf">if</span> col <span class="op">!=</span> <span class="st">'education'</span>]</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span>  X.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns.tolist()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Categrical columns nominal"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>categorical_columns <span class="op">=</span> X.select_dtypes(include<span class="op">=</span><span class="st">'category'</span>).columns.tolist()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>categorical_columns_nominal <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> categorical_columns <span class="cf">if</span> col <span class="op">!=</span> <span class="st">'education'</span>]</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span>  X.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns.tolist()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Categrical columns nominal</code></pre>
 </div>
 </div>
 </section>
-<section id="numerical-columns" class="level2">
-<h2 class="anchored" data-anchor-id="numerical-columns">Numerical columns</h2>
-<div id="b4f20f74" class="cell" data-execution_count="9">
+<section id="numerical-columns" class="level3">
+<h3 class="anchored" data-anchor-id="numerical-columns">Numerical columns</h3>
+<div id="e08fdce3" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Numerical columns"</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span> X.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns.tolist()</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>numerical_columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Numerical columns"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>numerical_columns <span class="op">=</span> X.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns.tolist()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>numerical_columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Numerical columns</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>['age',
  'fnlwgt',
  'education-num',
@@ -876,22 +885,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+</section>
 <section id="column-transformer" class="level2">
 <h2 class="anchored" data-anchor-id="column-transformer">Column Transformer</h2>
 <section id="features-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="features-transforms">Features Transforms</h3>
-<div id="d8e3ec52" class="cell" data-execution_count="10">
+<div id="abb48c3b" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Features Transforms"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>processor <span class="op">=</span> ColumnTransformer(</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'num'</span>, StandardScaler(), numerical_columns),</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'edu'</span>, OrdinalEncoder(categories<span class="op">=</span>education_order), [<span class="st">'education'</span>]), </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'onehot'</span>, OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>, handle_unknown<span class="op">=</span><span class="st">'ignore'</span>), categorical_columns_nominal)</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Features Transforms"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>processor <span class="op">=</span> ColumnTransformer(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'num'</span>, StandardScaler(), numerical_columns),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'edu'</span>, OrdinalEncoder(categories<span class="op">=</span>education_order), [<span class="st">'education'</span>]), </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'onehot'</span>, OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>, handle_unknown<span class="op">=</span><span class="st">'ignore'</span>), categorical_columns_nominal)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Features Transforms</code></pre>
@@ -900,15 +910,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="target-transforms" class="level3">
 <h3 class="anchored" data-anchor-id="target-transforms">Target Transforms</h3>
-<div id="4edf1612" class="cell" data-execution_count="11">
+<div id="92a14c52" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Target Transforms"</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>label_target_ancoded <span class="op">=</span> LabelEncoder()</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>y_train_encoded <span class="op">=</span> label_target_ancoded.fit_transform(y_train)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>y_test_encoded <span class="op">=</span> label_target_ancoded.fit_transform(y_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Target Transforms"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>label_target_ancoded <span class="op">=</span> LabelEncoder()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtener target encoded</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>y_train_encoded <span class="op">=</span> label_target_ancoded.fit_transform(y_train)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>y_test_encoded <span class="op">=</span> label_target_ancoded.fit_transform(y_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Target Transforms</code></pre>
@@ -916,19 +927,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
+</section>
+<section id="entrenamiento-del-modelo" class="level1">
+<h1>4. Entrenamiento del modelo</h1>
 <section id="pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="pipeline">Pipeline</h2>
-<div id="0b1fa385" class="cell" data-execution_count="12">
+<div id="c5a39a7e" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Pipeline"</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    [</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'Preprocesamiento'</span>, processor), </span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'Clasificación'</span>, LogisticRegression(max_iter<span class="op">=</span><span class="dv">10000</span>))</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Pipeline"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'Preprocesamiento'</span>, processor), </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'Clasificación'</span>, LogisticRegression(max_iter<span class="op">=</span><span class="dv">10000</span>))</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Pipeline</code></pre>
@@ -937,17 +951,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="entrenamiento" class="level2">
 <h2 class="anchored" data-anchor-id="entrenamiento">Entrenamiento</h2>
-<div id="f7ed3b19" class="cell" data-execution_count="13">
+<div id="14a6f055" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento"</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train_encoded)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train, y_train_encoded)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Entrenamiento</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <style>#sk-container-id-1 {
   /* Definition of color scheme common for light and dark mode */
   --sklearn-color-text: #000;
@@ -1801,28 +1815,31 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </div>
 </div>
 </section>
-<section id="evaluar-predecir" class="level2">
-<h2 class="anchored" data-anchor-id="evaluar-predecir">Evaluar / Predecir</h2>
-<div id="f20f5c38" class="cell" data-execution_count="14">
+</section>
+<section id="predicciones" class="level1">
+<h1>5. Predicciones</h1>
+<div id="e3ff940c" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Evaluar / Predecir"</span>)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> pipeline.predict(X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Evaluar / Predecir"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> pipeline.predict(X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Evaluar / Predecir</code></pre>
 </div>
 </div>
 </section>
+<section id="evaluacones-del-modelo" class="level1">
+<h1>6. Evaluacones del modelo</h1>
 <section id="evaluar-resultados" class="level2">
 <h2 class="anchored" data-anchor-id="evaluar-resultados">Evaluar resultados</h2>
-<div id="e89dcaa5" class="cell" data-execution_count="15">
+<div id="9a98590f" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Evaluar resultados"</span>)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test_encoded, y_pred, target_names<span class="op">=</span>label_target_ancoded.classes_))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Evaluar resultados"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test_encoded, y_pred, target_names<span class="op">=</span>label_target_ancoded.classes_))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Evaluar resultados
@@ -1840,12 +1857,12 @@ weighted avg       0.85      0.85      0.85      9769
 </section>
 <section id="matriz-de-confusión" class="level2">
 <h2 class="anchored" data-anchor-id="matriz-de-confusión">matriz de confusión</h2>
-<div id="7ce31f34" class="cell" data-execution_count="16">
+<div id="b6d0ef48" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"matriz de confusión"</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(y_test_encoded, y_pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"matriz de confusión"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_predictions(y_test_encoded, y_pred)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>matriz de confusión</code></pre>
@@ -1853,7 +1870,7 @@ weighted avg       0.85      0.85      0.85      9769
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="categorical_pieline_files/figure-html/cell-17-output-2.png" width="513" height="429" class="figure-img"></p>
+<p><img src="categorical_pieline_files/figure-html/cell-16-output-2.png" width="513" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
