@@ -1,5 +1,5 @@
 ---
-title: "Categorical encoding"
+title: "Categorical Encoding"
 author: "Patricio Porras"
 ---
 

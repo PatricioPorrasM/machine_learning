@@ -4,26 +4,33 @@ project:
  
 website:
   title: "Machine Learning PP"
-  navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - href: eda.qmd
-        text: EDA
-      - href: laboratorio1.qmd
-        text: Laboratorio 1
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - text: "Welcome"
+        href: index.qmd
+      - section: "Introduction to Machine Learning"
+        contents:
+          - altair.qmd
+          - eda.qmd
+      - section: "Clasificaction"
       - href: clasification.qmd
-        text: Clasificaciones      
-      - href: midterm_regresion.qmd
-        text: MidTerm - Regresión
-      - href: midterm_clasificacion.qmd
-        text: MidTerm - Clasificación 
-      - href: categorical_encoding.qmd
-        text: Categrorical Encoding
-      - href: categorical_pipeline.qmd
-        text: Categorical Pipeline
-      - href: ml_text.qmd
-        text: Machine Learning Text
+        contents:
+          - categorical_encoding.qmd
+          - categorical_pipeline.qmd
+      - section: "MidTerm"
+        contents:
+          - midterm_regresion.qmd
+          - midterm_clasificacion.qmd
+      - section: "Laboratories"
+        contents:
+          - laboratorio1.qmd
+      - section: "Natural Language Prceesing (NLP)"
+        contents:
+          - ml_text.qmd
+          - bagofwords.qmd
+          - tfidf.qmd
 format:
   html:
     theme: sketchy

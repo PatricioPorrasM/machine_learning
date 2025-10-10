@@ -8,7 +8,7 @@
 
 <meta name="author" content="Patricio Porras">
 
-<title>Categorical encoding – Machine Learning PP</title>
+<title>Categorical Encoding – Machine Learning PP</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,13 +76,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-926b14dc1eb7012682e9935fd1ab1d5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b0144236c7a1c846539e7cb7f6e993a6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
+  "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
+  "panel-placement": "start",
+  "type": "textbox",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -106,79 +106,173 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
-
-
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-
 
 
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-sidebar docked quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    </a>
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Machine Learning PP</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Home</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./eda.html"> 
-<span class="menu-text">EDA</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./laboratorio1.html"> 
-<span class="menu-text">Laboratorio 1</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./clasification.html"> 
-<span class="menu-text">Clasificaciones</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./midterm_regresion.html"> 
-<span class="menu-text">MidTerm - Regresión</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./midterm_clasificacion.html"> 
-<span class="menu-text">MidTerm - Clasificación</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./categorical_encoding.html" aria-current="page"> 
-<span class="menu-text">Categrorical Encoding</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./categorical_pipeline.qmd"> 
-<span class="menu-text">Categorical Pipeline</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./ml_text.html"> 
-<span class="menu-text">Machine Learning Text</span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
-</div>
-      </div> <!-- /container-fluid -->
-    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clasification.html">Clasification</a></li><li class="breadcrumb-item"><a href="./categorical_encoding.html">Categorical Encoding</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./altair.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción a Altair</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploratory Data Analysis (EDA)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Clasificaction</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./clasification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clasification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categorical_encoding.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Categorical Encoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categorical_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Categorical Pipeline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">MidTerm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./midterm_regresion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MidTerm Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./midterm_clasificacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MidTerm Clasificación</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Laboratories</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./laboratorio1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Laboratorio 1</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Natural Language Prceesing (NLP)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_text.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ML Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bagofwords.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bag Of Words</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tfidf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Term-Frequency Inverse Document Frequency (TFIDF)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -204,9 +298,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clasification.html">Clasification</a></li><li class="breadcrumb-item"><a href="./categorical_encoding.html">Categorical Encoding</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Categorical encoding</h1>
+<h1 class="title">Categorical Encoding</h1>
 </div>
 
 
@@ -233,7 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>1. Carga y Comprensión de datos</h1>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
-<div id="7f6ffb76" class="cell" data-execution_count="1">
+<div id="993bb7da" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Importar librerías"</span>)</span>
@@ -249,7 +343,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dataframe-de-ejemplo" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-de-ejemplo">Dataframe de ejemplo</h2>
-<div id="4ae626df" class="cell" data-execution_count="2">
+<div id="e1993499" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Armar dataframe de ejemlpo"</span>)</span>
@@ -315,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>2. Preprocesamiento de datos</h1>
 <section id="labelencoder-usar-solo-en-la-columna-target-output" class="level2">
 <h2 class="anchored" data-anchor-id="labelencoder-usar-solo-en-la-columna-target-output">LabelEncoder(): usar solo en la columna target (<code>output</code>)</h2>
-<div id="3bba029f" class="cell" data-execution_count="3">
+<div id="41b43d76" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar LabelEncoder"</span>)</span>
@@ -375,7 +469,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l" class="level2">
 <h2 class="anchored" data-anchor-id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l">OrdinalEncoder(): Usar en dond elas columnas tengan un orden natural (e.g., S &lt; M &lt; L)</h2>
-<div id="bc1c91de" class="cell" data-execution_count="4">
+<div id="bafa4720" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OrdinalEncoder"</span>)</span>
@@ -440,7 +534,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural" class="level2">
 <h2 class="anchored" data-anchor-id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural">OneHotEncoder(): usar para las columnas categoricas nominales, donde los valores no tienen un orden natural</h2>
-<div id="973077e6" class="cell" data-execution_count="5">
+<div id="1b47d6c7" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OneHotEncoder"</span>)</span>
@@ -522,7 +616,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aplicar-columntransformer" class="level2">
 <h2 class="anchored" data-anchor-id="aplicar-columntransformer">Aplicar ColumnTransformer</h2>
-<div id="475c3cc0" class="cell" data-execution_count="6">
+<div id="5d8c2b8b" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar ColumnTransformer"</span>)</span>
@@ -548,7 +642,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aplicar-el-preprocessor" class="level2">
 <h2 class="anchored" data-anchor-id="aplicar-el-preprocessor">Aplicar el preprocessor</h2>
-<div id="92465800" class="cell" data-execution_count="7">
+<div id="45ac8ace" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar el preprocessor"</span>)</span>
