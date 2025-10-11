@@ -366,6 +366,6 @@ El bajo número de Falsos Negativos es particularmente valioso, ya que significa
 
 1.  **El Feature Engineering es clave:** La creación de un target bien justificado (`is_influencer`) y la limpieza de features como `hashtags` fueron fundamentales para el éxito del proyecto. Un modelo, por más avanzado que sea, no puede rendir bien sin datos bien preparados.
 2.  **La importancia de los Pipelines:** Utilizar `Pipeline` y `ColumnTransformer` no solo organiza el código, sino que previene errores comunes como la fuga de datos (data leakage), al asegurar que el preprocesamiento se ajuste solo con los datos de entrenamiento.
-3.  **Manejo del Desbalance de Clases:** El simple hecho de usar el parámetro `class_weight='balanced'` en `LogisticRegression` fue suficiente para que el modelo manejara eficazmente el desbalance de clases, logrando un recall muy alto en la clase minoritaria.
+3.  **Manejo del Desbalance de Clases:** El simple hecho de usar el parámetro `class_weight='balanced'` en `LogisticRegression` debe ser suficiente para que el modelo manejara eficazmente el desbalance de clases, y lograr  un recall muy alto en la clase minoritaria.
 4.  **Próximos Pasos:** Para mejorar aún más, se podrían probar modelos más complejos como `Gradient Boosting` (e.g., XGBoost, LightGBM) o realizar un análisis más profundo de los Falsos Positivos para entender por qué el modelo confunde ciertas cuentas "comunes" con "influyentes".
 
