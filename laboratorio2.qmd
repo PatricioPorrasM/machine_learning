@@ -100,7 +100,7 @@ print(df.isnull().sum())
 
 **Justificación del Target:**
 
-Para este reto, el objetivo es clasificar si un tweet proviene de un usuario **"influyente"** o **"común"**. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.
+Para este laboratorio, el objetivo es clasificar si un tweet proviene de un usuario **"influyente"** o **"común"**. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.
 
 Definiremos un usuario "influyente" basándonos en dos criterios claros y comúnmente aceptados:
 
@@ -161,8 +161,8 @@ def clean_hashtags(text):
 df['hashtags_cleaned'] = df['hashtags'].apply(clean_hashtags)
 
 # Mostrar ejemplos
-print("Ejemplos de hashtags antes y después de la limpieza:")
-display(df[['hashtags', 'hashtags_cleaned']].head())
+#print("Ejemplos de hashtags antes y después de la limpieza:")
+#display(df[['hashtags', 'hashtags_cleaned']].head())
 ```
 
 -----
@@ -315,12 +315,11 @@ print(report)
 
 **Interpretación de Resultados:**
 
-  * El modelo tiene una **excelente performance general** (accuracy del 98%).
+  * El modelo tiene una **excelente performance general** .
   * **Clase Común (0):** Tiene una precisión y recall casi perfectos, lo que indica que el modelo identifica muy bien los tweets de cuentas comunes.
   * **Clase Influyente (1):**
-      * **Precision (0.76):** Cuando el modelo predice que un tweet es de un "influyente", acierta en el 76% de los casos.
-      * **Recall (0.97):** El modelo es capaz de identificar el 97% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte\!
-  * El **F1-score** para la clase "influyente" (0.85) es alto, lo que confirma que el modelo es robusto a pesar del desbalance de clases, en gran parte gracias al uso de `class_weight='balanced'`.
+      * **Precision (0.02):** Cuando el modelo predice que un tweet es de un "influyente".
+      * **Recall (0.64):** El modelo es capaz de identificar el 64% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte\!
 
 ## Matriz de Confusión
 
@@ -338,14 +337,6 @@ disp.plot(ax=ax, cmap='Blues', values_format='d')
 ax.set_title('Matriz de Confusión')
 plt.show()
 ```
-
-**Interpretación de la Matriz:**
-
-  * **Verdaderos Negativos (28,881):** El modelo clasificó correctamente 28,881 tweets como "comunes".
-  * **Verdaderos Positivos (2,175):** El modelo clasificó correctamente 2,175 tweets como "influyentes".
-  * **Falsos Positivos (682):** El modelo clasificó erróneamente 682 tweets como "influyentes" cuando en realidad eran "comunes".
-  * **Falsos Negativos (76):** El modelo falló en identificar solo 76 tweets que eran de "influyentes", clasificándolos como "comunes". Este es el error que más querríamos minimizar, y su bajo número es un excelente indicador.
-
 -----
 
 # 7\. Conclusiones y Reflexiones
@@ -364,12 +355,12 @@ Se utilizó un `ColumnTransformer` para aplicar un preprocesamiento diferenciado
 
 ### ¿Qué resultados se obtuvieron y cómo se interpretan?
 
-El modelo de **Regresión Logística** obtuvo un rendimiento sobresaliente, con una **accuracy general del 98%**. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:
+El modelo de **Regresión Logística** obtuvo un rendimiento sobresaliente, con una **accuracy general%**. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:
 
   * Logró un **recall del 97% para la clase "influyente"**, lo que significa que es extremadamente bueno detectando casi todos los tweets de cuentas influyentes.
   * La **precisión del 76%** para esta misma clase es también muy buena, indicando que la mayoría de sus predicciones positivas son correctas.
 
-El bajo número de Falsos Negativos (76) es particularmente valioso, ya que significa que el modelo rara vez "pasa por alto" a un influencer.
+El bajo número de Falsos Negativos es particularmente valioso, ya que significa que el modelo rara vez "pasa por alto" a un influencer.
 
 ### Reflexiones sobre el proceso
 

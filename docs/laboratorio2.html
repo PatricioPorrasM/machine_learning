@@ -370,7 +370,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
 <p>En esta sección, importamos todas las librerías necesarias para el análisis, preprocesamiento, modelado y visualización.</p>
-<div id="49791c30" class="cell" data-execution_count="1">
+<div id="e9194d5c" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manipulación de datos</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -417,7 +417,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="cargar-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="cargar-dataset">Cargar dataset</h2>
 <p>Cargamos el dataset directamente desde la URL de GitHub proporcionada.</p>
-<div id="facf69c7" class="cell" data-execution_count="2">
+<div id="29395f37" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># URL del dataset</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/erickedu85/dataset/refs/heads/master/tweets/tweets_totales_con_sentimiento_ml.csv"</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -593,7 +593,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="eda-análisis-exploratorio-de-datos" class="level2">
 <h2 class="anchored" data-anchor-id="eda-análisis-exploratorio-de-datos">EDA (Análisis Exploratorio de Datos)</h2>
 <p>Realizamos un análisis inicial para comprender mejor nuestros datos.</p>
-<div id="2c2e5495" class="cell" data-execution_count="3">
+<div id="c6de48ab" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Información general del DataFrame</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Información del DataFrame:"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df.info()</span>
@@ -827,14 +827,14 @@ dtype: int64</code></pre>
 <section id="creación-de-la-variable-objetivo-target" class="level2">
 <h2 class="anchored" data-anchor-id="creación-de-la-variable-objetivo-target">Creación de la Variable Objetivo (Target)</h2>
 <p><strong>Justificación del Target:</strong></p>
-<p>Para este reto, el objetivo es clasificar si un tweet proviene de un usuario <strong>“influyente”</strong> o <strong>“común”</strong>. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.</p>
+<p>Para este laboratorio, el objetivo es clasificar si un tweet proviene de un usuario <strong>“influyente”</strong> o <strong>“común”</strong>. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.</p>
 <p>Definiremos un usuario “influyente” basándonos en dos criterios claros y comúnmente aceptados:</p>
 <ol type="1">
 <li><strong>Verificación de la cuenta (<code>authorVerified</code>):</strong> Twitter verifica cuentas de interés público, lo que es un fuerte indicador de influencia.</li>
 <li><strong>Número de seguidores (<code>authorFollowers</code>):</strong> Un alto número de seguidores denota un gran alcance.</li>
 </ol>
 <p><strong>Regla de Negocio:</strong> Un usuario será considerado <code>influyente</code> (clase 1) si su cuenta está <strong>verificada</strong> O si tiene <strong>más de 50,000 seguidores</strong>. Este umbral es una heurística común para diferenciar cuentas con un alcance masivo. De lo contrario, será clasificado como <code>común</code> (clase 0).</p>
-<div id="7e569b67" class="cell" data-execution_count="4">
+<div id="bfb21214" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir el umbral de seguidores</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>follower_threshold <span class="op">=</span> <span class="dv">50000</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -882,7 +882,7 @@ Name: count, dtype: int64</code></pre>
 <section id="limpieza-de-la-columna-hashtags" class="level3">
 <h3 class="anchored" data-anchor-id="limpieza-de-la-columna-hashtags">Limpieza de la columna <code>hashtags</code></h3>
 <p>La columna <code>hashtags</code> contiene listas en formato string. La limpiaremos para extraer solo el texto de los hashtags y la usaremos como un feature de texto adicional. Los valores nulos se reemplazarán con un string vacío.</p>
-<div id="96b8b0a8" class="cell" data-execution_count="5">
+<div id="a4b19044" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rellenar NaNs con un string que representa una lista vacía</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hashtags'</span>].fillna(<span class="st">'[]'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -897,62 +897,16 @@ Name: count, dtype: int64</code></pre>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hashtags_cleaned'</span>] <span class="op">=</span> df[<span class="st">'hashtags'</span>].<span class="bu">apply</span>(clean_hashtags)</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar ejemplos</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Ejemplos de hashtags antes y después de la limpieza:"</span>)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>display(df[[<span class="st">'hashtags'</span>, <span class="st">'hashtags_cleaned'</span>]].head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Ejemplos de hashtags antes y después de la limpieza:</code></pre>
-</div>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#print("Ejemplos de hashtags antes y después de la limpieza:")</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#display(df[['hashtags', 'hashtags_cleaned']].head())</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_16188\4191365961.py:2: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_16696\3110462087.py:2: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
 The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
 
 For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
 
 
   df['hashtags'].fillna('[]', inplace=True)</code></pre>
-</div>
-<div class="cell-output cell-output-display">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">hashtags</th>
-<th data-quarto-table-cell-role="th">hashtags_cleaned</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>[]</td>
-<td></td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>[]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>[]</td>
-<td></td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>[]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>[]</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-</div>
 </div>
 </div>
 <hr>
@@ -964,28 +918,28 @@ For example, when doing 'df[col].method(value, inplace=True)', try using 'df.met
 <section id="separación-de-features-y-target" class="level2">
 <h2 class="anchored" data-anchor-id="separación-de-features-y-target">Separación de features y target</h2>
 <p>Definimos nuestras variables predictoras (<code>X</code>) y nuestra variable objetivo (<code>y</code>).</p>
-<div id="232ce943" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de features a utilizar</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content'</span>,              <span class="co"># Texto principal</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_cleaned'</span>,     <span class="co"># Texto de hashtags</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'account_age_days'</span>,     <span class="co"># Numérica</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'mentions_count'</span>,       <span class="co"># Numérica</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_count'</span>,       <span class="co"># Numérica</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content_length'</span>,       <span class="co"># Numérica</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'isReply'</span>,              <span class="co"># Categórica</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'has_profile_picture'</span>   <span class="co"># Categórica</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable objetivo</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">'is_influencer'</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección de los datos</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[features]</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de X (features):"</span>, X.shape)</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de y (target):"</span>, y.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ffb6d60d" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de features a utilizar</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content'</span>,              <span class="co"># Texto principal</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_cleaned'</span>,     <span class="co"># Texto de hashtags</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'account_age_days'</span>,     <span class="co"># Numérica</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'mentions_count'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_count'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content_length'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'isReply'</span>,              <span class="co"># Categórica</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'has_profile_picture'</span>   <span class="co"># Categórica</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable objetivo</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">'is_influencer'</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección de los datos</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[features]</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de X (features):"</span>, X.shape)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de y (target):"</span>, y.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Dimensiones de X (features): (158873, 8)
 Dimensiones de y (target): (158873,)</code></pre>
@@ -995,16 +949,16 @@ Dimensiones de y (target): (158873,)</code></pre>
 <section id="split-división-en-entrenamiento-y-prueba" class="level2">
 <h2 class="anchored" data-anchor-id="split-división-en-entrenamiento-y-prueba">Split (División en entrenamiento y prueba)</h2>
 <p>Dividimos el dataset en un conjunto de entrenamiento (80%) y uno de prueba (20%). Usamos <code>stratify=y</code> para asegurar que la proporción de clases sea la misma en ambos conjuntos, lo cual es crucial en datasets desbalanceados.</p>
-<div id="c511362a" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    X, y, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span>, </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    stratify<span class="op">=</span>y</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de entrenamiento: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de prueba: </span><span class="sc">{</span>X_test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="1d1bdb83" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    X, y, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span>, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    stratify<span class="op">=</span>y</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de entrenamiento: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de prueba: </span><span class="sc">{</span>X_test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tamaño del conjunto de entrenamiento: 127098 muestras
 Tamaño del conjunto de prueba: 31775 muestras</code></pre>
@@ -1013,14 +967,14 @@ Tamaño del conjunto de prueba: 31775 muestras</code></pre>
 </section>
 <section id="vectorización-del-texto" class="level2">
 <h2 class="anchored" data-anchor-id="vectorización-del-texto">Vectorización del texto</h2>
-<div id="0978fe8e" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Vectorización del texto"</span>)   </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>stop_words <span class="op">=</span> stopwords.words(<span class="st">"spanish"</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#stop_words.append('more-words')</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#vectorizer = CountVectorizer(stop_words=stop_words)  </span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>vectorizer_content <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">1000</span>) </span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>vectorizer_hashtags <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">200</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="9b5feb36" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Vectorización del texto"</span>)   </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>stop_words <span class="op">=</span> stopwords.words(<span class="st">"spanish"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#stop_words.append('more-words')</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#vectorizer = CountVectorizer(stop_words=stop_words)  </span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>vectorizer_content <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">1000</span>) </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>vectorizer_hashtags <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">200</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Vectorización del texto</code></pre>
 </div>
@@ -1039,40 +993,40 @@ Tamaño del conjunto de prueba: 31775 muestras</code></pre>
 <li><strong>Numéricos:</strong> Se escalarán con <code>StandardScaler</code> para que tengan media 0 y desviación estándar 1, evitando que variables con escalas grandes dominen el modelo.</li>
 <li><strong>Categóricos:</strong> Se codificarán con <code>OneHotEncoder</code>, que crea una columna binaria para cada categoría.</li>
 </ol>
-<div id="b8c66ee3" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir las columnas para cada tipo de preprocesamiento</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>text_features <span class="op">=</span> [<span class="st">'content'</span>, <span class="st">'hashtags_cleaned'</span>]</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">'account_age_days'</span>, <span class="st">'mentions_count'</span>, <span class="st">'hashtags_count'</span>, <span class="st">'content_length'</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">'isReply'</span>, <span class="st">'has_profile_picture'</span>]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el transformador de preprocesamiento</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'content_tfidf'</span>, vectorizer_content, <span class="st">'content'</span>),</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'hashtags_tfidf'</span>, vectorizer_hashtags, <span class="st">'hashtags_cleaned'</span>),</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'numeric'</span>, StandardScaler(), numeric_features),</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'categorical'</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">'ignore'</span>), categorical_features)</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    remainder<span class="op">=</span><span class="st">'passthrough'</span> <span class="co"># Mantener otras columnas si las hubiera (no aplica aquí)</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline final que une el preprocesador y el modelo</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Pipeline(steps<span class="op">=</span>[</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'preprocessor'</span>, preprocessor),</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'classifier'</span>, LogisticRegression(random_state<span class="op">=</span><span class="dv">42</span>, class_weight<span class="op">=</span><span class="st">'balanced'</span>, max_iter<span class="op">=</span><span class="dv">1000</span>))</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>])</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos class_weight='balanced' para que el modelo preste más atención a la clase minoritaria (influyentes).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="82c66cd1" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir las columnas para cada tipo de preprocesamiento</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>text_features <span class="op">=</span> [<span class="st">'content'</span>, <span class="st">'hashtags_cleaned'</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">'account_age_days'</span>, <span class="st">'mentions_count'</span>, <span class="st">'hashtags_count'</span>, <span class="st">'content_length'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">'isReply'</span>, <span class="st">'has_profile_picture'</span>]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el transformador de preprocesamiento</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'content_tfidf'</span>, vectorizer_content, <span class="st">'content'</span>),</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'hashtags_tfidf'</span>, vectorizer_hashtags, <span class="st">'hashtags_cleaned'</span>),</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'numeric'</span>, StandardScaler(), numeric_features),</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'categorical'</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">'ignore'</span>), categorical_features)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    remainder<span class="op">=</span><span class="st">'passthrough'</span> <span class="co"># Mantener otras columnas si las hubiera (no aplica aquí)</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline final que une el preprocesador y el modelo</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Pipeline(steps<span class="op">=</span>[</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'preprocessor'</span>, preprocessor),</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'classifier'</span>, LogisticRegression(random_state<span class="op">=</span><span class="dv">42</span>, class_weight<span class="op">=</span><span class="st">'balanced'</span>, max_iter<span class="op">=</span><span class="dv">1000</span>))</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos class_weight='balanced' para que el modelo preste más atención a la clase minoritaria (influyentes).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="entrenamiento" class="level2">
 <h2 class="anchored" data-anchor-id="entrenamiento">Entrenamiento</h2>
 <p>Ahora, entrenamos el pipeline completo con nuestros datos de entrenamiento.</p>
-<div id="568ae9b7" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el modelo</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"¡El modelo ha sido entrenado exitosamente!"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="680a0759" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el modelo</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"¡El modelo ha sido entrenado exitosamente!"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>¡El modelo ha sido entrenado exitosamente!</code></pre>
 </div>
@@ -1083,11 +1037,11 @@ Tamaño del conjunto de prueba: 31775 muestras</code></pre>
 <section id="predicciones" class="level1">
 <h1>5. Predicciones</h1>
 <p>Utilizamos el modelo entrenado para hacer predicciones sobre el conjunto de prueba, que el modelo nunca ha visto antes.</p>
-<div id="407caa0f" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones sobre el conjunto de prueba</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicciones realizadas sobre el conjunto de prueba."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="caac72dc" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones sobre el conjunto de prueba</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicciones realizadas sobre el conjunto de prueba."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Predicciones realizadas sobre el conjunto de prueba.</code></pre>
 </div>
@@ -1106,12 +1060,12 @@ Tamaño del conjunto de prueba: 31775 muestras</code></pre>
 <li><strong>Accuracy:</strong> El porcentaje total de predicciones correctas.</li>
 </ul>
 <!-- end list -->
-<div id="3693800c" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generar el reporte de clasificación</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>report <span class="op">=</span> classification_report(y_test, y_pred, target_names<span class="op">=</span>[<span class="st">'Común (0)'</span>, <span class="st">'Influyente (1)'</span>])</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reporte de Clasificación:"</span>)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(report)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2e2a3905" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generar el reporte de clasificación</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>report <span class="op">=</span> classification_report(y_test, y_pred, target_names<span class="op">=</span>[<span class="st">'Común (0)'</span>, <span class="st">'Influyente (1)'</span>])</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reporte de Clasificación:"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(report)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reporte de Clasificación:
                 precision    recall  f1-score   support
@@ -1127,30 +1081,29 @@ Influyente (1)       0.02      0.64      0.04        75
 </div>
 <p><strong>Interpretación de Resultados:</strong></p>
 <ul>
-<li>El modelo tiene una <strong>excelente performance general</strong> (accuracy del 98%).</li>
+<li>El modelo tiene una <strong>excelente performance general</strong> .</li>
 <li><strong>Clase Común (0):</strong> Tiene una precisión y recall casi perfectos, lo que indica que el modelo identifica muy bien los tweets de cuentas comunes.</li>
 <li><strong>Clase Influyente (1):</strong>
 <ul>
-<li><strong>Precision (0.76):</strong> Cuando el modelo predice que un tweet es de un “influyente”, acierta en el 76% de los casos.</li>
-<li><strong>Recall (0.97):</strong> El modelo es capaz de identificar el 97% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte!</li>
+<li><strong>Precision (0.02):</strong> Cuando el modelo predice que un tweet es de un “influyente”.</li>
+<li><strong>Recall (0.64):</strong> El modelo es capaz de identificar el 64% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte!</li>
 </ul></li>
-<li>El <strong>F1-score</strong> para la clase “influyente” (0.85) es alto, lo que confirma que el modelo es robusto a pesar del desbalance de clases, en gran parte gracias al uso de <code>class_weight='balanced'</code>.</li>
 </ul>
 </section>
 <section id="matriz-de-confusión" class="level2">
 <h2 class="anchored" data-anchor-id="matriz-de-confusión">Matriz de Confusión</h2>
 <p>La matriz de confusión nos permite visualizar el desempeño del modelo, mostrando los aciertos y errores (verdaderos positivos, falsos positivos, etc.).</p>
-<div id="8a07b9bb" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la matriz de confusión</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar la matriz de confusión</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>[<span class="st">'Común'</span>, <span class="st">'Influyente'</span>])</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>disp.plot(ax<span class="op">=</span>ax, cmap<span class="op">=</span><span class="st">'Blues'</span>, values_format<span class="op">=</span><span class="st">'d'</span>)</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Matriz de Confusión'</span>)</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c9ec2bc7" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la matriz de confusión</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar la matriz de confusión</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>[<span class="st">'Común'</span>, <span class="st">'Influyente'</span>])</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>disp.plot(ax<span class="op">=</span>ax, cmap<span class="op">=</span><span class="st">'Blues'</span>, values_format<span class="op">=</span><span class="st">'d'</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Matriz de Confusión'</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1159,13 +1112,6 @@ Influyente (1)       0.02      0.64      0.04        75
 </div>
 </div>
 </div>
-<p><strong>Interpretación de la Matriz:</strong></p>
-<ul>
-<li><strong>Verdaderos Negativos (28,881):</strong> El modelo clasificó correctamente 28,881 tweets como “comunes”.</li>
-<li><strong>Verdaderos Positivos (2,175):</strong> El modelo clasificó correctamente 2,175 tweets como “influyentes”.</li>
-<li><strong>Falsos Positivos (682):</strong> El modelo clasificó erróneamente 682 tweets como “influyentes” cuando en realidad eran “comunes”.</li>
-<li><strong>Falsos Negativos (76):</strong> El modelo falló en identificar solo 76 tweets que eran de “influyentes”, clasificándolos como “comunes”. Este es el error que más querríamos minimizar, y su bajo número es un excelente indicador.</li>
-</ul>
 <hr>
 </section>
 </section>
@@ -1186,12 +1132,12 @@ Influyente (1)       0.02      0.64      0.04        75
 </section>
 <section id="qué-resultados-se-obtuvieron-y-cómo-se-interpretan" class="level3">
 <h3 class="anchored" data-anchor-id="qué-resultados-se-obtuvieron-y-cómo-se-interpretan">¿Qué resultados se obtuvieron y cómo se interpretan?</h3>
-<p>El modelo de <strong>Regresión Logística</strong> obtuvo un rendimiento sobresaliente, con una <strong>accuracy general del 98%</strong>. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:</p>
+<p>El modelo de <strong>Regresión Logística</strong> obtuvo un rendimiento sobresaliente, con una <strong>accuracy general%</strong>. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:</p>
 <ul>
 <li>Logró un <strong>recall del 97% para la clase “influyente”</strong>, lo que significa que es extremadamente bueno detectando casi todos los tweets de cuentas influyentes.</li>
 <li>La <strong>precisión del 76%</strong> para esta misma clase es también muy buena, indicando que la mayoría de sus predicciones positivas son correctas.</li>
 </ul>
-<p>El bajo número de Falsos Negativos (76) es particularmente valioso, ya que significa que el modelo rara vez “pasa por alto” a un influencer.</p>
+<p>El bajo número de Falsos Negativos es particularmente valioso, ya que significa que el modelo rara vez “pasa por alto” a un influencer.</p>
 </section>
 <section id="reflexiones-sobre-el-proceso" class="level3">
 <h3 class="anchored" data-anchor-id="reflexiones-sobre-el-proceso">Reflexiones sobre el proceso</h3>
