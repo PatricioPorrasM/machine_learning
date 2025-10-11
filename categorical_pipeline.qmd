@@ -31,6 +31,18 @@ df = data.frame.copy()
 df
 ```
 
+## EDA
+
+```{python}
+print("EDA")
+
+df.info()
+
+df.describe()
+
+df.isna().sum()
+```
+
 # 2. Preprocesamiento de datos
 
 ```{python}
