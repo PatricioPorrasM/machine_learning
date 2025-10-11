@@ -296,14 +296,7 @@ print("Predicciones realizadas sobre el conjunto de prueba.")
 
 ## Evaluar resultados (Métricas de Clasificación)
 
-El `classification_report` nos proporciona las métricas clave:
-
-  * **Precision:** De todas las predicciones positivas, ¿cuántas fueron correctas?
-  * **Recall (Sensibilidad):** De todos los positivos reales, ¿cuántos fueron identificados correctamente?
-  * **F1-score:** La media armónica de precision y recall. Es muy útil para datasets desbalanceados.
-  * **Accuracy:** El porcentaje total de predicciones correctas.
-
-<!-- end list -->
+El `classification_report` nos proporciona las métricas clave.
 
 ```{python}
 # Generar el reporte de clasificación
@@ -349,18 +342,13 @@ Se creó una variable objetivo binaria, `is_influencer`, para clasificar cuentas
 
 Se utilizó un `ColumnTransformer` para aplicar un preprocesamiento diferenciado a cada tipo de dato, una práctica robusta y estándar en la industria:
 
-  * **Vectorización de Texto (`TfidfVectorizer`):** Se aplicó a las columnas `content` y `hashtags_cleaned`. TF-IDF fue elegido porque no solo cuenta la frecuencia de las palabras, sino que también pondera su importancia, dando más peso a términos que son distintivos de una clase.
+  * **Vectorización de Texto (`TfidfVectorizer`):** Se aplicó a las columnas `content` y `hashtags_cleaned`. 
   * **Escalado Numérico (`StandardScaler`):** Las variables numéricas fueron escaladas para asegurar que ninguna variable dominara el modelo solo por tener una escala mayor (e.g., `account_age_days` vs. `mentions_count`).
   * **Codificación Categórica (`OneHotEncoder`):** Las variables booleanas (`isReply`, `has_profile_picture`) fueron convertidas a un formato numérico que el modelo de regresión logística puede interpretar sin asumir un orden inexistente.
 
 ### ¿Qué resultados se obtuvieron y cómo se interpretan?
 
-El modelo de **Regresión Logística** obtuvo un rendimiento sobresaliente, con una **accuracy general%**. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:
-
-  * Logró un **recall del 97% para la clase "influyente"**, lo que significa que es extremadamente bueno detectando casi todos los tweets de cuentas influyentes.
-  * La **precisión del 76%** para esta misma clase es también muy buena, indicando que la mayoría de sus predicciones positivas son correctas.
-
-El bajo número de Falsos Negativos es particularmente valioso, ya que significa que el modelo rara vez "pasa por alto" a un influencer.
+El modelo de **Regresión Logística** obtuvo un buen rendimiento, con una **accuracy general%**. 
 
 ### Reflexiones sobre el proceso
 
