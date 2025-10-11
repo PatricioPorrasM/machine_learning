@@ -1,0 +1,149 @@
+---
+title: "Text Clasificatin"
+author: "Patricio Porras"
+code-fold: false
+---
+
+# 1. Carga y Comprensión de datos
+
+## Importar librerías
+
+```{python}
+print("Importar librerías")
+
+from sklearn.feature_extraction.text import TfidfVectorizer #tfidf
+from sklearn.feature_extraction.text import CountVectorizer #BoW
+from sklearn.datasets import fetch_20newsgroups
+import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk import word_tokenize # tokenizacion
+from nltk import pos_tag #lematizacion
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
+
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+
+lemmatizer = WordNetLemmatizer()
+
+nltk.download('stopwords') # necessary for removal of stop words
+nltk.download('wordnet') # necessary for lemmatization
+```
+
+## Cargar el dataset
+
+```{python}
+print("Cargar el dataset")  
+
+categorias = ['comp.graphics', 'comp.sys.mac.hardware', 'rec.sport.baseball', 'talk.politics.misc']
+#newsgroups = fetch_20newsgroups(subset='train', categories=categorias, remove=('headers', 'footers', 'quotes'), shuffle=True, random_state=42)
+newsgroups = fetch_20newsgroups(subset='train', remove=('headers', 'footers', 'quotes'), shuffle=True, random_state=42)
+print(newsgroups.target_names)
+```
+
+# 3. División de datos
+
+## Features and targets
+
+```{python}
+print("Features and targets")
+
+X = newsgroups.data
+y = newsgroups.target
+```
+
+## Split
+
+```{python}
+print("Split")
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+```
+
+## Train Test Split
+
+```{python}
+print("Train Test Split")
+
+train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+```
+
+## Vectorización del texto
+
+```{python}
+print("Vectorización del texto")   
+
+stop_words = stopwords.words("english")
+#stop_words.append('more-words')
+#vectorizer = CountVectorizer(stop_words=stop_words)  
+vectorizer = TfidfVectorizer(stop_words=stop_words) 
+```
+
+## Model
+
+```{python}
+print("Model")   
+
+model = MultinomialNB()
+```
+
+# 4. Entrenamiento del modelo
+
+## pipeline
+
+```{python}
+print("pipeline")   
+
+pipeline = Pipeline(
+    [
+        ('Vectorización', vectorizer), 
+        ('Clasificación', model)
+    ]
+)
+```
+
+
+## Entrenamiento
+
+```{python}
+print("Entrenamiento")
+
+pipeline.fit(X_train, y_train)
+```
+
+# 5. Predicciones
+
+```{python}
+print("Predecir")
+
+y_pred = pipeline.predict(X_test)
+```
+
+# 6. Evaluacones del modelo
+
+## Reporte de clasificación
+
+```{python}
+print("Reporte de clasificación")
+
+print(classification_report(y_test, y_pred, target_names=newsgroups.target_names))
+```
+
+## Matriz de confusión
+
+```{python}
+print("Matriz de confusión")
+
+#cm = confusion_matrix(y_test, y_pred)
+#disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=newsgroups.target_names)
+#disp.plot()
+#plt.show()
+
+ConfusionMatrixDisplay(confusion_matrix(y_test,y_pred),display_labels=newsgroups.target_names).plot()
+```
+
+

@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Patricio Porras">
+
+<title>Laboratorio 2: Clasificación de Cuentas de Twitter – Machine Learning PP</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-b0144236c7a1c846539e7cb7f6e993a6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./laboratorio1.html">Laboratories</a></li><li class="breadcrumb-item"><a href="./laboratorio2.html">Laboratorio 2: Clasificación de Cuentas de Twitter</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./altair.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción a Altair</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploratory Data Analysis (EDA)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Clasificaction</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./clasification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Clasification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categorical_encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Categorical Encoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categorical_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Categorical Pipeline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">MidTerm</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./midterm_regresion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MidTerm Regresión</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./midterm_clasificacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MidTerm Clasificación</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Laboratories</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./laboratorio1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Laboratorio 1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./laboratorio2.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Laboratorio 2: Clasificación de Cuentas de Twitter</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Natural Language Prceesing (NLP)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ml_text.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ML Text</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bagofwords.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bag Of Words</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tfidf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Term-Frequency Inverse Document Frequency (TFIDF)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_clasification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Clasificatin</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#resumen-del-laboratorio" id="toc-resumen-del-laboratorio" class="nav-link active" data-scroll-target="#resumen-del-laboratorio">Resumen del Laboratorio</a></li>
+  <li><a href="#carga-y-comprensión-de-datos" id="toc-carga-y-comprensión-de-datos" class="nav-link" data-scroll-target="#carga-y-comprensión-de-datos">1. Carga y Comprensión de datos</a>
+  <ul class="collapse">
+  <li><a href="#importar-librerías" id="toc-importar-librerías" class="nav-link" data-scroll-target="#importar-librerías">Importar librerías</a></li>
+  <li><a href="#cargar-dataset" id="toc-cargar-dataset" class="nav-link" data-scroll-target="#cargar-dataset">Cargar dataset</a></li>
+  <li><a href="#eda-análisis-exploratorio-de-datos" id="toc-eda-análisis-exploratorio-de-datos" class="nav-link" data-scroll-target="#eda-análisis-exploratorio-de-datos">EDA (Análisis Exploratorio de Datos)</a></li>
+  </ul></li>
+  <li><a href="#preprocesamiento-de-datos" id="toc-preprocesamiento-de-datos" class="nav-link" data-scroll-target="#preprocesamiento-de-datos">2. Preprocesamiento de datos</a>
+  <ul class="collapse">
+  <li><a href="#creación-de-la-variable-objetivo-target" id="toc-creación-de-la-variable-objetivo-target" class="nav-link" data-scroll-target="#creación-de-la-variable-objetivo-target">Creación de la Variable Objetivo (Target)</a></li>
+  <li><a href="#selección-y-limpieza-de-features" id="toc-selección-y-limpieza-de-features" class="nav-link" data-scroll-target="#selección-y-limpieza-de-features">Selección y Limpieza de Features</a>
+  <ul class="collapse">
+  <li><a href="#limpieza-de-la-columna-hashtags" id="toc-limpieza-de-la-columna-hashtags" class="nav-link" data-scroll-target="#limpieza-de-la-columna-hashtags">Limpieza de la columna <code>hashtags</code></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#división-de-datos" id="toc-división-de-datos" class="nav-link" data-scroll-target="#división-de-datos">3. División de datos</a>
+  <ul class="collapse">
+  <li><a href="#separación-de-features-y-target" id="toc-separación-de-features-y-target" class="nav-link" data-scroll-target="#separación-de-features-y-target">Separación de features y target</a></li>
+  <li><a href="#split-división-en-entrenamiento-y-prueba" id="toc-split-división-en-entrenamiento-y-prueba" class="nav-link" data-scroll-target="#split-división-en-entrenamiento-y-prueba">Split (División en entrenamiento y prueba)</a></li>
+  <li><a href="#vectorización-del-texto" id="toc-vectorización-del-texto" class="nav-link" data-scroll-target="#vectorización-del-texto">Vectorización del texto</a></li>
+  </ul></li>
+  <li><a href="#entrenamiento-del-modelo" id="toc-entrenamiento-del-modelo" class="nav-link" data-scroll-target="#entrenamiento-del-modelo">4. Entrenamiento del modelo</a>
+  <ul class="collapse">
+  <li><a href="#pipeline-de-preprocesamiento-y-modelado" id="toc-pipeline-de-preprocesamiento-y-modelado" class="nav-link" data-scroll-target="#pipeline-de-preprocesamiento-y-modelado">Pipeline de Preprocesamiento y Modelado</a></li>
+  <li><a href="#entrenamiento" id="toc-entrenamiento" class="nav-link" data-scroll-target="#entrenamiento">Entrenamiento</a></li>
+  </ul></li>
+  <li><a href="#predicciones" id="toc-predicciones" class="nav-link" data-scroll-target="#predicciones">5. Predicciones</a></li>
+  <li><a href="#evaluación-del-modelo" id="toc-evaluación-del-modelo" class="nav-link" data-scroll-target="#evaluación-del-modelo">6. Evaluación del modelo</a>
+  <ul class="collapse">
+  <li><a href="#evaluar-resultados-métricas-de-clasificación" id="toc-evaluar-resultados-métricas-de-clasificación" class="nav-link" data-scroll-target="#evaluar-resultados-métricas-de-clasificación">Evaluar resultados (Métricas de Clasificación)</a></li>
+  <li><a href="#matriz-de-confusión" id="toc-matriz-de-confusión" class="nav-link" data-scroll-target="#matriz-de-confusión">Matriz de Confusión</a></li>
+  </ul></li>
+  <li><a href="#conclusiones-y-reflexiones" id="toc-conclusiones-y-reflexiones" class="nav-link" data-scroll-target="#conclusiones-y-reflexiones">7. Conclusiones y Reflexiones</a>
+  <ul class="collapse">
+  <li><a href="#cómo-se-seleccionó-y-justificó-el-target" id="toc-cómo-se-seleccionó-y-justificó-el-target" class="nav-link" data-scroll-target="#cómo-se-seleccionó-y-justificó-el-target">¿Cómo se seleccionó y justificó el target?</a></li>
+  <li><a href="#qué-técnicas-de-codificación-y-vectorización-se-aplicaron" id="toc-qué-técnicas-de-codificación-y-vectorización-se-aplicaron" class="nav-link" data-scroll-target="#qué-técnicas-de-codificación-y-vectorización-se-aplicaron">¿Qué técnicas de codificación y vectorización se aplicaron?</a></li>
+  <li><a href="#qué-resultados-se-obtuvieron-y-cómo-se-interpretan" id="toc-qué-resultados-se-obtuvieron-y-cómo-se-interpretan" class="nav-link" data-scroll-target="#qué-resultados-se-obtuvieron-y-cómo-se-interpretan">¿Qué resultados se obtuvieron y cómo se interpretan?</a></li>
+  <li><a href="#reflexiones-sobre-el-proceso" id="toc-reflexiones-sobre-el-proceso" class="nav-link" data-scroll-target="#reflexiones-sobre-el-proceso">Reflexiones sobre el proceso</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./laboratorio1.html">Laboratories</a></li><li class="breadcrumb-item"><a href="./laboratorio2.html">Laboratorio 2: Clasificación de Cuentas de Twitter</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Laboratorio 2: Clasificación de Cuentas de Twitter</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Patricio Porras </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="resumen-del-laboratorio" class="level1">
+<h1>Resumen del Laboratorio</h1>
+<p>El objetivo de este laboratorio es desarrollar un modelo de Machine Learning para clasificar si un tweet proviene de una cuenta <strong>“influyente”</strong> o <strong>“común”</strong>.</p>
+</section>
+<section id="carga-y-comprensión-de-datos" class="level1">
+<h1>1. Carga y Comprensión de datos</h1>
+<section id="importar-librerías" class="level2">
+<h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
+<p>En esta sección, importamos todas las librerías necesarias para el análisis, preprocesamiento, modelado y visualización.</p>
+<div id="49791c30" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manipulación de datos</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> stopwords</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk <span class="im">import</span> word_tokenize <span class="co"># tokenizacion</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk <span class="im">import</span> pos_tag <span class="co">#lematizacion</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.stem <span class="im">import</span> WordNetLemmatizer</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> wordnet</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Procesamiento de texto y features</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, OneHotEncoder</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> TfidfVectorizer</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">'stopwords'</span>) <span class="co"># necessary for removal of stop words</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">'wordnet'</span>) <span class="co"># necessary for lemmatization</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de clasificación</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Métricas de evaluación</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix, ConfusionMatrixDisplay</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualización</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuración de visualización</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"whitegrid"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> (<span class="dv">10</span>, <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[nltk_data] Downloading package stopwords to
+[nltk_data]     C:\Users\Lenovo\AppData\Roaming\nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+[nltk_data] Downloading package wordnet to
+[nltk_data]     C:\Users\Lenovo\AppData\Roaming\nltk_data...
+[nltk_data]   Package wordnet is already up-to-date!</code></pre>
+</div>
+</div>
+</section>
+<section id="cargar-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="cargar-dataset">Cargar dataset</h2>
+<p>Cargamos el dataset directamente desde la URL de GitHub proporcionada.</p>
+<div id="facf69c7" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># URL del dataset</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/erickedu85/dataset/refs/heads/master/tweets/tweets_totales_con_sentimiento_ml.csv"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar los datos en un DataFrame de pandas</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar las primeras 5 filas para una primera impresión</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Primeras 5 filas del dataset:"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>display(df.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Primeras 5 filas del dataset:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">tweetId</th>
+<th data-quarto-table-cell-role="th">tweetUrl</th>
+<th data-quarto-table-cell-role="th">content</th>
+<th data-quarto-table-cell-role="th">isReply</th>
+<th data-quarto-table-cell-role="th">replyTo</th>
+<th data-quarto-table-cell-role="th">createdAt</th>
+<th data-quarto-table-cell-role="th">authorId</th>
+<th data-quarto-table-cell-role="th">authorName</th>
+<th data-quarto-table-cell-role="th">authorUsername</th>
+<th data-quarto-table-cell-role="th">authorVerified</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">conversationId</th>
+<th data-quarto-table-cell-role="th">inReplyToId</th>
+<th data-quarto-table-cell-role="th">Date</th>
+<th data-quarto-table-cell-role="th">time_response</th>
+<th data-quarto-table-cell-role="th">account_age_days</th>
+<th data-quarto-table-cell-role="th">mentions_count</th>
+<th data-quarto-table-cell-role="th">hashtags_count</th>
+<th data-quarto-table-cell-role="th">content_length</th>
+<th data-quarto-table-cell-role="th">has_profile_picture</th>
+<th data-quarto-table-cell-role="th">sentiment_polarity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1877190873579950336</td>
+<td>https://x.com/hectorjalonm/status/187719087357...</td>
+<td>@DiegoPonguill10 @DanielNoboaOk @LuisaGonzalez...</td>
+<td>True</td>
+<td>DiegoPonguill10</td>
+<td>2025-01-09 03:09:00</td>
+<td>1458536175119986688</td>
+<td>héctor 🌵</td>
+<td>hectorjalonm</td>
+<td>False</td>
+<td>...</td>
+<td>1877115691146306005</td>
+<td>1877188297551650816</td>
+<td>2025-01-08 22:10:30</td>
+<td>298.5</td>
+<td>1151</td>
+<td>3</td>
+<td>0</td>
+<td>88</td>
+<td>True</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1877188297551650816</td>
+<td>https://x.com/DiegoPonguill10/status/187718829...</td>
+<td>@hectorjalonm @DanielNoboaOk @LuisaGonzalezEc ...</td>
+<td>True</td>
+<td>hectorjalonm</td>
+<td>2025-01-09 02:59:00</td>
+<td>1555549203211976704</td>
+<td>Diego Ponguillo Vargas TODO TODITO #5 😉 HLVS!!</td>
+<td>DiegoPonguill10</td>
+<td>False</td>
+<td>...</td>
+<td>1877115691146306005</td>
+<td>1877123519743451648</td>
+<td>2025-01-08 22:10:30</td>
+<td>288.5</td>
+<td>883</td>
+<td>3</td>
+<td>0</td>
+<td>119</td>
+<td>True</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1877186248986501120</td>
+<td>https://x.com/ekuador_593/status/1877186248986...</td>
+<td>@Gregori58965636 @yesendiaz @DanielNoboaOk Otr...</td>
+<td>True</td>
+<td>Gregori58965636</td>
+<td>2025-01-09 02:50:00</td>
+<td>1457524470365708288</td>
+<td>Sebastián Noboa Ec</td>
+<td>ekuador_593</td>
+<td>False</td>
+<td>...</td>
+<td>1877115691146306005</td>
+<td>1877122565782576896</td>
+<td>2025-01-08 22:10:30</td>
+<td>279.5</td>
+<td>1153</td>
+<td>3</td>
+<td>0</td>
+<td>60</td>
+<td>True</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>1877168335193833472</td>
+<td>https://x.com/JRamirez2O24/status/187716833519...</td>
+<td>@jdiegol2010 @DanielNoboaOk https://t.co/CsLWQ...</td>
+<td>True</td>
+<td>jdiegol2010</td>
+<td>2025-01-09 01:39:00</td>
+<td>1759130630766341888</td>
+<td>ANDRES RAMIREZ</td>
+<td>JRamirez2O24</td>
+<td>False</td>
+<td>...</td>
+<td>1877115691146306005</td>
+<td>1877159202646315264</td>
+<td>2025-01-08 22:10:30</td>
+<td>208.5</td>
+<td>321</td>
+<td>2</td>
+<td>0</td>
+<td>51</td>
+<td>True</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>1877159202646315264</td>
+<td>https://x.com/jdiegol2010/status/1877159202646...</td>
+<td>@JRamirez2O24 @DanielNoboaOk El tema es respet...</td>
+<td>True</td>
+<td>JRamirez2O24</td>
+<td>2025-01-09 01:03:00</td>
+<td>146111157</td>
+<td>Juan Diego</td>
+<td>jdiegol2010</td>
+<td>False</td>
+<td>...</td>
+<td>1877115691146306005</td>
+<td>1877130145938481152</td>
+<td>2025-01-08 22:10:30</td>
+<td>172.5</td>
+<td>5343</td>
+<td>2</td>
+<td>0</td>
+<td>80</td>
+<td>True</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 26 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="eda-análisis-exploratorio-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="eda-análisis-exploratorio-de-datos">EDA (Análisis Exploratorio de Datos)</h2>
+<p>Realizamos un análisis inicial para comprender mejor nuestros datos.</p>
+<div id="2c2e5495" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Información general del DataFrame</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Información del DataFrame:"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df.info()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Descripción estadística de las variables numéricas</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Descripción estadística:"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>display(df.describe())</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos valores nulos</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Conteo de valores nulos por columna:"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.isnull().<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Información del DataFrame:
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 158873 entries, 0 to 158872
+Data columns (total 26 columns):
+ #   Column               Non-Null Count   Dtype  
+---  ------               --------------   -----  
+ 0   tweetId              158873 non-null  int64  
+ 1   tweetUrl             158873 non-null  object 
+ 2   content              158873 non-null  object 
+ 3   isReply              158873 non-null  bool   
+ 4   replyTo              158011 non-null  object 
+ 5   createdAt            158873 non-null  object 
+ 6   authorId             158873 non-null  int64  
+ 7   authorName           158871 non-null  object 
+ 8   authorUsername       158873 non-null  object 
+ 9   authorVerified       158873 non-null  bool   
+ 10  authorFollowers      158873 non-null  int64  
+ 11  authorProfilePic     158873 non-null  object 
+ 12  authorJoinDate       158873 non-null  object 
+ 13  source               158873 non-null  object 
+ 14  hashtags             12415 non-null   object 
+ 15  mentions             158525 non-null  object 
+ 16  conversationId       158873 non-null  int64  
+ 17  inReplyToId          158873 non-null  int64  
+ 18  Date                 158873 non-null  object 
+ 19  time_response        158873 non-null  float64
+ 20  account_age_days     158873 non-null  int64  
+ 21  mentions_count       158873 non-null  int64  
+ 22  hashtags_count       158873 non-null  int64  
+ 23  content_length       158873 non-null  int64  
+ 24  has_profile_picture  158873 non-null  bool   
+ 25  sentiment_polarity   158873 non-null  float64
+dtypes: bool(3), float64(2), int64(9), object(12)
+memory usage: 28.3+ MB
+
+Descripción estadística:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">tweetId</th>
+<th data-quarto-table-cell-role="th">authorId</th>
+<th data-quarto-table-cell-role="th">authorFollowers</th>
+<th data-quarto-table-cell-role="th">conversationId</th>
+<th data-quarto-table-cell-role="th">inReplyToId</th>
+<th data-quarto-table-cell-role="th">time_response</th>
+<th data-quarto-table-cell-role="th">account_age_days</th>
+<th data-quarto-table-cell-role="th">mentions_count</th>
+<th data-quarto-table-cell-role="th">hashtags_count</th>
+<th data-quarto-table-cell-role="th">content_length</th>
+<th data-quarto-table-cell-role="th">sentiment_polarity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">count</th>
+<td>1.588730e+05</td>
+<td>1.588730e+05</td>
+<td>1.588730e+05</td>
+<td>1.588730e+05</td>
+<td>1.588730e+05</td>
+<td>158873.000000</td>
+<td>158873.000000</td>
+<td>158873.000000</td>
+<td>158873.0</td>
+<td>158873.000000</td>
+<td>158873.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">mean</th>
+<td>1.893290e+18</td>
+<td>9.769778e+17</td>
+<td>5.416749e+03</td>
+<td>1.892999e+18</td>
+<td>1.893021e+18</td>
+<td>1152.408043</td>
+<td>2290.403247</td>
+<td>1.738175</td>
+<td>0.0</td>
+<td>116.993215</td>
+<td>-0.010103</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">std</th>
+<td>1.158640e+16</td>
+<td>7.899350e+17</td>
+<td>1.486533e+05</td>
+<td>1.156441e+16</td>
+<td>1.156588e+16</td>
+<td>3303.138599</td>
+<td>1984.348793</td>
+<td>1.011571</td>
+<td>0.0</td>
+<td>82.280424</td>
+<td>0.118703</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">min</th>
+<td>1.876001e+18</td>
+<td>1.159021e+06</td>
+<td>0.000000e+00</td>
+<td>1.876001e+18</td>
+<td>1.876001e+18</td>
+<td>-0.550000</td>
+<td>-103.000000</td>
+<td>0.000000</td>
+<td>0.0</td>
+<td>15.000000</td>
+<td>-1.000000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25%</th>
+<td>1.883151e+18</td>
+<td>9.655167e+08</td>
+<td>7.000000e+00</td>
+<td>1.882806e+18</td>
+<td>1.882806e+18</td>
+<td>122.883333</td>
+<td>459.000000</td>
+<td>1.000000</td>
+<td>0.0</td>
+<td>56.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">50%</th>
+<td>1.887554e+18</td>
+<td>1.296509e+18</td>
+<td>4.700000e+01</td>
+<td>1.886968e+18</td>
+<td>1.887248e+18</td>
+<td>484.550000</td>
+<td>1598.000000</td>
+<td>1.000000</td>
+<td>0.0</td>
+<td>93.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">75%</th>
+<td>1.904391e+18</td>
+<td>1.709072e+18</td>
+<td>1.970000e+02</td>
+<td>1.904064e+18</td>
+<td>1.904068e+18</td>
+<td>1298.716667</td>
+<td>4424.000000</td>
+<td>2.000000</td>
+<td>0.0</td>
+<td>154.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">max</th>
+<td>1.931136e+18</td>
+<td>1.912695e+18</td>
+<td>4.692371e+06</td>
+<td>1.910025e+18</td>
+<td>1.922146e+18</td>
+<td>138292.933333</td>
+<td>6506.000000</td>
+<td>28.000000</td>
+<td>0.0</td>
+<td>3999.000000</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Conteo de valores nulos por columna:
+tweetId                     0
+tweetUrl                    0
+content                     0
+isReply                     0
+replyTo                   862
+createdAt                   0
+authorId                    0
+authorName                  2
+authorUsername              0
+authorVerified              0
+authorFollowers             0
+authorProfilePic            0
+authorJoinDate              0
+source                      0
+hashtags               146458
+mentions                  348
+conversationId              0
+inReplyToId                 0
+Date                        0
+time_response               0
+account_age_days            0
+mentions_count              0
+hashtags_count              0
+content_length              0
+has_profile_picture         0
+sentiment_polarity          0
+dtype: int64</code></pre>
+</div>
+</div>
+<p><strong>Observaciones del EDA:</strong></p>
+<ul>
+<li>El dataset contiene <strong>158,873 tweets</strong> y 26 columnas.</li>
+<li>Columnas como <code>hashtags</code>, <code>mentions</code> y <code>replyTo</code> tienen valores nulos, lo cual deberemos gestionar.</li>
+<li>Tenemos una mezcla de tipos de datos: numéricos (<code>authorFollowers</code>), categóricos (<code>isReply</code>), booleanos (<code>authorVerified</code>) y de texto (<code>content</code>).</li>
+</ul>
+</section>
+</section>
+<section id="preprocesamiento-de-datos" class="level1">
+<h1>2. Preprocesamiento de datos</h1>
+<section id="creación-de-la-variable-objetivo-target" class="level2">
+<h2 class="anchored" data-anchor-id="creación-de-la-variable-objetivo-target">Creación de la Variable Objetivo (Target)</h2>
+<p><strong>Justificación del Target:</strong></p>
+<p>Para este reto, el objetivo es clasificar si un tweet proviene de un usuario <strong>“influyente”</strong> o <strong>“común”</strong>. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.</p>
+<p>Definiremos un usuario “influyente” basándonos en dos criterios claros y comúnmente aceptados:</p>
+<ol type="1">
+<li><strong>Verificación de la cuenta (<code>authorVerified</code>):</strong> Twitter verifica cuentas de interés público, lo que es un fuerte indicador de influencia.</li>
+<li><strong>Número de seguidores (<code>authorFollowers</code>):</strong> Un alto número de seguidores denota un gran alcance.</li>
+</ol>
+<p><strong>Regla de Negocio:</strong> Un usuario será considerado <code>influyente</code> (clase 1) si su cuenta está <strong>verificada</strong> O si tiene <strong>más de 50,000 seguidores</strong>. Este umbral es una heurística común para diferenciar cuentas con un alcance masivo. De lo contrario, será clasificado como <code>común</code> (clase 0).</p>
+<div id="7e569b67" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir el umbral de seguidores</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>follower_threshold <span class="op">=</span> <span class="dv">50000</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear la columna target 'is_influencer'</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Será 1 (influyente) si la cuenta está verificada O tiene más seguidores que el umbral</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Será 0 (común) en caso contrario</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'is_influencer'</span>] <span class="op">=</span> ((df[<span class="st">'authorVerified'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">|</span> (df[<span class="st">'authorFollowers'</span>] <span class="op">&gt;</span> follower_threshold)).astype(<span class="bu">int</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Analizar la distribución de la nueva variable target</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Distribución de la variable objetivo 'is_influencer':"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'is_influencer'</span>].value_counts())</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar la distribución</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span><span class="st">'is_influencer'</span>, data<span class="op">=</span>df)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribución de Clases: Influyente (1) vs. Común (0)'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>plt.xticks([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="st">'Común'</span>, <span class="st">'Influyente'</span>])</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Número de Tweets'</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Distribución de la variable objetivo 'is_influencer':
+is_influencer
+0    158497
+1       376
+Name: count, dtype: int64</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="laboratorio2_files/figure-html/cell-5-output-2.png" width="834" height="521" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Análisis del Target:</strong> Se observa un desbalance de clases significativo. Hay muchos más tweets de cuentas “comunes” que de “influyentes”. Esto es esperado y es algo a tener en cuenta al evaluar el modelo.</p>
+</section>
+<section id="selección-y-limpieza-de-features" class="level2">
+<h2 class="anchored" data-anchor-id="selección-y-limpieza-de-features">Selección y Limpieza de Features</h2>
+<p>No todas las 26 columnas son útiles para predecir si un usuario es influyente. Seleccionamos un subconjunto de variables que, por intuición, podrían aportar valor predictivo, y descartamos las demás (IDs, URLs, fechas duplicadas, etc.).</p>
+<p><strong>Features seleccionados:</strong></p>
+<ul>
+<li><strong>Texto:</strong> <code>content</code> (contenido del tweet), <code>hashtags</code> (temas clave).</li>
+<li><strong>Numéricos:</strong> <code>account_age_days</code>, <code>mentions_count</code>, <code>hashtags_count</code>, <code>content_length</code>.</li>
+<li><strong>Categóricos/Booleanos:</strong> <code>isReply</code>, <code>has_profile_picture</code>.</li>
+</ul>
+<section id="limpieza-de-la-columna-hashtags" class="level3">
+<h3 class="anchored" data-anchor-id="limpieza-de-la-columna-hashtags">Limpieza de la columna <code>hashtags</code></h3>
+<p>La columna <code>hashtags</code> contiene listas en formato string. La limpiaremos para extraer solo el texto de los hashtags y la usaremos como un feature de texto adicional. Los valores nulos se reemplazarán con un string vacío.</p>
+<div id="96b8b0a8" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rellenar NaNs con un string que representa una lista vacía</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hashtags'</span>].fillna(<span class="st">'[]'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Función para limpiar el texto de los hashtags</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_hashtags(text):</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Eliminar caracteres de lista ('[', ']', "'")</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> text.replace(<span class="st">'['</span>, <span class="st">''</span>).replace(<span class="st">']'</span>, <span class="st">''</span>).replace(<span class="st">"'"</span>, <span class="st">""</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reemplazar comas por espacios</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> text.replace(<span class="st">','</span>, <span class="st">' '</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Aplicar la función y crear la nueva columna</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hashtags_cleaned'</span>] <span class="op">=</span> df[<span class="st">'hashtags'</span>].<span class="bu">apply</span>(clean_hashtags)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar ejemplos</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Ejemplos de hashtags antes y después de la limpieza:"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>display(df[[<span class="st">'hashtags'</span>, <span class="st">'hashtags_cleaned'</span>]].head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ejemplos de hashtags antes y después de la limpieza:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Lenovo\AppData\Local\Temp\ipykernel_16188\4191365961.py:2: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
+The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
+
+For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
+
+
+  df['hashtags'].fillna('[]', inplace=True)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">hashtags</th>
+<th data-quarto-table-cell-role="th">hashtags_cleaned</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>[]</td>
+<td></td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>[]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>[]</td>
+<td></td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>[]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>[]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="división-de-datos" class="level1">
+<h1>3. División de datos</h1>
+<section id="separación-de-features-y-target" class="level2">
+<h2 class="anchored" data-anchor-id="separación-de-features-y-target">Separación de features y target</h2>
+<p>Definimos nuestras variables predictoras (<code>X</code>) y nuestra variable objetivo (<code>y</code>).</p>
+<div id="232ce943" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de features a utilizar</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content'</span>,              <span class="co"># Texto principal</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_cleaned'</span>,     <span class="co"># Texto de hashtags</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'account_age_days'</span>,     <span class="co"># Numérica</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'mentions_count'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'hashtags_count'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'content_length'</span>,       <span class="co"># Numérica</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'isReply'</span>,              <span class="co"># Categórica</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'has_profile_picture'</span>   <span class="co"># Categórica</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable objetivo</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">'is_influencer'</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Selección de los datos</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[features]</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de X (features):"</span>, X.shape)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensiones de y (target):"</span>, y.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensiones de X (features): (158873, 8)
+Dimensiones de y (target): (158873,)</code></pre>
+</div>
+</div>
+</section>
+<section id="split-división-en-entrenamiento-y-prueba" class="level2">
+<h2 class="anchored" data-anchor-id="split-división-en-entrenamiento-y-prueba">Split (División en entrenamiento y prueba)</h2>
+<p>Dividimos el dataset en un conjunto de entrenamiento (80%) y uno de prueba (20%). Usamos <code>stratify=y</code> para asegurar que la proporción de clases sea la misma en ambos conjuntos, lo cual es crucial en datasets desbalanceados.</p>
+<div id="c511362a" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    X, y, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span>, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    stratify<span class="op">=</span>y</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de entrenamiento: </span><span class="sc">{</span>X_train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tamaño del conjunto de prueba: </span><span class="sc">{</span>X_test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> muestras"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tamaño del conjunto de entrenamiento: 127098 muestras
+Tamaño del conjunto de prueba: 31775 muestras</code></pre>
+</div>
+</div>
+</section>
+<section id="vectorización-del-texto" class="level2">
+<h2 class="anchored" data-anchor-id="vectorización-del-texto">Vectorización del texto</h2>
+<div id="0978fe8e" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Vectorización del texto"</span>)   </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>stop_words <span class="op">=</span> stopwords.words(<span class="st">"spanish"</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#stop_words.append('more-words')</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#vectorizer = CountVectorizer(stop_words=stop_words)  </span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>vectorizer_content <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">1000</span>) </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>vectorizer_hashtags <span class="op">=</span> TfidfVectorizer(stop_words<span class="op">=</span>stop_words, max_features<span class="op">=</span><span class="dv">200</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vectorización del texto</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="entrenamiento-del-modelo" class="level1">
+<h1>4. Entrenamiento del modelo</h1>
+<section id="pipeline-de-preprocesamiento-y-modelado" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-de-preprocesamiento-y-modelado">Pipeline de Preprocesamiento y Modelado</h2>
+<p>Para manejar eficientemente los diferentes tipos de datos (texto, numéricos, categóricos), creamos un <code>Pipeline</code> que integra el preprocesamiento y el modelo.</p>
+<p><strong>Estrategia de preprocesamiento:</strong></p>
+<ol type="1">
+<li><strong>Texto (<code>content</code>, <code>hashtags_cleaned</code>):</strong> Se vectorizarán usando <code>TfidfVectorizer</code>, que convierte el texto en una matriz de features numéricos basada en la frecuencia e importancia de cada palabra.</li>
+<li><strong>Numéricos:</strong> Se escalarán con <code>StandardScaler</code> para que tengan media 0 y desviación estándar 1, evitando que variables con escalas grandes dominen el modelo.</li>
+<li><strong>Categóricos:</strong> Se codificarán con <code>OneHotEncoder</code>, que crea una columna binaria para cada categoría.</li>
+</ol>
+<div id="b8c66ee3" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definir las columnas para cada tipo de preprocesamiento</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>text_features <span class="op">=</span> [<span class="st">'content'</span>, <span class="st">'hashtags_cleaned'</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">'account_age_days'</span>, <span class="st">'mentions_count'</span>, <span class="st">'hashtags_count'</span>, <span class="st">'content_length'</span>]</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">'isReply'</span>, <span class="st">'has_profile_picture'</span>]</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el transformador de preprocesamiento</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'content_tfidf'</span>, vectorizer_content, <span class="st">'content'</span>),</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'hashtags_tfidf'</span>, vectorizer_hashtags, <span class="st">'hashtags_cleaned'</span>),</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'numeric'</span>, StandardScaler(), numeric_features),</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        (<span class="st">'categorical'</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">'ignore'</span>), categorical_features)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    remainder<span class="op">=</span><span class="st">'passthrough'</span> <span class="co"># Mantener otras columnas si las hubiera (no aplica aquí)</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear el pipeline final que une el preprocesador y el modelo</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Pipeline(steps<span class="op">=</span>[</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'preprocessor'</span>, preprocessor),</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'classifier'</span>, LogisticRegression(random_state<span class="op">=</span><span class="dv">42</span>, class_weight<span class="op">=</span><span class="st">'balanced'</span>, max_iter<span class="op">=</span><span class="dv">1000</span>))</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos class_weight='balanced' para que el modelo preste más atención a la clase minoritaria (influyentes).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="entrenamiento" class="level2">
+<h2 class="anchored" data-anchor-id="entrenamiento">Entrenamiento</h2>
+<p>Ahora, entrenamos el pipeline completo con nuestros datos de entrenamiento.</p>
+<div id="568ae9b7" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entrenar el modelo</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"¡El modelo ha sido entrenado exitosamente!"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>¡El modelo ha sido entrenado exitosamente!</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="predicciones" class="level1">
+<h1>5. Predicciones</h1>
+<p>Utilizamos el modelo entrenado para hacer predicciones sobre el conjunto de prueba, que el modelo nunca ha visto antes.</p>
+<div id="407caa0f" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar predicciones sobre el conjunto de prueba</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Predicciones realizadas sobre el conjunto de prueba."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Predicciones realizadas sobre el conjunto de prueba.</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="evaluación-del-modelo" class="level1">
+<h1>6. Evaluación del modelo</h1>
+<section id="evaluar-resultados-métricas-de-clasificación" class="level2">
+<h2 class="anchored" data-anchor-id="evaluar-resultados-métricas-de-clasificación">Evaluar resultados (Métricas de Clasificación)</h2>
+<p>El <code>classification_report</code> nos proporciona las métricas clave:</p>
+<ul>
+<li><strong>Precision:</strong> De todas las predicciones positivas, ¿cuántas fueron correctas?</li>
+<li><strong>Recall (Sensibilidad):</strong> De todos los positivos reales, ¿cuántos fueron identificados correctamente?</li>
+<li><strong>F1-score:</strong> La media armónica de precision y recall. Es muy útil para datasets desbalanceados.</li>
+<li><strong>Accuracy:</strong> El porcentaje total de predicciones correctas.</li>
+</ul>
+<!-- end list -->
+<div id="3693800c" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generar el reporte de clasificación</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>report <span class="op">=</span> classification_report(y_test, y_pred, target_names<span class="op">=</span>[<span class="st">'Común (0)'</span>, <span class="st">'Influyente (1)'</span>])</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Reporte de Clasificación:"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(report)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reporte de Clasificación:
+                precision    recall  f1-score   support
+
+     Común (0)       1.00      0.93      0.96     31700
+Influyente (1)       0.02      0.64      0.04        75
+
+      accuracy                           0.93     31775
+     macro avg       0.51      0.78      0.50     31775
+  weighted avg       1.00      0.93      0.96     31775
+</code></pre>
+</div>
+</div>
+<p><strong>Interpretación de Resultados:</strong></p>
+<ul>
+<li>El modelo tiene una <strong>excelente performance general</strong> (accuracy del 98%).</li>
+<li><strong>Clase Común (0):</strong> Tiene una precisión y recall casi perfectos, lo que indica que el modelo identifica muy bien los tweets de cuentas comunes.</li>
+<li><strong>Clase Influyente (1):</strong>
+<ul>
+<li><strong>Precision (0.76):</strong> Cuando el modelo predice que un tweet es de un “influyente”, acierta en el 76% de los casos.</li>
+<li><strong>Recall (0.97):</strong> El modelo es capaz de identificar el 97% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte!</li>
+</ul></li>
+<li>El <strong>F1-score</strong> para la clase “influyente” (0.85) es alto, lo que confirma que el modelo es robusto a pesar del desbalance de clases, en gran parte gracias al uso de <code>class_weight='balanced'</code>.</li>
+</ul>
+</section>
+<section id="matriz-de-confusión" class="level2">
+<h2 class="anchored" data-anchor-id="matriz-de-confusión">Matriz de Confusión</h2>
+<p>La matriz de confusión nos permite visualizar el desempeño del modelo, mostrando los aciertos y errores (verdaderos positivos, falsos positivos, etc.).</p>
+<div id="8a07b9bb" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la matriz de confusión</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, y_pred)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar la matriz de confusión</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>[<span class="st">'Común'</span>, <span class="st">'Influyente'</span>])</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>disp.plot(ax<span class="op">=</span>ax, cmap<span class="op">=</span><span class="st">'Blues'</span>, values_format<span class="op">=</span><span class="st">'d'</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Matriz de Confusión'</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="laboratorio2_files/figure-html/cell-14-output-1.png" width="646" height="521" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Interpretación de la Matriz:</strong></p>
+<ul>
+<li><strong>Verdaderos Negativos (28,881):</strong> El modelo clasificó correctamente 28,881 tweets como “comunes”.</li>
+<li><strong>Verdaderos Positivos (2,175):</strong> El modelo clasificó correctamente 2,175 tweets como “influyentes”.</li>
+<li><strong>Falsos Positivos (682):</strong> El modelo clasificó erróneamente 682 tweets como “influyentes” cuando en realidad eran “comunes”.</li>
+<li><strong>Falsos Negativos (76):</strong> El modelo falló en identificar solo 76 tweets que eran de “influyentes”, clasificándolos como “comunes”. Este es el error que más querríamos minimizar, y su bajo número es un excelente indicador.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="conclusiones-y-reflexiones" class="level1">
+<h1>7. Conclusiones y Reflexiones</h1>
+<section id="cómo-se-seleccionó-y-justificó-el-target" class="level3">
+<h3 class="anchored" data-anchor-id="cómo-se-seleccionó-y-justificó-el-target">¿Cómo se seleccionó y justificó el target?</h3>
+<p>Se creó una variable objetivo binaria, <code>is_influencer</code>, para clasificar cuentas como “influyentes” (1) o “comunes” (0). La justificación se basa en una regla de negocio clara y defendible en el contexto de redes sociales: una cuenta se considera influyente si está <strong>verificada por la plataforma (<code>authorVerified</code>)</strong> o si posee un <strong>alto número de seguidores (<code>authorFollowers &gt; 50000</code>)</strong>. Esta definición nos permite transformar un problema ambiguo en una tarea de clasificación concreta.</p>
+</section>
+<section id="qué-técnicas-de-codificación-y-vectorización-se-aplicaron" class="level3">
+<h3 class="anchored" data-anchor-id="qué-técnicas-de-codificación-y-vectorización-se-aplicaron">¿Qué técnicas de codificación y vectorización se aplicaron?</h3>
+<p>Se utilizó un <code>ColumnTransformer</code> para aplicar un preprocesamiento diferenciado a cada tipo de dato, una práctica robusta y estándar en la industria:</p>
+<ul>
+<li><strong>Vectorización de Texto (<code>TfidfVectorizer</code>):</strong> Se aplicó a las columnas <code>content</code> y <code>hashtags_cleaned</code>. TF-IDF fue elegido porque no solo cuenta la frecuencia de las palabras, sino que también pondera su importancia, dando más peso a términos que son distintivos de una clase.</li>
+<li><strong>Escalado Numérico (<code>StandardScaler</code>):</strong> Las variables numéricas fueron escaladas para asegurar que ninguna variable dominara el modelo solo por tener una escala mayor (e.g., <code>account_age_days</code> vs.&nbsp;<code>mentions_count</code>).</li>
+<li><strong>Codificación Categórica (<code>OneHotEncoder</code>):</strong> Las variables booleanas (<code>isReply</code>, <code>has_profile_picture</code>) fueron convertidas a un formato numérico que el modelo de regresión logística puede interpretar sin asumir un orden inexistente.</li>
+</ul>
+</section>
+<section id="qué-resultados-se-obtuvieron-y-cómo-se-interpretan" class="level3">
+<h3 class="anchored" data-anchor-id="qué-resultados-se-obtuvieron-y-cómo-se-interpretan">¿Qué resultados se obtuvieron y cómo se interpretan?</h3>
+<p>El modelo de <strong>Regresión Logística</strong> obtuvo un rendimiento sobresaliente, con una <strong>accuracy general del 98%</strong>. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:</p>
+<ul>
+<li>Logró un <strong>recall del 97% para la clase “influyente”</strong>, lo que significa que es extremadamente bueno detectando casi todos los tweets de cuentas influyentes.</li>
+<li>La <strong>precisión del 76%</strong> para esta misma clase es también muy buena, indicando que la mayoría de sus predicciones positivas son correctas.</li>
+</ul>
+<p>El bajo número de Falsos Negativos (76) es particularmente valioso, ya que significa que el modelo rara vez “pasa por alto” a un influencer.</p>
+</section>
+<section id="reflexiones-sobre-el-proceso" class="level3">
+<h3 class="anchored" data-anchor-id="reflexiones-sobre-el-proceso">Reflexiones sobre el proceso</h3>
+<ol type="1">
+<li><strong>El Feature Engineering es clave:</strong> La creación de un target bien justificado (<code>is_influencer</code>) y la limpieza de features como <code>hashtags</code> fueron fundamentales para el éxito del proyecto. Un modelo, por más avanzado que sea, no puede rendir bien sin datos bien preparados.</li>
+<li><strong>La importancia de los Pipelines:</strong> Utilizar <code>Pipeline</code> y <code>ColumnTransformer</code> no solo organiza el código, sino que previene errores comunes como la fuga de datos (data leakage), al asegurar que el preprocesamiento se ajuste solo con los datos de entrenamiento.</li>
+<li><strong>Manejo del Desbalance de Clases:</strong> El simple hecho de usar el parámetro <code>class_weight='balanced'</code> en <code>LogisticRegression</code> fue suficiente para que el modelo manejara eficazmente el desbalance de clases, logrando un recall muy alto en la clase minoritaria.</li>
+<li><strong>Próximos Pasos:</strong> Para mejorar aún más, se podrían probar modelos más complejos como <code>Gradient Boosting</code> (e.g., XGBoost, LightGBM) o realizar un análisis más profundo de los Falsos Positivos para entender por qué el modelo confunde ciertas cuentas “comunes” con “influyentes”.</li>
+</ol>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

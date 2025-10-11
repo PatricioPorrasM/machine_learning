@@ -26,11 +26,13 @@ website:
       - section: "Laboratories"
         contents:
           - laboratorio1.qmd
+          - laboratorio2.qmd
       - section: "Natural Language Prceesing (NLP)"
         contents:
           - ml_text.qmd
           - bagofwords.qmd
           - tfidf.qmd
+          - text_clasification.qmd
 format:
   html:
     theme: sketchy

@@ -1,0 +1,380 @@
+
+---
+title: "Laboratorio 2: Clasificación de Cuentas de Twitter"
+author: "Patricio Porras"
+code-fold: false
+---
+
+# Resumen del Laboratorio
+
+El objetivo de este laboratorio es desarrollar un modelo de Machine Learning para clasificar si un tweet proviene de una cuenta **"influyente"** o **"común"**.
+
+# 1\. Carga y Comprensión de datos
+
+## Importar librerías
+
+En esta sección, importamos todas las librerías necesarias para el análisis, preprocesamiento, modelado y visualización.
+
+```{python}
+
+# Manipulación de datos
+import pandas as pd
+import numpy as np
+import nltk
+from nltk.corpus import stopwords
+from nltk import word_tokenize # tokenizacion
+from nltk import pos_tag #lematizacion
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
+
+# Procesamiento de texto y features
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+nltk.download('stopwords') # necessary for removal of stop words
+nltk.download('wordnet') # necessary for lemmatization
+
+# Modelo de clasificación
+from sklearn.linear_model import LogisticRegression
+
+# Métricas de evaluación
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+
+# Visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración de visualización
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 6)
+
+```
+
+## Cargar dataset
+
+Cargamos el dataset directamente desde la URL de GitHub proporcionada.
+
+```{python}
+# URL del dataset
+url = "https://raw.githubusercontent.com/erickedu85/dataset/refs/heads/master/tweets/tweets_totales_con_sentimiento_ml.csv"
+
+# Cargar los datos en un DataFrame de pandas
+df = pd.read_csv(url)
+
+# Mostrar las primeras 5 filas para una primera impresión
+print("Primeras 5 filas del dataset:")
+display(df.head())
+```
+
+## EDA (Análisis Exploratorio de Datos)
+
+Realizamos un análisis inicial para comprender mejor nuestros datos.
+
+```{python}
+# Información general del DataFrame
+print("Información del DataFrame:")
+df.info()
+
+# Descripción estadística de las variables numéricas
+print("\nDescripción estadística:")
+display(df.describe())
+
+# Verificamos valores nulos
+print("\nConteo de valores nulos por columna:")
+print(df.isnull().sum())
+```
+
+**Observaciones del EDA:**
+
+  * El dataset contiene **158,873 tweets** y 26 columnas.
+  * Columnas como `hashtags`, `mentions` y `replyTo` tienen valores nulos, lo cual deberemos gestionar.
+  * Tenemos una mezcla de tipos de datos: numéricos (`authorFollowers`), categóricos (`isReply`), booleanos (`authorVerified`) y de texto (`content`).
+
+
+# 2\. Preprocesamiento de datos
+
+## Creación de la Variable Objetivo (Target)
+
+**Justificación del Target:**
+
+Para este reto, el objetivo es clasificar si un tweet proviene de un usuario **"influyente"** o **"común"**. Esta es una tarea de clasificación binaria muy útil para análisis de redes sociales.
+
+Definiremos un usuario "influyente" basándonos en dos criterios claros y comúnmente aceptados:
+
+1.  **Verificación de la cuenta (`authorVerified`):** Twitter verifica cuentas de interés público, lo que es un fuerte indicador de influencia.
+2.  **Número de seguidores (`authorFollowers`):** Un alto número de seguidores denota un gran alcance.
+
+**Regla de Negocio:** Un usuario será considerado `influyente` (clase 1) si su cuenta está **verificada** O si tiene **más de 50,000 seguidores**. Este umbral es una heurística común para diferenciar cuentas con un alcance masivo. De lo contrario, será clasificado como `común` (clase 0).
+
+```{python}
+# Definir el umbral de seguidores
+follower_threshold = 50000
+
+# Crear la columna target 'is_influencer'
+# Será 1 (influyente) si la cuenta está verificada O tiene más seguidores que el umbral
+# Será 0 (común) en caso contrario
+df['is_influencer'] = ((df['authorVerified'] == True) | (df['authorFollowers'] > follower_threshold)).astype(int)
+
+# Analizar la distribución de la nueva variable target
+print("Distribución de la variable objetivo 'is_influencer':")
+print(df['is_influencer'].value_counts())
+
+# Visualizar la distribución
+sns.countplot(x='is_influencer', data=df)
+plt.title('Distribución de Clases: Influyente (1) vs. Común (0)')
+plt.xticks([0, 1], ['Común', 'Influyente'])
+plt.ylabel('Número de Tweets')
+plt.show()
+```
+
+**Análisis del Target:** Se observa un desbalance de clases significativo. Hay muchos más tweets de cuentas "comunes" que de "influyentes". Esto es esperado y es algo a tener en cuenta al evaluar el modelo.
+
+## Selección y Limpieza de Features
+
+No todas las 26 columnas son útiles para predecir si un usuario es influyente. Seleccionamos un subconjunto de variables que, por intuición, podrían aportar valor predictivo, y descartamos las demás (IDs, URLs, fechas duplicadas, etc.).
+
+**Features seleccionados:**
+
+  * **Texto:** `content` (contenido del tweet), `hashtags` (temas clave).
+  * **Numéricos:** `account_age_days`, `mentions_count`, `hashtags_count`, `content_length`.
+  * **Categóricos/Booleanos:** `isReply`, `has_profile_picture`.
+
+### Limpieza de la columna `hashtags`
+
+La columna `hashtags` contiene listas en formato string. La limpiaremos para extraer solo el texto de los hashtags y la usaremos como un feature de texto adicional. Los valores nulos se reemplazarán con un string vacío.
+
+```{python}
+# Rellenar NaNs con un string que representa una lista vacía
+df['hashtags'].fillna('[]', inplace=True)
+
+# Función para limpiar el texto de los hashtags
+def clean_hashtags(text):
+    # Eliminar caracteres de lista ('[', ']', "'")
+    text = text.replace('[', '').replace(']', '').replace("'", "")
+    # Reemplazar comas por espacios
+    return text.replace(',', ' ')
+
+# Aplicar la función y crear la nueva columna
+df['hashtags_cleaned'] = df['hashtags'].apply(clean_hashtags)
+
+# Mostrar ejemplos
+print("Ejemplos de hashtags antes y después de la limpieza:")
+display(df[['hashtags', 'hashtags_cleaned']].head())
+```
+
+-----
+
+# 3\. División de datos
+
+## Separación de features y target
+
+Definimos nuestras variables predictoras (`X`) y nuestra variable objetivo (`y`).
+
+```{python}
+# Lista de features a utilizar
+features = [
+    'content',              # Texto principal
+    'hashtags_cleaned',     # Texto de hashtags
+    'account_age_days',     # Numérica
+    'mentions_count',       # Numérica
+    'hashtags_count',       # Numérica
+    'content_length',       # Numérica
+    'isReply',              # Categórica
+    'has_profile_picture'   # Categórica
+]
+
+# Variable objetivo
+target = 'is_influencer'
+
+# Selección de los datos
+X = df[features]
+y = df[target]
+
+print("Dimensiones de X (features):", X.shape)
+print("Dimensiones de y (target):", y.shape)
+```
+
+## Split (División en entrenamiento y prueba)
+
+Dividimos el dataset en un conjunto de entrenamiento (80%) y uno de prueba (20%). Usamos `stratify=y` para asegurar que la proporción de clases sea la misma en ambos conjuntos, lo cual es crucial en datasets desbalanceados.
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, 
+    test_size=0.2, 
+    random_state=42, 
+    stratify=y
+)
+
+print(f"Tamaño del conjunto de entrenamiento: {X_train.shape[0]} muestras")
+print(f"Tamaño del conjunto de prueba: {X_test.shape[0]} muestras")
+```
+
+
+## Vectorización del texto
+
+```{python}
+print("Vectorización del texto")   
+
+stop_words = stopwords.words("spanish")
+#stop_words.append('more-words')
+#vectorizer = CountVectorizer(stop_words=stop_words)  
+vectorizer_content = TfidfVectorizer(stop_words=stop_words, max_features=1000) 
+vectorizer_hashtags = TfidfVectorizer(stop_words=stop_words, max_features=200) 
+```
+
+-----
+
+# 4\. Entrenamiento del modelo
+
+## Pipeline de Preprocesamiento y Modelado
+
+Para manejar eficientemente los diferentes tipos de datos (texto, numéricos, categóricos), creamos un `Pipeline` que integra el preprocesamiento y el modelo.
+
+**Estrategia de preprocesamiento:**
+
+1.  **Texto (`content`, `hashtags_cleaned`):** Se vectorizarán usando `TfidfVectorizer`, que convierte el texto en una matriz de features numéricos basada en la frecuencia e importancia de cada palabra.
+2.  **Numéricos:** Se escalarán con `StandardScaler` para que tengan media 0 y desviación estándar 1, evitando que variables con escalas grandes dominen el modelo.
+3.  **Categóricos:** Se codificarán con `OneHotEncoder`, que crea una columna binaria para cada categoría.
+
+```{python}
+# Definir las columnas para cada tipo de preprocesamiento
+text_features = ['content', 'hashtags_cleaned']
+numeric_features = ['account_age_days', 'mentions_count', 'hashtags_count', 'content_length']
+categorical_features = ['isReply', 'has_profile_picture']
+
+# Crear el transformador de preprocesamiento
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('content_tfidf', vectorizer_content, 'content'),
+        ('hashtags_tfidf', vectorizer_hashtags, 'hashtags_cleaned'),
+        ('numeric', StandardScaler(), numeric_features),
+        ('categorical', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+    ],
+    remainder='passthrough' # Mantener otras columnas si las hubiera (no aplica aquí)
+)
+
+# Crear el pipeline final que une el preprocesador y el modelo
+model = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', LogisticRegression(random_state=42, class_weight='balanced', max_iter=1000))
+])
+
+# Usamos class_weight='balanced' para que el modelo preste más atención a la clase minoritaria (influyentes).
+```
+
+## Entrenamiento
+
+Ahora, entrenamos el pipeline completo con nuestros datos de entrenamiento.
+
+```{python}
+# Entrenar el modelo
+model.fit(X_train, y_train)
+
+print("¡El modelo ha sido entrenado exitosamente!")
+```
+
+-----
+
+# 5\. Predicciones
+
+Utilizamos el modelo entrenado para hacer predicciones sobre el conjunto de prueba, que el modelo nunca ha visto antes.
+
+```{python}
+# Realizar predicciones sobre el conjunto de prueba
+y_pred = model.predict(X_test)
+
+print("Predicciones realizadas sobre el conjunto de prueba.")
+```
+
+-----
+
+# 6\. Evaluación del modelo
+
+## Evaluar resultados (Métricas de Clasificación)
+
+El `classification_report` nos proporciona las métricas clave:
+
+  * **Precision:** De todas las predicciones positivas, ¿cuántas fueron correctas?
+  * **Recall (Sensibilidad):** De todos los positivos reales, ¿cuántos fueron identificados correctamente?
+  * **F1-score:** La media armónica de precision y recall. Es muy útil para datasets desbalanceados.
+  * **Accuracy:** El porcentaje total de predicciones correctas.
+
+<!-- end list -->
+
+```{python}
+# Generar el reporte de clasificación
+report = classification_report(y_test, y_pred, target_names=['Común (0)', 'Influyente (1)'])
+
+print("Reporte de Clasificación:")
+print(report)
+```
+
+**Interpretación de Resultados:**
+
+  * El modelo tiene una **excelente performance general** (accuracy del 98%).
+  * **Clase Común (0):** Tiene una precisión y recall casi perfectos, lo que indica que el modelo identifica muy bien los tweets de cuentas comunes.
+  * **Clase Influyente (1):**
+      * **Precision (0.76):** Cuando el modelo predice que un tweet es de un "influyente", acierta en el 76% de los casos.
+      * **Recall (0.97):** El modelo es capaz de identificar el 97% de todos los tweets que realmente provienen de cuentas influyentes. ¡Este es un resultado muy fuerte\!
+  * El **F1-score** para la clase "influyente" (0.85) es alto, lo que confirma que el modelo es robusto a pesar del desbalance de clases, en gran parte gracias al uso de `class_weight='balanced'`.
+
+## Matriz de Confusión
+
+La matriz de confusión nos permite visualizar el desempeño del modelo, mostrando los aciertos y errores (verdaderos positivos, falsos positivos, etc.).
+
+```{python}
+# Calcular la matriz de confusión
+cm = confusion_matrix(y_test, y_pred)
+
+# Visualizar la matriz de confusión
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Común', 'Influyente'])
+
+fig, ax = plt.subplots(figsize=(8, 6))
+disp.plot(ax=ax, cmap='Blues', values_format='d')
+ax.set_title('Matriz de Confusión')
+plt.show()
+```
+
+**Interpretación de la Matriz:**
+
+  * **Verdaderos Negativos (28,881):** El modelo clasificó correctamente 28,881 tweets como "comunes".
+  * **Verdaderos Positivos (2,175):** El modelo clasificó correctamente 2,175 tweets como "influyentes".
+  * **Falsos Positivos (682):** El modelo clasificó erróneamente 682 tweets como "influyentes" cuando en realidad eran "comunes".
+  * **Falsos Negativos (76):** El modelo falló en identificar solo 76 tweets que eran de "influyentes", clasificándolos como "comunes". Este es el error que más querríamos minimizar, y su bajo número es un excelente indicador.
+
+-----
+
+# 7\. Conclusiones y Reflexiones
+
+### ¿Cómo se seleccionó y justificó el target?
+
+Se creó una variable objetivo binaria, `is_influencer`, para clasificar cuentas como "influyentes" (1) o "comunes" (0). La justificación se basa en una regla de negocio clara y defendible en el contexto de redes sociales: una cuenta se considera influyente si está **verificada por la plataforma (`authorVerified`)** o si posee un **alto número de seguidores (`authorFollowers > 50000`)**. Esta definición nos permite transformar un problema ambiguo en una tarea de clasificación concreta.
+
+### ¿Qué técnicas de codificación y vectorización se aplicaron?
+
+Se utilizó un `ColumnTransformer` para aplicar un preprocesamiento diferenciado a cada tipo de dato, una práctica robusta y estándar en la industria:
+
+  * **Vectorización de Texto (`TfidfVectorizer`):** Se aplicó a las columnas `content` y `hashtags_cleaned`. TF-IDF fue elegido porque no solo cuenta la frecuencia de las palabras, sino que también pondera su importancia, dando más peso a términos que son distintivos de una clase.
+  * **Escalado Numérico (`StandardScaler`):** Las variables numéricas fueron escaladas para asegurar que ninguna variable dominara el modelo solo por tener una escala mayor (e.g., `account_age_days` vs. `mentions_count`).
+  * **Codificación Categórica (`OneHotEncoder`):** Las variables booleanas (`isReply`, `has_profile_picture`) fueron convertidas a un formato numérico que el modelo de regresión logística puede interpretar sin asumir un orden inexistente.
+
+### ¿Qué resultados se obtuvieron y cómo se interpretan?
+
+El modelo de **Regresión Logística** obtuvo un rendimiento sobresaliente, con una **accuracy general del 98%**. Lo más destacable es su capacidad para identificar correctamente a la clase minoritaria:
+
+  * Logró un **recall del 97% para la clase "influyente"**, lo que significa que es extremadamente bueno detectando casi todos los tweets de cuentas influyentes.
+  * La **precisión del 76%** para esta misma clase es también muy buena, indicando que la mayoría de sus predicciones positivas son correctas.
+
+El bajo número de Falsos Negativos (76) es particularmente valioso, ya que significa que el modelo rara vez "pasa por alto" a un influencer.
+
+### Reflexiones sobre el proceso
+
+1.  **El Feature Engineering es clave:** La creación de un target bien justificado (`is_influencer`) y la limpieza de features como `hashtags` fueron fundamentales para el éxito del proyecto. Un modelo, por más avanzado que sea, no puede rendir bien sin datos bien preparados.
+2.  **La importancia de los Pipelines:** Utilizar `Pipeline` y `ColumnTransformer` no solo organiza el código, sino que previene errores comunes como la fuga de datos (data leakage), al asegurar que el preprocesamiento se ajuste solo con los datos de entrenamiento.
+3.  **Manejo del Desbalance de Clases:** El simple hecho de usar el parámetro `class_weight='balanced'` en `LogisticRegression` fue suficiente para que el modelo manejara eficazmente el desbalance de clases, logrando un recall muy alto en la clase minoritaria.
+4.  **Próximos Pasos:** Para mejorar aún más, se podrían probar modelos más complejos como `Gradient Boosting` (e.g., XGBoost, LightGBM) o realizar un análisis más profundo de los Falsos Positivos para entender por qué el modelo confunde ciertas cuentas "comunes" con "influyentes".
+
