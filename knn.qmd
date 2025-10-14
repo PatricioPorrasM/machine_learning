@@ -1,0 +1,224 @@
+---
+title: "KNN"
+author: "Patricio Porras"
+code-fold: false
+---
+
+# 1. Carga y Comprensión de datos
+
+## Importar librerías
+
+```{python}
+print("Importar librerías")
+
+import pandas as pd
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import GridSearchCV, cross_val_score
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split
+```
+
+## Cargar dataset
+
+```{python}
+print("cargar dataset")
+
+data = fetch_openml('titanic', version=1, as_frame=True)#['frame']
+
+df = data.frame.copy()
+df
+```
+
+## EDA
+
+```{python}
+print("EDA")
+
+df.info()
+
+#df.describe()
+
+#df.isna().sum()# 2. Preprocesamiento de datos
+
+```
+
+# 2. Preprocesamiento de datos
+
+## Filtrado de columnas
+
+```{python}
+print("Filtrado de columnas")
+
+df = df[['pclass', 'sex', 'age', 'sibsp', 'parch', 'embarked', 'survived']]
+```
+
+## Eliminacipon de datos faltantes y conversión del target
+
+```{python}
+print("Eliminacipon de datos faltantes y conversión del target")
+
+df = df[df['survived'].notna()]
+df['survived'] = df['survived'].astype(int)
+```
+
+# 3. División de datos
+
+## Features y target
+
+```{python}
+print("Features y target")
+
+X = df.drop(columns='survived')
+y = df['survived']
+```
+
+## Identificacion de features
+
+```{python}
+print("Features y target")
+
+cat_cols = ['sex', 'embarked'] # categorical nominal
+num_cols = ['pclass', 'age', 'sibsp', 'parch']
+```
+
+
+## Split
+
+```{python}
+print("Split")
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+```
+
+# 4. Entrenamiento del modelo
+
+## Pipeline
+
+```{python}
+print("Pipeline")
+
+categorical_pipeline = Pipeline(
+    [
+        ('Imputación categórica', SimpleImputer(strategy='most_frequent')),
+        ('Encodaje OneHot', OneHotEncoder(handle_unknown='ignore'))
+    ]
+)
+
+numerical_pipeline = Pipeline(
+    [
+        ('Imputación numérica', SimpleImputer(strategy='mean')),
+        ('Escalado', StandardScaler())
+    ]
+)
+
+```
+
+## Aplicar ColumnTransformer
+
+```{python}
+print("Aplicar ColumnTransformer")
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', categorical_pipeline, cat_cols), 
+        ('num', numerical_pipeline, num_cols)
+    ]
+)
+```
+
+## PipeLine general
+
+```{python}
+print("PipeLine general")
+
+pipeline = Pipeline(
+    [
+        ('Preprocesamiento', preprocessor),
+        ('Clasificación', KNeighborsClassifier())
+    ]
+)
+```
+
+## GridSearchCV
+
+### Definir param_grid
+
+```{python}
+print("Definir param_grid")
+
+param_grid = {
+    'Clasificación__n_neighbors': list(range(1,51)), #[3, 5, 7, 9, 11],
+    'Clasificación__weights': ['uniform', 'distance'],
+    'Clasificación__metric': ['minkowski', 'euclidean', 'manhattan'],
+    'Clasificación__p': [1, 2]
+}
+```
+### Realizar GridSearchCV
+
+```{python}
+print("Realizar GridSearchCV")
+
+grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='accuracy')
+
+```
+
+## Entrenamiento
+
+```{python}
+print("Entrenamiento")
+
+grid_search.fit(X_train, y_train)
+```
+
+## Obtener el best_estimator_
+
+```{python}
+print("Obtener el best_estimator_")
+
+best_estimator = grid_search.best_estimator_
+```
+
+## Presentar el best_estimator_
+
+```{python}
+print("Presentar el best_estimator_")
+
+best_estimator
+
+print("Mejores parámetros")
+print(grid_search.best_params_)
+```
+
+```{python}
+print("Presentar el best_estimator_")
+
+best_estimator
+```
+
+# 5. Predicciones
+
+```{python}
+print("Evaluar / Predecir")
+
+y_pred = best_estimator.predict(X_test)## Evaluar resultados
+```
+
+# 6. Evaluaciones del modelo
+
+## Reporte del modelo
+
+```{python}
+print("Reporte del modelo")
+
+print("REPORTE DE CLASIFICACIÓN")
+print(classification_report(y_test, y_pred))
+
+print("MATRIZ DE CONFUSION")
+ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred)).plot()
+
+```

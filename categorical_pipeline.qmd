@@ -178,7 +178,7 @@ print("Evaluar / Predecir")
 y_pred = pipeline.predict(X_test)
 ```
 
-# 6. Evaluacones del modelo
+# 6. Evaluaciones del modelo
 
 ## Evaluar resultados
 ```{python}

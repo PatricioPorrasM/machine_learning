@@ -19,6 +19,7 @@ website:
         contents:
           - categorical_encoding.qmd
           - categorical_pipeline.qmd
+          - knn.qmd
       - section: "MidTerm"
         contents:
           - midterm_regresion.qmd
