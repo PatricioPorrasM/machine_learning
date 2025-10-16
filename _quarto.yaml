@@ -34,6 +34,9 @@ website:
           - bagofwords.qmd
           - tfidf.qmd
           - text_clasification.qmd
+      - section: "Clustering"
+        contents:
+          - kmeans.qmd
 format:
   html:
     theme: sketchy

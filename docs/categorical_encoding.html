@@ -198,6 +198,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Categorical Pipeline</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./knn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">KNN</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -238,6 +244,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Laboratorio 1</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./laboratorio2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Laboratorio 2: Clasificación de Cuentas de Twitter</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -265,6 +277,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./tfidf.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Term-Frequency Inverse Document Frequency (TFIDF)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_clasification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Clasificatin</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Clustering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kmeans.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kmeans</span></a>
   </div>
 </li>
       </ul>
@@ -327,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>1. Carga y Comprensión de datos</h1>
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">Importar librerías</h2>
-<div id="993bb7da" class="cell" data-execution_count="1">
+<div id="e383aed8" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Importar librerías"</span>)</span>
@@ -343,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dataframe-de-ejemplo" class="level2">
 <h2 class="anchored" data-anchor-id="dataframe-de-ejemplo">Dataframe de ejemplo</h2>
-<div id="e1993499" class="cell" data-execution_count="2">
+<div id="f3014279" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Armar dataframe de ejemlpo"</span>)</span>
@@ -409,7 +444,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>2. Preprocesamiento de datos</h1>
 <section id="labelencoder-usar-solo-en-la-columna-target-output" class="level2">
 <h2 class="anchored" data-anchor-id="labelencoder-usar-solo-en-la-columna-target-output">LabelEncoder(): usar solo en la columna target (<code>output</code>)</h2>
-<div id="41b43d76" class="cell" data-execution_count="3">
+<div id="5fdaa722" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar LabelEncoder"</span>)</span>
@@ -469,7 +504,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l" class="level2">
 <h2 class="anchored" data-anchor-id="ordinalencoder-usar-en-dond-elas-columnas-tengan-un-orden-natural-e.g.-s-m-l">OrdinalEncoder(): Usar en dond elas columnas tengan un orden natural (e.g., S &lt; M &lt; L)</h2>
-<div id="bafa4720" class="cell" data-execution_count="4">
+<div id="36cc3a6b" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OrdinalEncoder"</span>)</span>
@@ -534,7 +569,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural" class="level2">
 <h2 class="anchored" data-anchor-id="onehotencoder-usar-para-las-columnas-categoricas-nominales-donde-los-valores-no-tienen-un-orden-natural">OneHotEncoder(): usar para las columnas categoricas nominales, donde los valores no tienen un orden natural</h2>
-<div id="1b47d6c7" class="cell" data-execution_count="5">
+<div id="ae93b5d5" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar OneHotEncoder"</span>)</span>
@@ -616,7 +651,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aplicar-columntransformer" class="level2">
 <h2 class="anchored" data-anchor-id="aplicar-columntransformer">Aplicar ColumnTransformer</h2>
-<div id="5d8c2b8b" class="cell" data-execution_count="6">
+<div id="c18a1056" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar ColumnTransformer"</span>)</span>
@@ -642,7 +677,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aplicar-el-preprocessor" class="level2">
 <h2 class="anchored" data-anchor-id="aplicar-el-preprocessor">Aplicar el preprocessor</h2>
-<div id="45ac8ace" class="cell" data-execution_count="7">
+<div id="41c2b7cb" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aplicar el preprocessor"</span>)</span>

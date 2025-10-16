@@ -195,6 +195,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Categorical Pipeline</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./knn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">KNN</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -235,6 +241,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Laboratorio 1</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./laboratorio2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Laboratorio 2: Clasificación de Cuentas de Twitter</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -262,6 +274,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./tfidf.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Term-Frequency Inverse Document Frequency (TFIDF)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_clasification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Clasificatin</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Clustering</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./kmeans.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kmeans</span></a>
   </div>
 </li>
       </ul>
@@ -332,7 +367,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="importar-librerías" class="level2">
 <h2 class="anchored" data-anchor-id="importar-librerías">1. Importar Librerías</h2>
 <p>Primero importamos todas las librerías necesarias para el análisis.</p>
-<div id="389e0bb3" class="cell" data-execution_count="1">
+<div id="6b3074ef" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Librerías para manipulación de datos</span></span>
@@ -360,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="carga-el-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="carga-el-dataset">2. Carga el Dataset</h2>
 <p>Primero, cargamos las librerías necesarias y el conjunto de datos. Realizaremos una exploración básica para entender su estructura, identificar las variables numéricas y categóricas, y prepararlo para el modelo.</p>
-<div id="f0dcbfed" class="cell" data-execution_count="2">
+<div id="a313cfbb" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar el dataset desde el archivo CSV</span></span>
@@ -373,7 +408,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="exploración-inicial-del-dataset">3. Exploración Inicial del Dataset</h2>
 <section id="exploración-inicial" class="level3">
 <h3 class="anchored" data-anchor-id="exploración-inicial">3.1 Exploración inicial</h3>
-<div id="b1ff54e8" class="cell" data-execution_count="3">
+<div id="53710b4a" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Exploración Inicial ---</span></span>
@@ -450,7 +485,7 @@ memory usage: 10.0+ KB
 <section id="renombrado-de-clumnas" class="level3">
 <h3 class="anchored" data-anchor-id="renombrado-de-clumnas">3.2 renombrado de clumnas</h3>
 <p>Se renombra kas columnas para mejor facilidad de manipularlas</p>
-<div id="c73000d5" class="cell" data-execution_count="4">
+<div id="f65a8e72" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Limpieza y Selección de Características ---</span></span>
@@ -472,7 +507,7 @@ memory usage: 10.0+ KB
 </details>
 </div>
 <p>Ver columnas renombradas</p>
-<div id="5d647c37" class="cell" data-execution_count="5">
+<div id="59b5e52b" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Información General del Dataset renombado ---"</span>)</span>
@@ -501,7 +536,7 @@ memory usage: 10.0+ KB</code></pre>
 </section>
 <section id="evitar-el-us-de-variables-categóricas" class="level3">
 <h3 class="anchored" data-anchor-id="evitar-el-us-de-variables-categóricas">3.3 Evitar el us de variables categóricas</h3>
-<div id="d3ed37e9" class="cell" data-execution_count="6">
+<div id="6768bed3" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Según los lineamientos, debemos evitar el uso de variables categóricas.</span></span>

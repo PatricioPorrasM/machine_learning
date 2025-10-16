@@ -1,0 +1,251 @@
+---
+title: "Kmeans"
+author: "Patricio Porras"
+code-fold: false
+---
+
+# 1. Carga y Comprensión de datos
+
+## Importar librerías
+
+```{python}
+#| label: Importar_librerías
+print("Importar librerías")
+
+import altair as alt
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.metrics import silhouette_score
+```
+
+## Cargar dataset
+
+```{python}
+#| label: Cargar_datos
+print("cargar dataset")
+
+url = "https://raw.githubusercontent.com/erickedu85/dataset/master/age_income.csv"
+df = pd.read_csv(url)
+df
+```
+
+## Visualizar datos
+
+```{python}
+#| label: Visualizar_datos
+print("Visualizar datos")
+
+alt.Chart(df).mark_circle().encode(
+    alt.X('age'),
+    alt.Y('annual_income($)'),
+    tooltip=['age', 'annual_income($)']
+).interactive()
+```
+
+# 2. Método del codo (Elbow)
+
+```{python}
+#| label: Método_del_codo_Elbow
+print("Método del codo (Elbow)")
+
+sse = [] #inercia
+k_range = range(2, 11) # valores posibles de k
+
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(df[['age', 'annual_income($)']])
+    sse.append(kmeans.inertia_)
+
+print("Inercia: \n", sse)
+
+```
+
+## Visualizar el SSE vs K_range
+
+```{python}
+#| label: Visualizar_el_SSE_vs_K_range
+print("Visualizar el SSE vs K_range")
+
+elbow_df =  pd.DataFrame(
+    {
+        'K':k_range,
+        'SSE':sse
+    }
+)
+
+alt.Chart(elbow_df).mark_line().encode(
+    alt.X('K'),
+    alt.Y('SSE'),
+    tooltip=['K', 'SSE']
+).properties(
+    title="Método del codo (Elbow)"
+).interactive()
+```
+
+## Clusterización con k=3
+
+```{python}
+#| label: Clusterización_k_3
+print("Clusterización con k=3")
+
+k_clusters = 3
+clusters = KMeans(n_clusters=k_clusters, random_state=42)
+df['clusters'] = clusters.fit_predict(df[['age', 'annual_income($)']])
+df
+```
+
+## Visualizar clusters K=3
+
+```{python}
+#| label: Visualizar_clusters_k_3
+print("Visualizar clusters k=3")
+
+alt.Chart(df).mark_circle().encode(
+    alt.X('age'),
+    alt.Y('annual_income($)'),
+    alt.Color('clusters:N'),
+    tooltip=['age', 'annual_income($)', 'clusters:N']
+).properties(
+    title="Clusters"
+).interactive()
+```
+
+# 3. Pipeline + StandarScale()
+
+## ColumnTransformer
+```{python}
+#| label: ColumnTransformer
+print("ColumnTransformer")
+
+num_cols = ['age', 'annual_income($)']
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('StandardScaler', StandardScaler(), num_cols)
+    ]
+)
+```
+
+## Pipeline
+
+```{python}
+#| label: Pipeline
+print("Pipeline")
+
+pipeline = Pipeline(
+    [
+        ('Preprocessor', preprocessor),
+        ('KMeans', KMeans(random_state=42))
+    ]
+)
+```
+
+## Modelo Elbow
+
+```{python}
+#| label: Modelo_Elbow
+print("Modelo Elbow")
+
+k_range = range(2, 11) # valores posibles de k
+sse_standar = [] #inercia
+silhouette_scores = []
+
+for k in k_range:
+    pipeline.set_params(KMeans__n_clusters=k)
+    pipeline.fit(df[num_cols])
+    sse_standar.append(pipeline.named_steps['KMeans'].inertia_)
+    pred = pipeline.predict(df[num_cols])
+    score = silhouette_score(
+        pipeline.named_steps['Preprocessor'].transform(df[num_cols]),
+        pred
+    )
+    print("k: ", k)
+    print("Score: ", score)
+    print("Pred:", pred)
+    
+    silhouette_scores.append(score)
+
+# print("Inercia: \n", sse_standar)
+
+```
+
+## Visualización del método del codo y Silhouette
+
+```{python}
+#| fig-width: 10
+#| fig-height: 8
+#| label: Visualiza-codo-silhouette
+#| fig-cap: "Visualización del método del cododo y Silhouette"
+print("Visualización del método del codo y Silhouette")
+
+sse_stabdar_df =  pd.DataFrame(
+    {
+        'K':k_range,
+        'SSE_STANDAR':sse_standar,
+    }
+)
+
+silhouette_df =  pd.DataFrame(
+    {
+        'K':k_range,
+        'Silhouette':silhouette_scores
+    }
+)
+
+viz_sse_estandar = alt.Chart(sse_stabdar_df).mark_line().encode(
+    alt.X('K'),
+    alt.Y('SSE_STANDAR'),
+    tooltip=['K', 'SSE_STANDAR']
+).properties(
+    title="Método del codo con Pipeline + Estandarización"
+).interactive()
+
+viz_silhouette = alt.Chart(silhouette_df).mark_line().encode(
+    alt.X('K'),
+    alt.Y('Silhouette'),
+    tooltip=['K', 'Silhouette']
+).properties(
+    title="Silhouette Score con Pipeline + Estandarización"
+).interactive()
+
+viz_sse_estandar | viz_silhouette
+
+```
+
+## Custerización con Pipeline + StandarScale()
+
+```{python}
+#| label: Clusterización_con_Pipeline_StandarScale
+print("Clusterización con Pipeline + StandarScale()")
+
+k_optimo = k_range[silhouette_scores.index(max(silhouette_scores))]
+print("K óptimo: ", k_optimo)
+
+pipeline.set_params(KMeans__n_clusters=k_optimo)
+df['clusters_standar'] = pipeline.fit_predict(df[num_cols])
+df
+```
+
+## Visualización clusters estándar
+
+```{python}
+#| label: Visualiza-cluster-standar
+#| fig-width: 10
+#| fig-height: 8
+#| fig-cap: "Visualización clusters estándar"
+print("Visualización clusters estándar")
+
+alt.Chart(df).mark_circle().encode(
+    alt.X('age'),
+    alt.Y('annual_income($)'),
+    alt.Color('clusters_standar:N'),
+    tooltip=['age', 'annual_income($)', 'clusters_standar:N']
+).properties(
+    title="Clusters"
+).interactive()
+```
