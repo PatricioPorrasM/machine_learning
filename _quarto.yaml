@@ -37,6 +37,7 @@ website:
       - section: "Clustering"
         contents:
           - kmeans.qmd
+          - hac.qmd
 format:
   html:
     theme: sketchy

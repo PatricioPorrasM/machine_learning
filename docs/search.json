@@ -196,5 +196,80 @@
       "Clustering",
       "Kmeans"
     ]
+  },
+  {
+    "objectID": "hac.html",
+    "href": "hac.html",
+    "title": "Hierachical Agglomerative Clustering (HAC)",
+    "section": "",
+    "text": "print(\"Importar librerías\")\n\nimport pandas as pd\nimport altair as alt\nfrom sklearn.datasets import load_iris\nfrom sklearn.cluster import AgglomerativeClustering\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\nfrom scipy.cluster.hierarchy import dendrogram,linkage\n\nimport matplotlib.pyplot as plt\n\nImportar librerías",
+    "crumbs": [
+      "Clustering",
+      "Hierachical Agglomerative Clustering (HAC)"
+    ]
+  },
+  {
+    "objectID": "hac.html#creacion-del-dataframe-para-la-viz",
+    "href": "hac.html#creacion-del-dataframe-para-la-viz",
+    "title": "Hierachical Agglomerative Clustering (HAC)",
+    "section": "Creacion del dataframe para la viz",
+    "text": "Creacion del dataframe para la viz\n\nprint(\"Creacion del dataframe para la viz\")\n\nX_scaled = pipeline.named_steps['scaler'].transform(X)\ndf_viz = pd.DataFrame(X_scaled,columns=['Feature1','Feature2'])\ndf_viz['clusters'] = labels.astype(str)\ndf_viz['index'] = X.index.astype(str)\ndf_viz\n\nCreacion del dataframe para la viz\n\n\n\n\n\n\n\n\n\nFeature1\nFeature2\nclusters\nindex\n\n\n\n\n0\n0.269382\n0.191870\n2\n0\n\n\n1\n-0.303771\n-1.140559\n0\n1\n\n\n2\n-0.876924\n-0.607588\n0\n2\n\n\n3\n-1.163501\n-0.874073\n0\n3\n\n\n4\n-0.017195\n0.458355\n2\n4\n\n\n5\n1.129111\n1.257813\n1\n5\n\n\n6\n-1.163501\n-0.074616\n0\n6\n\n\n7\n-0.017195\n-0.074616\n2\n7\n\n\n8\n-1.736653\n-1.407045\n0\n8\n\n\n9\n-0.303771\n-0.874073\n0\n9\n\n\n10\n1.129111\n0.724841\n1\n10\n\n\n11\n-0.590348\n-0.074616\n0\n11\n\n\n12\n-0.590348\n-1.140559\n0\n12\n\n\n13\n-2.023230\n-1.140559\n0\n13\n\n\n14\n2.275417\n1.524299\n1\n14\n\n\n15\n1.988841\n2.590242\n1\n15\n\n\n16\n1.129111\n1.257813\n1\n16\n\n\n17\n0.269382\n0.191870\n2\n17\n\n\n18\n1.988841\n0.991327\n1\n18\n\n\n19\n0.269382\n0.991327\n1\n19\n\n\n20\n1.129111\n-0.074616\n2\n20\n\n\n21\n0.269382\n0.724841\n1\n21\n\n\n22\n-1.163501\n0.458355\n0\n22\n\n\n23\n0.269382\n-0.341102\n2\n23\n\n\n24\n-0.590348\n-0.074616\n0\n24\n\n\n25\n-0.017195\n-1.140559\n0\n25\n\n\n26\n-0.017195\n-0.074616\n2\n26\n\n\n27\n0.555958\n0.191870\n2\n27\n\n\n28\n0.555958\n-0.074616\n2\n28\n\n\n29\n-0.876924\n-0.607588\n0\n29\n\n\n30\n-0.590348\n-0.874073\n0\n30\n\n\n31\n1.129111\n-0.074616\n2\n31\n\n\n32\n0.555958\n1.790784\n1\n32\n\n\n33\n1.415688\n2.057270\n1\n33\n\n\n34\n-0.303771\n-0.874073\n0\n34\n\n\n35\n-0.017195\n-0.607588\n2\n35\n\n\n36\n1.415688\n0.191870\n2\n36\n\n\n37\n-0.303771\n0.458355\n2\n37\n\n\n38\n-1.736653\n-1.140559\n0\n38\n\n\n39\n0.269382\n-0.074616\n2\n39\n\n\n40\n-0.017195\n0.191870\n2\n40\n\n\n41\n-1.450077\n-3.005959\n0\n41\n\n\n42\n-1.736653\n-0.607588\n0\n42\n\n\n43\n-0.017195\n0.191870\n2\n43\n\n\n44\n0.269382\n0.991327\n1\n44\n\n\n45\n-0.590348\n-1.140559\n0\n45\n\n\n46\n0.269382\n0.991327\n1\n46\n\n\n47\n-1.163501\n-0.607588\n0\n47\n\n\n48\n0.842535\n0.724841\n1\n48\n\n\n49\n-0.017195\n-0.341102\n2\n49",
+    "crumbs": [
+      "Clustering",
+      "Hierachical Agglomerative Clustering (HAC)"
+    ]
+  },
+  {
+    "objectID": "hac.html#visualización",
+    "href": "hac.html#visualización",
+    "title": "Hierachical Agglomerative Clustering (HAC)",
+    "section": "Visualización",
+    "text": "Visualización\n\nprint(\"Visualización\")\n\nscatter = alt.Chart(df_viz).mark_circle(size=65).encode(\n    alt.X('Feature1'),\n    alt.Y('Feature2'),\n    alt.Color('clusters'),\n    tooltip=['Feature1','Feature2','index']\n).interactive()\n\ntexto_scatter = alt.Chart(df_viz).mark_text(\n    align='left',\n    dx=5,\n    baseline='middle'\n).encode(\n    alt.X('Feature1'),\n    alt.Y('Feature2'),\n    text='index'\n)\n\n(scatter + texto_scatter).properties(\n    width=500,\n    height=500\n)\n\nVisualización",
+    "crumbs": [
+      "Clustering",
+      "Hierachical Agglomerative Clustering (HAC)"
+    ]
+  },
+  {
+    "objectID": "hac.html#creación-del-linked",
+    "href": "hac.html#creación-del-linked",
+    "title": "Hierachical Agglomerative Clustering (HAC)",
+    "section": "Creación del linked",
+    "text": "Creación del linked\n\nprint(\"Creación del linked\")\n\n#X_scaled\n#‘ward’, ‘complete’, ‘average’, ‘single’}\nlinked = linkage(X_scaled,method='complete')\n\nCreación del linked",
+    "crumbs": [
+      "Clustering",
+      "Hierachical Agglomerative Clustering (HAC)"
+    ]
+  },
+  {
+    "objectID": "hac.html#dendrogram",
+    "href": "hac.html#dendrogram",
+    "title": "Hierachical Agglomerative Clustering (HAC)",
+    "section": "Dendrogram",
+    "text": "Dendrogram\n\nprint(\"dendograma\")\n\nplt.figure(figsize=(10, 5))\ndendrogram(linked,\n           orientation='top',\n           distance_sort='descending',\n           show_leaf_counts=False)\nplt.title(\"Dendrogram\")\nplt.xlabel(\"Sample index\")\nplt.ylabel(\"Distance\")\n# plt.grid(True)\nplt.show()\n\ndendograma",
+    "crumbs": [
+      "Clustering",
+      "Hierachical Agglomerative Clustering (HAC)"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PRIMER REPORTE EN QUARTO",
+    "section": "",
+    "text": "Elemento 0\nElemento 1\nElemento 2\nElemento 3\nElemento 4\n\n\n\n\n                        Name  Miles_per_Gallon  Cylinders  Displacement  \\\n0  chevrolet chevelle malibu              18.0          8         307.0   \n1          buick skylark 320              15.0          8         350.0   \n2         plymouth satellite              18.0          8         318.0   \n3              amc rebel sst              16.0          8         304.0   \n4                ford torino              17.0          8         302.0   \n\n   Horsepower  Weight_in_lbs  Acceleration       Year Origin  \n0       130.0           3504          12.0 1970-01-01    USA  \n1       165.0           3693          11.5 1970-01-01    USA  \n2       150.0           3436          11.0 1970-01-01    USA  \n3       150.0           3433          12.0 1970-01-01    USA  \n4       140.0           3449          10.5 1970-01-01    USA  \n\n\n\n\n&lt;class 'pandas.core.frame.DataFrame'&gt;\nRangeIndex: 406 entries, 0 to 405\nData columns (total 9 columns):\n #   Column            Non-Null Count  Dtype         \n---  ------            --------------  -----         \n 0   Name              406 non-null    object        \n 1   Miles_per_Gallon  398 non-null    float64       \n 2   Cylinders         406 non-null    int64         \n 3   Displacement      406 non-null    float64       \n 4   Horsepower        400 non-null    float64       \n 5   Weight_in_lbs     406 non-null    int64         \n 6   Acceleration      406 non-null    float64       \n 7   Year              406 non-null    datetime64[ns]\n 8   Origin            406 non-null    object        \ndtypes: datetime64[ns](1), float64(4), int64(2), object(2)\nmemory usage: 28.7+ KB\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n‘count()’\n\n\n\n\n\n\n\n\n‘mean’",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#agregaciones",
+    "href": "index.html#agregaciones",
+    "title": "PRIMER REPORTE EN QUARTO",
+    "section": "",
+    "text": "‘count()’\n\n\n\n\n\n\n\n\n‘mean’",
+    "crumbs": [
+      "Welcome"
+    ]
   }
 ]
