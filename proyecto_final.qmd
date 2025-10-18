@@ -31,7 +31,7 @@ from nltk.corpus import wordnet
 
 # Procesamiento de texto y features
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler, label_binarize
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -51,7 +51,9 @@ from sklearn.metrics import (
     RocCurveDisplay,
     mean_squared_error, 
     r2_score,
-    silhouette_score
+    silhouette_score, 
+    roc_curve, 
+    auc
 )
 
 # Visualización
@@ -64,7 +66,6 @@ plt.rcParams['figure.figsize'] = (10, 6)
 
 from sklearn.cluster import KMeans
 from sklearn.datasets import fetch_openml
-from sklearn.metrics import silhouette_score
 
 import re
 import unicodedata
@@ -100,7 +101,7 @@ df = pd.read_csv(url)
 ```
 
 
-## Función de Limpieza de Texto (NLP)
+## Función de Limpieza de Texto
 
 Definimos la función personalizada que realizará la limpieza y lematización del texto en español, según lo solicitado.
 
@@ -111,14 +112,6 @@ Definimos la función personalizada que realizará la limpieza y lematización d
 stopwords_es = set(stopwords.words('spanish'))
 
 def limpiar_y_lematizar(texto):
-    """
-    Función completa para limpiar y lematizar texto en español.
-    1. Reemplaza tildes y caracteres especiales.
-    2. Convierte a minúsculas.
-    3. Elimina URLs, menciones (@) y hashtags (#).
-    4. Elimina puntuación y números.
-    5. Lematiza con SpaCy y elimina stopwords.
-    """
     if not isinstance(texto, str):
         return ""
     
@@ -133,7 +126,7 @@ def limpiar_y_lematizar(texto):
     texto = re.sub(r'[@#]\w+', '', texto)
     
     # 4. Eliminar puntuación y números
-    texto = re.sub(r'[^a-zA-Z\s]', '', texto)
+    texto = re.sub(r'[^a-zA-Z\s]', ' ', texto)
     
     # 5. Lematización con SpaCy y eliminación de stopwords
     doc = nlp_spacy(texto)
@@ -280,9 +273,11 @@ Exploramos las variables que usaremos como *features* (predictoras).
 
 ```{python}
 #| label: EDA_sin_valores_nulos
-print("Sin valores nulos")
+print("Limpiamos valores nulos")
 df_clean = df.dropna(subset=['toxicity_score'])
 ```
+
+Graficamos histogramas de variables numéricas.
 
 ```{python}
 #| label: EDA_numeric_histograms
@@ -294,7 +289,7 @@ numeric_features = ['authorFollowers', 'time_response', 'account_age_days',
                   'mentions_count', 'hashtags_count', 'content_length']
 
 # Creamos una figura con 2 filas y 3 columnas
-fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(10, 5))
 fig.suptitle('Distribución de Features Numéricos', fontsize=16, y=1.02)
 
 # Aplanamos el array de ejes para iterar fácilmente
@@ -314,6 +309,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+Boxplots de Variables Numéricas (para detectar outliers).
+
 ```{python}
 #| label: EDA_numeric_boxplots
 #| fig-cap: "Boxplots de variables numéricas"
@@ -321,7 +318,7 @@ plt.show()
 print("Boxplots de Variables Numéricas (para detectar outliers):")
 
 # Creamos una figura con 2 filas y 3 columnas
-fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(10, 5))
 fig.suptitle('Boxplots de Features Numéricos', fontsize=16, y=1.02)
 
 # Aplanamos el array de ejes
@@ -340,6 +337,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+Conteo de Variables Categóricas.
+
 ```{python}
 #| label: EDA_categorical_counts
 #| fig-cap: "Conteo de variables categóricas"
@@ -349,7 +348,7 @@ print("Conteo de Variables Categóricas:")
 categorical_features = ['isReply', 'authorVerified', 'has_profile_picture', 'source']
 
 # Creamos una figura con 2 filas y 2 columnas
-fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 12))
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(8, 6))
 fig.suptitle('Conteo de Features Categóricos', fontsize=16, y=1.02)
 
 # isReply
@@ -374,11 +373,11 @@ axes[1, 1].set_title('Top 10 de "source" (Plataforma)')
 axes[1, 1].set_xlabel('Conteo')
 axes[1, 1].set_ylabel('Source')
 
-
 plt.tight_layout()
 plt.show()
 ```
 
+Más datos.
 
 ```{python}
 #| label: EDA_features
@@ -398,11 +397,15 @@ for col in categorical_features_list:
 
 **Hallazgo Clave 3:**
 
-  * **Features Numéricos:** Las variables tienen escalas muy diferentes (ej. `authorFollowers` vs `mentions_count`), lo que confirma la necesidad de **escalamiento** (ej. `StandardScaler`).
-  * **Features Categóricos:** `source` Todos los registros de esta muestra fueron realizados desde `Twitter for iPhone`. `OneHotEncoder` es apropiado. `isReply` y `authorVerified` son booleanos que también serán codificados.
+  * **Alta Homogeneidad (Falta de Varianza):** Tres de las cuatro variables categóricas son, en la práctica, constantes en tu dataset.
+    - `isReply`: El 100% de tus datos son `True`. Esto significa que tu dataset se compone exclusivamente de respuestas, no hay tweets originales.
+    - `authorVerified`: El 100% de los autores son False (no verificados). Tu dataset representa únicamente a usuarios "comunes", no a cuentas oficiales o celebridades.
+    - `source`: El 100% de los tweets provienen de Twitter for iPhone. No hay diversidad de clientes (como Android, Web App, etc.)
+  * **Única Variable Categórica Útil:** `has_profile_picture`: Esta es la única variable categórica de este grupo que tiene varianza (95.5% True vs 4.5% False). Por lo tanto, es la única que puede aportar poder predictivo al modelo.
+  * Se eliminarán las variables: `isReply`, `authorVerified`, `source`.
 
 
-Generando Nube de Palabras del texto limpio...
+Generando Nube de Palabras del texto limpio.
 ```{python}
 #| label: EDA_text_wordcloud
 #| fig-cap: "Nube de palabras del contenido de los tweets"
@@ -432,7 +435,8 @@ plt.title('Nube de Palabras más Frecuentes (Lematizadas)', fontsize=16)
 plt.show()
 ```
 
-Gráfico de Frecuencias (Top 20 Palabras)
+
+Gráfico de Frecuencias (Top 20 Palabras).
 
 ```{python}
 #| label: EDA_text_frequency
@@ -464,7 +468,7 @@ plt.ylabel('Palabra')
 plt.show()
 ```
 
-Heatmap de Correlación (Features Numéricos y Target)
+Heatmap de Correlación (Features Numéricos y Target).
 
 ```{python}
 #| label: EDA_correlacion_heatmap
@@ -491,19 +495,20 @@ plt.show()
 ```
 
 
-Gráfico de Correlación Específico (content_length vs toxicity_score)
+Gráfico de Dispersión Específico (content_length vs toxicity_score)
 
 ```{python}
-#| label: EDA_density_heatmap
-#| fig-cap: "Heatmap de Densidad: Longitud del Tweet vs. Score de Toxicidad"
+#| label: EDA_correlacion_scatter
+#| fig-cap: "Longitud del contenido vs. Toxicidad"
 
-print("Heatmap de Densidad entre Longitud del Contenido y Toxicidad")
-
-plt.figure(figsize=(12, 8))
-sns.histplot(data=df_clean, x='content_length', y='toxicity_score', bins=50, cbar=True)
-plt.title('Heatmap de Densidad: Longitud vs. Toxicidad')
-plt.xlabel('Longitud del Contenido (Caracteres)')
-plt.ylabel('Score de Toxicidad')
+# Usamos jointplot para ver el scatter y los histogramas
+sns.jointplot(data=df_clean, 
+              x='content_length', 
+              y='toxicity_score', 
+              kind='reg', # 'reg' añade una línea de regresión
+              joint_kws={'line_kws': {'color': 'red'}},
+              scatter_kws={'alpha': 0.3})
+plt.suptitle('Longitud del Tweet vs. Score de Toxicidad', y=1.02)
 plt.show()
 ```
 
@@ -524,21 +529,39 @@ Como se decidió en el EDA, eliminamos las filas donde `toxicity_score` es nulo 
 ```{python}
 #| label: Preprocessing_nulos
 print(f"Tamaño original: {df.shape}")
+print("Limpiamos valores nulos del target y eliminamos columnas sin varianza")
 df_clean = df.dropna(subset=['toxicity_score'])
+
+# Eliminamos las columnas identificadas en el Hallazgo Clave 3 por falta de varianza
+cols_to_drop = ['isReply', 'authorVerified', 'source']
+df_clean = df_clean.drop(columns=cols_to_drop)
+
 print(f"Tamaño después de eliminar nulos en target: {df_clean.shape}")
 
 # Definición de Targets
 # 1. Target de Regresión (continuo)
 y_reg = df_clean['toxicity_score']
 
-# 2. Target de Clasificación (binario)
-# Usamos el umbral de 0.5 como se solicitó.
-UMBRAL_TOXICIDAD = 0.5
-y_class = (df_clean['toxicity_score'] > UMBRAL_TOXICIDAD).astype(int)
+# 2. Target de Clasificación (Multiclase por Cuartiles)
+# Usamos pd.qcut para dividir en 4 clases (cuartiles)
+# q=4 significa 4 grupos con ~25% de los datos cada uno.
+# labels=False nos da clases numéricas: 0, 1, 2, 3
+# duplicates='drop' maneja el caso donde hay muchos valores idénticos (ej. 0.0)
+try:
+    y_class = pd.qcut(df_clean['toxicity_score'], q=4, labels=False, duplicates='drop')
+except ValueError as e:
+    print(f"Advertencia al crear cuartiles: {e}")
+    # Si 'drop' no es suficiente (datos muy sesgados), se reduce el número de cuantiles
+    y_class = pd.qcut(df_clean['toxicity_score'], q=4, labels=False, duplicates='raise').astype(str)
 
-# Revisamos el desbalanceo de clases (esperado por el EDA)
-print("\nBalance de clases para el target binario (umbral > 0.5):")
-print(y_class.value_counts(normalize=True))
+
+# Definimos los nombres de las etiquetas para usarlos en la evaluación
+class_labels = ['Q1 (Bajo)', 'Q2 (Moderado-Bajo)', 'Q3 (Moderado-Alto)', 'Q4 (Alto)']
+
+# Revisamos el balance de clases (debería ser ~25% por definición)
+print("\nBalance de clases para el target multiclase (Cuartiles):")
+print(y_class.value_counts(normalize=True).sort_index())
+
 ```
 
 **Nota sobre Desbalanceo:** Como se anticipó, la clase `1` (tóxico) representa solo el 24% de los datos. Usaremos `class_weight='balanced'` en el modelo de clasificación para mitigar esto.
@@ -553,11 +576,7 @@ Seleccionamos las columnas que servirán como *features*.
 # Columnas de features identificadas en el EDA
 text_features = 'content'
 numeric_features = ['authorFollowers', 'time_response', 'account_age_days', 'mentions_count', 'hashtags_count', 'content_length']
-categorical_features = ['isReply', 'authorVerified', 'has_profile_picture', 'source']
-
-# Rellenamos nulos en 'source' (feature categórico) con 'Desconocido'
-# (Aunque en este dataset no parece haber nulos en 'source' tras limpiar el target, es buena práctica)
-df_clean['source'] = df_clean['source'].fillna('Desconocido')
+categorical_features = ['has_profile_picture']
 
 # Creamos el DataFrame X de features
 X = df_clean[numeric_features + categorical_features + [text_features]]
@@ -779,10 +798,11 @@ Generamos tanto las clases predichas como las probabilidades (necesarias para la
 
 ```{python}
 #| label: Predicciones_clasificacion
-print("Generndo predicciones de clasificación.")
+print("Generando predicciones de clasificación.")
 
 y_pred_class = pipeline_class.predict(X_test)
-y_pred_proba_class = pipeline_class.predict_proba(X_test)[:, 1] # Probabilidad de la clase 1 (tóxico)
+# Para ROC multiclase, necesitamos las probabilidades de *todas* las clases
+y_pred_proba_class = pipeline_class.predict_proba(X_test) 
 ```
 
 ## Predicciones de Clustering
@@ -851,20 +871,22 @@ Evaluamos qué tan bien nuestro modelo distingue entre tweets "tóxicos" y "no t
 
 ```{python}
 #| label: Evaluacion_clasificacion_reporte
-#| fig-cap: "Matriz de Confusión (Clasificación)"
+#| fig-cap: "Matriz de Confusión (Multiclase)"
 
 print("--- Evaluación Modelo de Clasificación (LogisticRegression) ---")
-print("\nReporte de Clasificación:")
-print(classification_report(y_test_class, y_pred_class, target_names=['No Tóxico (0)', 'Tóxico (1)']))
+print("\nReporte de Clasificación (Multiclase):")
+# Usamos los labels definidos en el preprocesamiento
+print(classification_report(y_test_class, y_pred_class, target_names=class_labels))
 
 # Matriz de Confusión
-print("\nMatriz de Confusión:")
+print("\nMatriz de Confusión (Multiclase):")
 cm = confusion_matrix(y_test_class, y_pred_class)
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['No Tóxico', 'Tóxico'])
+# Usamos los labels definidos
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_labels)
 
-fig, ax = plt.subplots(figsize=(7, 7))
+fig, ax = plt.subplots(figsize=(9, 9))
 disp.plot(ax=ax, cmap='Blues', colorbar=False)
-plt.title('Matriz de Confusión')
+plt.title('Matriz de Confusión (Multiclase - Cuartiles)')
 plt.show()
 ```
 
@@ -878,16 +900,43 @@ plt.show()
 
 ```{python}
 #| label: Evaluacion_clasificacion_roc
-#| fig-cap: "Curva ROC (Clasificación)"
+#| fig-cap: "Curva ROC Multiclase (One-vs-Rest)"
 
-auc_score = roc_auc_score(y_test_class, y_pred_proba_class)
-print(f"\nÁrea bajo la Curva ROC (AUC-ROC): {auc_score:.4f}")
+# --- Cálculo de Score AUC ---
+# Para AUC multiclase, usamos One-vs-Rest (ovr) y las probabilidades completas
+auc_score_ovr = roc_auc_score(y_test_class, y_pred_proba_class, multi_class='ovr')
+print(f"\nÁrea bajo la Curva ROC (AUC-ROC) Promedio (OVR): {auc_score_ovr:.4f}")
 
-fig, ax = plt.subplots(figsize=(8, 7))
-RocCurveDisplay.from_predictions(y_test_class, y_pred_proba_class, ax=ax, name='Logistic Regression')
-ax.plot([0, 1], [0, 1], linestyle='--', color='r', label='Azar (AUC = 0.5)')
-plt.title('Curva ROC')
-plt.legend()
+# --- Visualización de Curva ROC Multiclase ---
+
+# Binarizar las etiquetas de prueba
+n_classes = len(class_labels)
+y_test_bin = label_binarize(y_test_class, classes=range(n_classes))
+
+# Calcular ROC y AUC para cada clase
+fpr = dict()
+tpr = dict()
+roc_auc = dict()
+for i in range(n_classes):
+    fpr[i], tpr[i], _ = roc_curve(y_test_bin[:, i], y_pred_proba_class[:, i])
+    roc_auc[i] = auc(fpr[i], tpr[i])
+
+# Graficar todas las curvas ROC
+plt.figure(figsize=(10, 8))
+colors = ['blue', 'green', 'red', 'purple'] # Un color por clase
+
+for i, color in zip(range(n_classes), colors):
+    plt.plot(fpr[i], tpr[i], color=color, lw=2,
+             label=f'Curva ROC clase {i} ({class_labels[i]}) (AUC = {roc_auc[i]:.2f})')
+
+plt.plot([0, 1], [0, 1], 'k--', lw=2, label='Azar (AUC = 0.5)')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('Tasa de Falsos Positivos (FPR)')
+plt.ylabel('Tasa de Verdaderos Positivos (TPR)')
+plt.title('Curva ROC Multiclase (One-vs-Rest)')
+plt.legend(loc="lower right")
+plt.grid(True)
 plt.show()
 ```
 
@@ -940,21 +989,21 @@ for i in range(k_optimo):
 
 # 7\. Conclusiones
 
-Reflexión final sobre los resultados del proyecto.
+Reflexión final sobre los resultados del proyecto, ahora enfocada en la clasificación multiclase por cuartiles.
 
 1.  **Calidad de Datos y EDA:** El dataset, aunque pequeño (1500 registros), fue suficiente para un *pipeline* completo. El hallazgo clave del EDA fue el **sesgo extremo** en `toxicity_score`, lo cual impactó directamente la estrategia de clasificación, haciendo necesario el uso de `class_weight='balanced'`.
 
 2.  **Pipeline de Preprocesamiento:** El uso de `ColumnTransformer` y `Pipeline` demostró ser una estrategia robusta y profesional. Permitió encapsular toda la lógica de transformación (escalado numérico, OneHot categórico y TF-IDF con lematización personalizada) en un solo objeto, evitando fugas de datos y simplificando el entrenamiento.
 
-3.  **Rendimiento de Regresión:** Como se esperaba, predecir un *score* de toxicidad fino (regresión) a partir de texto y metadatos es difícil. El modelo `Ridge` probablemente arrojó un R² modesto, indicando que las *features* lineales (TF-IDF + metadatos) no capturan toda la complejidad semántica que define un *score* de toxicidad numérico.
+3.  **Rendimiento de Regresión:** Como se esperaba, predecir un *score* de toxicidad fino (regresión) a partir de texto y metadatos es difícil. El modelo `Ridge` arrojó un **R² de 0.39**, indicando que las *features* lineales (TF-IDF + metadatos) explican el 42% de la varianza, lo cual es un punto de partida razonable pero muestra que no capturan toda la complejidad semántica.
 
-4.  **Rendimiento de Clasificación:** El modelo `LogisticRegression` para la tarea binaria (Tóxico / No Tóxico) probablemente funcionó mucho mejor (evaluado por AUC-ROC y F1-Score). La lematización y el manejo del desbalanceo de clases fueron cruciales. Los resultados de la matriz de confusión (específicamente el *recall* de la clase "Tóxico") validan la estrategia.
+4.  **Rendimiento de Clasificación Multiclase:** El modelo `LogisticRegression` logró una **accuracy general del 72%** y un **AUC-ROC promedio de 0.69**, lo cual es un resultado sólido para un problema de 4 clases. El modelo es **muy bueno identificando la clase de menor toxicidad (Q1)**, con un F1-score de 0.84. Su rendimiento es más moderado para las clases intermedias, lo que sugiere que la distinción entre "moderado-bajo" y "moderado-alto" es semánticamente más difícil. La lematización y el manejo del desbalanceo fueron cruciales para estos resultados.
 
 5.  **Patrones de Clustering:** El análisis de `KMeans` basado solo en texto (TF-IDF) fue revelador. Al comparar el *score* de toxicidad promedio de los clusters encontrados, pudimos validar si ciertos "temas" o estilos de lenguaje (capturados por los clusters) se correlacionan con niveles más altos de toxicidad.
 
 ### Pasos Futuros y Mejoras
-
+  * **Más registros:** Mayor cantidad de registros para no desechar variables como: `isReply`, `authorVerified` y `source`.
   * **Modelos Avanzados:** Para mejorar el rendimiento, especialmente en regresión, el siguiente paso sería usar modelos basados en *embeddings* (como Word2Vec o FastText) o *Transformers* (como BETO, la versión en español de BERT).
   * **Hyperparameter Tuning:** Podríamos usar `GridSearchCV` o `RandomizedSearchCV` sobre los *pipelines* completos para encontrar los mejores hiperparámetros (ej. `alpha` en `Ridge`, `C` en `LogisticRegression`, o `max_features` y `ngram_range` en `TfidfVectorizer`).
   * **Feature Engineering:** Crear *features* adicionales, como el análisis de sentimiento (polaridad), la cantidad de mayúsculas, o la longitud promedio de las palabras, podría añadir más señal a los modelos.
-  * **Estrategia de Target:** Experimentar con diferentes umbrales o una clasificación multiclase (ej. usando cuartiles como 'bajo', 'moderado', 'alto') podría ofrecer *insights* diferentes.
+  * **Análisis de Errores:** Investigar los errores de clasificación, especialmente entre las clases intermedias (Q2 y Q3), podría revelar patrones en el lenguaje que el modelo actual no está capturando.
