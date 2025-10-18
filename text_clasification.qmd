@@ -2,6 +2,7 @@
 title: "Text Clasificatin"
 author: "Patricio Porras"
 code-fold: false
+freeze: true
 ---
 
 # 1. Carga y Comprensión de datos
@@ -145,5 +146,3 @@ print("Matriz de confusión")
 
 ConfusionMatrixDisplay(confusion_matrix(y_test,y_pred),display_labels=newsgroups.target_names).plot()
 ```
-
-

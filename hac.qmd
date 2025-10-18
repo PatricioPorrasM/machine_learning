@@ -111,7 +111,7 @@ print("Creación del linked")
 
 #X_scaled
 #‘ward’, ‘complete’, ‘average’, ‘single’}
-linked = linkage(X_scaled,method='complete')
+linked = linkage(X_scaled, method='complete')
 
 ```
 

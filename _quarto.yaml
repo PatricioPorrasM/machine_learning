@@ -33,7 +33,7 @@ website:
           - ml_text.qmd
           - bagofwords.qmd
           - tfidf.qmd
-          - text_clasification.qmd
+          # - text_clasification.qmd
       - section: "Clustering"
         contents:
           - kmeans.qmd
@@ -45,4 +45,5 @@ format:
     code-fold: true
     fig-align: center
     df-print: paged
+    #cache: true
  
