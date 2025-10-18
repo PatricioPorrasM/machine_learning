@@ -32,7 +32,7 @@ from nltk.corpus import wordnet
 # Procesamiento de texto y features
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
@@ -73,6 +73,9 @@ import unicodedata
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Visualización de textos
+from wordcloud import WordCloud
+
 # Configuraciones
 import warnings
 warnings.filterwarnings('ignore')
@@ -94,6 +97,61 @@ print("Cargar dataset")
 
 url = "https://raw.githubusercontent.com/erickedu85/dataset/refs/heads/master/tweets/1500_tweets_con_toxicity.csv"
 df = pd.read_csv(url)
+```
+
+
+## Función de Limpieza de Texto (NLP)
+
+Definimos la función personalizada que realizará la limpieza y lematización del texto en español, según lo solicitado.
+
+```{python}
+#| label: Preprocessing_nlp_function
+
+# Obtenemos stopwords en español
+stopwords_es = set(stopwords.words('spanish'))
+
+def limpiar_y_lematizar(texto):
+    """
+    Función completa para limpiar y lematizar texto en español.
+    1. Reemplaza tildes y caracteres especiales.
+    2. Convierte a minúsculas.
+    3. Elimina URLs, menciones (@) y hashtags (#).
+    4. Elimina puntuación y números.
+    5. Lematiza con SpaCy y elimina stopwords.
+    """
+    if not isinstance(texto, str):
+        return ""
+    
+    # 1. Reemplazar tildes (Normalización NFD)
+    texto = unicodedata.normalize('NFD', texto).encode('ascii', 'ignore').decode('utf-8')
+    
+    # 2. Convertir a minúsculas
+    texto = texto.lower()
+    
+    # 3. Eliminar URLs, menciones y hashtags
+    texto = re.sub(r'http\S+|www\S+|https\S+', '', texto, flags=re.MULTILINE)
+    texto = re.sub(r'[@#]\w+', '', texto)
+    
+    # 4. Eliminar puntuación y números
+    texto = re.sub(r'[^a-zA-Z\s]', '', texto)
+    
+    # 5. Lematización con SpaCy y eliminación de stopwords
+    doc = nlp_spacy(texto)
+    lemmas = [
+        token.lemma_ 
+        for token in doc 
+        if token.text not in stopwords_es and 
+           not token.is_punct and 
+           not token.is_space and 
+           len(token.text) > 2 # eliminar tokens muy cortos
+    ]
+    
+    return " ".join(lemmas)
+
+# --- Prueba de la función ---
+texto_ejemplo = df['content'].iloc[0]
+print(f"--- Texto Original ---\n{texto_ejemplo}\n")
+print(f"--- Texto Limpio y Lematizado ---\n{limpiar_y_lematizar(texto_ejemplo)}")
 ```
 
 ## EDA
@@ -343,6 +401,112 @@ for col in categorical_features_list:
   * **Features Numéricos:** Las variables tienen escalas muy diferentes (ej. `authorFollowers` vs `mentions_count`), lo que confirma la necesidad de **escalamiento** (ej. `StandardScaler`).
   * **Features Categóricos:** `source` Todos los registros de esta muestra fueron realizados desde `Twitter for iPhone`. `OneHotEncoder` es apropiado. `isReply` y `authorVerified` son booleanos que también serán codificados.
 
+
+Generando Nube de Palabras del texto limpio...
+```{python}
+#| label: EDA_text_wordcloud
+#| fig-cap: "Nube de palabras del contenido de los tweets"
+#| warning: false 
+
+print("Generando Nube de Palabras del texto limpio...")
+
+# 1. Aplicamos la limpieza (lematización, stopwords, etc.)
+# Esto puede tardar un momento
+text_limpio = df_clean['content'].apply(limpiar_y_lematizar)
+
+# 2. Unimos todo el texto en un solo string
+full_text = " ".join(text_limpio)
+
+# 3. Generamos la nube de palabras
+wordcloud = WordCloud(width=1200, height=600, 
+                      background_color='white', 
+                      colormap='viridis',
+                      max_words=150
+                     ).generate(full_text)
+
+# 4. Mostramos la imagen
+plt.figure(figsize=(15, 7))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.title('Nube de Palabras más Frecuentes (Lematizadas)', fontsize=16)
+plt.show()
+```
+
+Gráfico de Frecuencias (Top 20 Palabras)
+
+```{python}
+#| label: EDA_text_frequency
+#| fig-cap: "Top 20 palabras más frecuentes (lematizadas)"
+#| warning: false 
+
+print("Generando Gráfico de Frecuencias del texto limpio...")
+
+# Usamos CountVectorizer con nuestra función de limpieza
+vec = CountVectorizer(preprocessor=limpiar_y_lematizar)
+
+# Obtenemos la matriz de conteo
+text_counts = vec.fit_transform(df_clean['content'])
+
+# Sumamos las ocurrencias de cada palabra
+sum_words = text_counts.sum(axis=0) 
+words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+words_freq = sorted(words_freq, key = lambda x: x[1], reverse=True)
+
+# Creamos un DataFrame con el Top 20
+top_words_df = pd.DataFrame(words_freq[:20], columns=['Palabra', 'Frecuencia'])
+
+# Graficamos
+plt.figure(figsize=(15, 8))
+sns.barplot(data=top_words_df, x='Frecuencia', y='Palabra', palette='plasma')
+plt.title('Top 20 Palabras más Frecuentes (Lematizadas)')
+plt.xlabel('Frecuencia Total')
+plt.ylabel('Palabra')
+plt.show()
+```
+
+Heatmap de Correlación (Features Numéricos y Target)
+
+```{python}
+#| label: EDA_correlacion_heatmap
+#| fig-cap: "Heatmap de correlación"
+
+print("Heatmap de Correlación (Features Numéricos y Target)")
+
+# Seleccionamos solo las columnas numéricas y el target
+numeric_and_target = numeric_features + ['toxicity_score']
+df_corr = df_clean[numeric_and_target]
+
+# Calculamos la matriz de correlación
+corr_matrix = df_corr.corr()
+
+# Graficamos el heatmap
+plt.figure(figsize=(12, 8))
+sns.heatmap(corr_matrix, 
+            annot=True,     # Mostrar los valores numéricos
+            cmap='vlag',    # Paleta de colores (rojo-blanco-azul)
+            fmt=".2f",      # Formato con 2 decimales
+            linewidths=0.5)
+plt.title('Heatmap de Correlación (Spearman)', fontsize=16)
+plt.show()
+```
+
+
+Gráfico de Correlación Específico (content_length vs toxicity_score)
+
+```{python}
+#| label: EDA_density_heatmap
+#| fig-cap: "Heatmap de Densidad: Longitud del Tweet vs. Score de Toxicidad"
+
+print("Heatmap de Densidad entre Longitud del Contenido y Toxicidad")
+
+plt.figure(figsize=(12, 8))
+sns.histplot(data=df_clean, x='content_length', y='toxicity_score', bins=50, cbar=True)
+plt.title('Heatmap de Densidad: Longitud vs. Toxicidad')
+plt.xlabel('Longitud del Contenido (Caracteres)')
+plt.ylabel('Score de Toxicidad')
+plt.show()
+```
+
 -----
 
 # 2\. Preprocesamiento de datos
@@ -401,60 +565,6 @@ X = df_clean[numeric_features + categorical_features + [text_features]]
 print(f"Dimensiones de X (features): {X.shape}")
 print(f"Dimensiones de y_reg (target regresión): {y_reg.shape}")
 print(f"Dimensiones de y_class (target clasificación): {y_class.shape}")
-```
-
-## Función de Limpieza de Texto (NLP)
-
-Definimos la función personalizada que realizará la limpieza y lematización del texto en español, según lo solicitado.
-
-```{python}
-#| label: Preprocessing_nlp_function
-
-# Obtenemos stopwords en español
-stopwords_es = set(stopwords.words('spanish'))
-
-def limpiar_y_lematizar(texto):
-    """
-    Función completa para limpiar y lematizar texto en español.
-    1. Reemplaza tildes y caracteres especiales.
-    2. Convierte a minúsculas.
-    3. Elimina URLs, menciones (@) y hashtags (#).
-    4. Elimina puntuación y números.
-    5. Lematiza con SpaCy y elimina stopwords.
-    """
-    if not isinstance(texto, str):
-        return ""
-    
-    # 1. Reemplazar tildes (Normalización NFD)
-    texto = unicodedata.normalize('NFD', texto).encode('ascii', 'ignore').decode('utf-8')
-    
-    # 2. Convertir a minúsculas
-    texto = texto.lower()
-    
-    # 3. Eliminar URLs, menciones y hashtags
-    texto = re.sub(r'http\S+|www\S+|https\S+', '', texto, flags=re.MULTILINE)
-    texto = re.sub(r'[@#]\w+', '', texto)
-    
-    # 4. Eliminar puntuación y números
-    texto = re.sub(r'[^a-zA-Z\s]', '', texto)
-    
-    # 5. Lematización con SpaCy y eliminación de stopwords
-    doc = nlp_spacy(texto)
-    lemmas = [
-        token.lemma_ 
-        for token in doc 
-        if token.text not in stopwords_es and 
-           not token.is_punct and 
-           not token.is_space and 
-           len(token.text) > 2 # eliminar tokens muy cortos
-    ]
-    
-    return " ".join(lemmas)
-
-# --- Prueba de la función ---
-texto_ejemplo = df['content'].iloc[0]
-print(f"--- Texto Original ---\n{texto_ejemplo}\n")
-print(f"--- Texto Limpio y Lematizado ---\n{limpiar_y_lematizar(texto_ejemplo)}")
 ```
 
 -----
@@ -537,18 +647,24 @@ print("ColumnTransformer definido exitosamente.")
 Construimos el *pipeline* final (preprocesador + modelo) y lo entrenamos para la tarea de regresión.
 
 ```{python}
-#| label: Entrenamiento_regresion
+#| label: Constriur_regresion_pipeline
 
+print("Construir pipeline para Regresión (Ridge)")
 # Creamos el pipeline completo
 pipeline_reg = Pipeline(steps=[
     ('preprocessor', preprocessor),
     ('model', Ridge(random_state=42))
 ])
 
-# Entrenamos el modelo de regresión
+```
+
+Entrenamos el modelo de regresión
+
+```{python}
+#| label: Entrenamiento_regresion
 print("Entrenando modelo de Regresión (Ridge)...")
+
 pipeline_reg.fit(X_train, y_train_reg)
-print("Entrenamiento completado.")
 ```
 
 ## Tarea 2: Clasificación (LogisticRegression)
@@ -556,7 +672,7 @@ print("Entrenamiento completado.")
 Construimos el *pipeline* para clasificación. Usamos `class_weight='balanced'` para manejar el desbalanceo de clases.
 
 ```{python}
-#| label: Entrenamiento_clasificacion
+#| label: Construir_clasificacion_pipeline
 
 # Creamos el pipeline completo
 pipeline_class = Pipeline(steps=[
@@ -564,10 +680,15 @@ pipeline_class = Pipeline(steps=[
     ('model', LogisticRegression(random_state=42, class_weight='balanced', max_iter=1000))
 ])
 
-# Entrenamos el modelo de clasificación
-print("Entrenando modelo de Clasificación (LogisticRegression)...")
+```
+
+Entrenamos el modelo de clasificación
+
+```{python}
+#| label: Entrenamiento_clasificacion
+
+print("Entrenando modelo de Clasificación (LogisticRegression)")
 pipeline_class.fit(X_train, y_train_class)
-print("Entrenamiento completado.")
 ```
 
 ## Tarea 3: Clustering (KMeans)
@@ -647,8 +768,9 @@ Usamos los modelos entrenados para generar predicciones sobre el conjunto de pru
 
 ```{python}
 #| label: Predicciones_regresion
+print("Generar predicciones de regresión.")
+
 y_pred_reg = pipeline_reg.predict(X_test)
-print("Predicciones de regresión generadas.")
 ```
 
 ## Predicciones de Clasificación
@@ -657,9 +779,10 @@ Generamos tanto las clases predichas como las probabilidades (necesarias para la
 
 ```{python}
 #| label: Predicciones_clasificacion
+print("Generndo predicciones de clasificación.")
+
 y_pred_class = pipeline_class.predict(X_test)
 y_pred_proba_class = pipeline_class.predict_proba(X_test)[:, 1] # Probabilidad de la clase 1 (tóxico)
-print("Predicciones de clasificación generadas.")
 ```
 
 ## Predicciones de Clustering

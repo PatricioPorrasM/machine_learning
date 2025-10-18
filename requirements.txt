@@ -14,3 +14,4 @@ matplotlib
 scipy>=1.10.0
 statsmodels>=0.14.0
 spacy>=3.5.0
+wordcloud>=1.8.0
