@@ -38,6 +38,9 @@ website:
         contents:
           - kmeans.qmd
           - hac.qmd
+      - section: "Proyecto Final"
+        contents:
+          - proyecto_final.qmd
 format:
   html:
     theme: sketchy

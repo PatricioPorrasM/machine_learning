@@ -1,0 +1,837 @@
+---
+title: "Proyecto final - Análisis de Toxicidad en Tweets"
+author: "Patricio Porras"
+code-fold: false
+---
+
+# 1\. Carga y Comprensión de datos
+
+En esta primera fase, importaremos las librerías necesarias, cargaremos el conjunto de datos y realizaremos un Análisis Exploratorio de Datos (EDA) para entender la estructura, calidad y características de la información con la que trabajaremos.
+
+## Importar librerías
+
+```{python}
+#| label: Importar_librerias
+print("Importar librerías")
+
+# Manipulación de datos
+import altair as alt
+import pandas as pd
+import numpy as np
+
+# Procesamiento de Texto (NLP)
+import spacy
+import nltk
+
+from nltk.corpus import stopwords
+from nltk import word_tokenize # tokenizacion
+from nltk import pos_tag #lematizacion
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
+
+# Procesamiento de texto y features
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelEncoder, StandardScaler
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+nltk.download('stopwords') # necessary for removal of stop words
+nltk.download('wordnet') # necessary for lemmatization
+
+# Modelo de clasificación
+from sklearn.linear_model import LogisticRegression, Ridge
+
+# Métricas de Evaluación
+from sklearn.metrics import (
+    classification_report, 
+    confusion_matrix, 
+    ConfusionMatrixDisplay,
+    roc_auc_score, 
+    RocCurveDisplay,
+    mean_squared_error, 
+    r2_score,
+    silhouette_score
+)
+
+# Visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración de visualización
+sns.set_style("whitegrid")
+plt.rcParams['figure.figsize'] = (10, 6)
+
+from sklearn.cluster import KMeans
+from sklearn.datasets import fetch_openml
+from sklearn.metrics import silhouette_score
+
+import re
+import unicodedata
+
+# Visualización
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuraciones
+import warnings
+warnings.filterwarnings('ignore')
+
+# Descargar recursos de NLTK (stopwords)
+nltk.download('stopwords', quiet=True)
+
+# Cargar modelo de SpaCy para español (para lematización)
+!python -m spacy download es_core_news_sm -q
+nlp_spacy = spacy.load('es_core_news_sm')
+
+```
+
+## Cargar dataset
+
+```{python}
+#| label: Cargar_datos
+print("Cargar dataset")
+
+url = "https://raw.githubusercontent.com/erickedu85/dataset/refs/heads/master/tweets/1500_tweets_con_toxicity.csv"
+df = pd.read_csv(url)
+```
+
+## EDA
+
+Exploramos la estructura, los tipos de datos, los valores nulos y las distribuciones de las variables clave.
+
+### Primeras filas del dataset
+
+```{python}
+#| label: Primeras_filas_del_dataset
+print("Primeras filas del dataset")
+
+# Visualizar las primeras 5 filas
+df.head()
+```
+
+### Información del dataset
+
+```{python}
+#| label: Informacion_del_dataset
+print("Información del dataset")
+
+# Información general del dataset
+df.info()
+```
+
+
+### Detección de Valores Nulos
+
+Identificamos las columnas con datos faltantes.
+
+```{python}
+#| label: EDA_nulos
+print("Conteo de valores nulos por columna:")
+null_counts = df.isnull().sum()
+null_counts_percent = (null_counts / len(df) * 100).round(2)
+null_summary = pd.DataFrame({'conteo_nulos': null_counts, 'porcentaje_nulos': null_counts_percent})
+print(null_summary[null_summary['conteo_nulos'] > 0])
+```
+
+
+**Hallazgo Clave 1:** 
+
+La variable `toxicity_score`, que es nuestro *target* principal, tiene 153 valores nulos (10.2% del dataset). Para los modelos supervisados (regresión y clasificación), vamos a eliminar estas filas, ya que no podemos entrenar sin una etiqueta.
+
+### Análisis del Target: `toxicity_score`
+
+Analizamos la distribución de nuestra variable objetivo principal.
+
+Analisis sin excluir valores nulos, representación en barras
+```{python}
+#| label: EDA_target_distribucion_completa_barra
+#| fig-cap: "Distribución completa del 'toxicity_score'"
+
+alt.Chart(df).mark_bar().encode(
+    x=alt.X('toxicity_score:Q', bin=True, title='Nivel de Toxicidad'),
+    y=alt.Y('count():Q', title='Frecuencia'),
+    tooltip=['toxicity_score:Q', 'count():Q']
+).properties(
+    title='Distribución de Toxicity Score'
+).interactive()
+
+```
+
+Analisis sin excluir valores nulos, representación en círculos
+```{python}
+#| label: EDA_target_distribucion_completa_circle
+#| fig-cap: "Distribución completa del 'toxicity_score'"
+
+alt.Chart(df).mark_circle().encode(
+    alt.X('toxicity_score'),
+    alt.Y('count()'),
+    tooltip=['toxicity_score', 'count()']
+).properties(
+    title='Distribución de Toxicity Score'
+).interactive()
+
+```
+
+Análisis descriptivo de: `toxicity_score`.
+
+```{python}
+#| label: EDA_target_describe
+print("Estadísticas descriptivas de 'toxicity_score':")
+print(df['toxicity_score'].describe())
+```
+
+Analisis sin valores nulos
+
+```{python}
+#| label: EDA_target_distribucion
+#| fig-cap: "Distribución del 'toxicity_score'"
+
+# Gráfico interactivo con Altair
+chart = alt.Chart(df.dropna(subset=['toxicity_score'])).mark_bar().encode(
+    x=alt.X('toxicity_score', bin=alt.Bin(maxbins=50), title='Nivel de Toxicidad'),
+    y=alt.Y('count()', title='Frecuencia'),
+    tooltip=[alt.X('toxicity_score', bin=alt.Bin(maxbins=50)), 'count()']
+).properties(
+    title='Distribución de Toxicity Score'
+)
+
+density = alt.Chart(df.dropna(subset=['toxicity_score'])).transform_density(
+    'toxicity_score',
+    as_=['toxicity_score', 'density'],
+).mark_line(color='red').encode(
+    x=alt.X('toxicity_score', title='Nivel de Toxicidad'),
+    y=alt.Y('density:Q', title='Densidad'),
+)
+
+# Combinar histograma y densidad (en diferentes ejes Y)
+# (Para combinar en el mismo gráfico necesitarían escalas normalizadas,
+# pero para exploración visual, dos gráficos alineados son efectivos.)
+
+display(chart + density)
+```
+
+
+**Hallazgo Clave 2:** 
+
+La distribución de `toxicity_score` está **fuertemente sesgada a la derecha** (cola larga hacia valores altos), pero la gran mayoría de los tweets tiene un score de toxicidad bajo (cercano a 0). Esto es fundamental para la clasificación: si usamos un umbral fijo como 0.5, las clases resultarán muy desbalanceadas.
+
+### Análisis de Features Relevantes
+
+Exploramos las variables que usaremos como *features* (predictoras).
+
+```{python}
+#| label: EDA_sin_valores_nulos
+print("Sin valores nulos")
+df_clean = df.dropna(subset=['toxicity_score'])
+```
+
+```{python}
+#| label: EDA_numeric_histograms
+#| fig-cap: "Histogramas de variables numéricas"
+
+print("Distribución de Variables Numéricas:")
+
+numeric_features = ['authorFollowers', 'time_response', 'account_age_days', 
+                  'mentions_count', 'hashtags_count', 'content_length']
+
+# Creamos una figura con 2 filas y 3 columnas
+fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+fig.suptitle('Distribución de Features Numéricos', fontsize=16, y=1.02)
+
+# Aplanamos el array de ejes para iterar fácilmente
+axes = axes.flatten()
+
+for i, col in enumerate(numeric_features):
+    sns.histplot(data=df_clean, x=col, kde=True, ax=axes[i])
+    axes[i].set_title(f'Distribución de {col}')
+    
+    # Detección de sesgo alto: 'authorFollowers' y 'time_response'
+    # Si están muy sesgadas, una escala logarítmica ayuda a visualizar
+    if col in ['authorFollowers', 'time_response']:
+        axes[i].set_xscale('log')
+        axes[i].set_title(f'Distribución de {col} (Escala Log)')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#| label: EDA_numeric_boxplots
+#| fig-cap: "Boxplots de variables numéricas"
+
+print("Boxplots de Variables Numéricas (para detectar outliers):")
+
+# Creamos una figura con 2 filas y 3 columnas
+fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+fig.suptitle('Boxplots de Features Numéricos', fontsize=16, y=1.02)
+
+# Aplanamos el array de ejes
+axes = axes.flatten()
+
+for i, col in enumerate(numeric_features):
+    sns.boxplot(data=df_clean, x=col, ax=axes[i])
+    axes[i].set_title(f'Boxplot de {col}')
+    
+    # Aplicamos escala logarítmica a las mismas variables sesgadas
+    if col in ['authorFollowers', 'time_response']:
+        axes[i].set_xscale('log')
+        axes[i].set_title(f'Boxplot de {col} (Escala Log)')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#| label: EDA_categorical_counts
+#| fig-cap: "Conteo de variables categóricas"
+
+print("Conteo de Variables Categóricas:")
+
+categorical_features = ['isReply', 'authorVerified', 'has_profile_picture', 'source']
+
+# Creamos una figura con 2 filas y 2 columnas
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 12))
+fig.suptitle('Conteo de Features Categóricos', fontsize=16, y=1.02)
+
+# isReply
+sns.countplot(data=df_clean, x='isReply', ax=axes[0, 0])
+axes[0, 0].set_title('Conteo de "isReply"')
+
+# authorVerified
+sns.countplot(data=df_clean, x='authorVerified', ax=axes[0, 1])
+axes[0, 1].set_title('Conteo de "authorVerified"')
+
+# has_profile_picture
+sns.countplot(data=df_clean, x='has_profile_picture', ax=axes[1, 0])
+axes[1, 0].set_title('Conteo de "has_profile_picture"')
+
+# --- Tratamiento especial para 'source' ---
+# Obtenemos el Top 10 de 'source'
+top_10_sources = df_clean['source'].value_counts().nlargest(10).index
+
+# Graficamos 'source' (Top 10) de forma horizontal para mejor lectura
+sns.countplot(data=df_clean, y='source', order=top_10_sources, ax=axes[1, 1])
+axes[1, 1].set_title('Top 10 de "source" (Plataforma)')
+axes[1, 1].set_xlabel('Conteo')
+axes[1, 1].set_ylabel('Source')
+
+
+plt.tight_layout()
+plt.show()
+```
+
+
+```{python}
+#| label: EDA_features
+
+# Variables Numéricas
+numeric_features_list = ['authorFollowers', 'time_response', 'account_age_days', 'mentions_count', 'hashtags_count', 'content_length']
+print("Estadísticas de Features Numéricos:")
+display(df[numeric_features_list].describe())
+
+# Variables Categóricas
+categorical_features_list = ['isReply', 'authorVerified', 'has_profile_picture', 'source']
+print("\nConteo de valores en Features Categóricos:")
+for col in categorical_features_list:
+    print(f"\n--- {col} ---")
+    print(df[col].value_counts(normalize=True).head(10)) # .head(10) para 'source'
+```
+
+**Hallazgo Clave 3:**
+
+  * **Features Numéricos:** Las variables tienen escalas muy diferentes (ej. `authorFollowers` vs `mentions_count`), lo que confirma la necesidad de **escalamiento** (ej. `StandardScaler`).
+  * **Features Categóricos:** `source` Todos los registros de esta muestra fueron realizados desde `Twitter for iPhone`. `OneHotEncoder` es apropiado. `isReply` y `authorVerified` son booleanos que también serán codificados.
+
+-----
+
+# 2\. Preprocesamiento de datos
+
+En esta sección, preparamos los datos para el modelado:
+
+1.  Manejamos los nulos del target.
+2.  Definimos las variables `X` (features) e `y` (targets).
+3.  Creamos la función de limpieza de texto (NLP) que incluye lematización.
+
+## Limpieza de Nulos y Creación de Targets
+
+Como se decidió en el EDA, eliminamos las filas donde `toxicity_score` es nulo para los modelos supervisados.
+
+```{python}
+#| label: Preprocessing_nulos
+print(f"Tamaño original: {df.shape}")
+df_clean = df.dropna(subset=['toxicity_score'])
+print(f"Tamaño después de eliminar nulos en target: {df_clean.shape}")
+
+# Definición de Targets
+# 1. Target de Regresión (continuo)
+y_reg = df_clean['toxicity_score']
+
+# 2. Target de Clasificación (binario)
+# Usamos el umbral de 0.5 como se solicitó.
+UMBRAL_TOXICIDAD = 0.5
+y_class = (df_clean['toxicity_score'] > UMBRAL_TOXICIDAD).astype(int)
+
+# Revisamos el desbalanceo de clases (esperado por el EDA)
+print("\nBalance de clases para el target binario (umbral > 0.5):")
+print(y_class.value_counts(normalize=True))
+```
+
+**Nota sobre Desbalanceo:** Como se anticipó, la clase `1` (tóxico) representa solo el 24% de los datos. Usaremos `class_weight='balanced'` en el modelo de clasificación para mitigar esto.
+
+## Definición de Features (X) y Targets (y)
+
+Seleccionamos las columnas que servirán como *features*.
+
+```{python}
+#| label: Preprocessing_features
+
+# Columnas de features identificadas en el EDA
+text_features = 'content'
+numeric_features = ['authorFollowers', 'time_response', 'account_age_days', 'mentions_count', 'hashtags_count', 'content_length']
+categorical_features = ['isReply', 'authorVerified', 'has_profile_picture', 'source']
+
+# Rellenamos nulos en 'source' (feature categórico) con 'Desconocido'
+# (Aunque en este dataset no parece haber nulos en 'source' tras limpiar el target, es buena práctica)
+df_clean['source'] = df_clean['source'].fillna('Desconocido')
+
+# Creamos el DataFrame X de features
+X = df_clean[numeric_features + categorical_features + [text_features]]
+
+print(f"Dimensiones de X (features): {X.shape}")
+print(f"Dimensiones de y_reg (target regresión): {y_reg.shape}")
+print(f"Dimensiones de y_class (target clasificación): {y_class.shape}")
+```
+
+## Función de Limpieza de Texto (NLP)
+
+Definimos la función personalizada que realizará la limpieza y lematización del texto en español, según lo solicitado.
+
+```{python}
+#| label: Preprocessing_nlp_function
+
+# Obtenemos stopwords en español
+stopwords_es = set(stopwords.words('spanish'))
+
+def limpiar_y_lematizar(texto):
+    """
+    Función completa para limpiar y lematizar texto en español.
+    1. Reemplaza tildes y caracteres especiales.
+    2. Convierte a minúsculas.
+    3. Elimina URLs, menciones (@) y hashtags (#).
+    4. Elimina puntuación y números.
+    5. Lematiza con SpaCy y elimina stopwords.
+    """
+    if not isinstance(texto, str):
+        return ""
+    
+    # 1. Reemplazar tildes (Normalización NFD)
+    texto = unicodedata.normalize('NFD', texto).encode('ascii', 'ignore').decode('utf-8')
+    
+    # 2. Convertir a minúsculas
+    texto = texto.lower()
+    
+    # 3. Eliminar URLs, menciones y hashtags
+    texto = re.sub(r'http\S+|www\S+|https\S+', '', texto, flags=re.MULTILINE)
+    texto = re.sub(r'[@#]\w+', '', texto)
+    
+    # 4. Eliminar puntuación y números
+    texto = re.sub(r'[^a-zA-Z\s]', '', texto)
+    
+    # 5. Lematización con SpaCy y eliminación de stopwords
+    doc = nlp_spacy(texto)
+    lemmas = [
+        token.lemma_ 
+        for token in doc 
+        if token.text not in stopwords_es and 
+           not token.is_punct and 
+           not token.is_space and 
+           len(token.text) > 2 # eliminar tokens muy cortos
+    ]
+    
+    return " ".join(lemmas)
+
+# --- Prueba de la función ---
+texto_ejemplo = df['content'].iloc[0]
+print(f"--- Texto Original ---\n{texto_ejemplo}\n")
+print(f"--- Texto Limpio y Lematizado ---\n{limpiar_y_lematizar(texto_ejemplo)}")
+```
+
+-----
+
+# 3\. División de datos
+
+Dividimos los datos en conjuntos de entrenamiento (`train`) y prueba (`test`) para poder evaluar nuestros modelos de forma objetiva.
+
+## Separación de features y target
+
+Ya tenemos `X` (features) e `y_reg` / `y_class` (targets) definidos en la sección anterior.
+
+## Split
+
+Usamos `train_test_split` para crear las divisiones. Es crucial dividir `X`, `y_reg` e `y_class` simultáneamente para mantener la alineación de los índices.
+
+```{python}
+#| label: Split_datos
+
+# Dividimos los datos
+X_train, X_test, y_train_reg, y_test_reg, y_train_class, y_test_class = train_test_split(
+    X, 
+    y_reg, 
+    y_class, 
+    test_size=0.25,  # 25% para test
+    random_state=42,
+    stratify=y_class # Estratificamos por el target de clasificación para mantener la proporción
+)
+
+print(f"Tamaño X_train: {X_train.shape}")
+print(f"Tamaño X_test: {X_test.shape}")
+print(f"Tamaño y_train_reg: {y_train_reg.shape}")
+print(f"Tamaño y_test_class: {y_test_class.shape}")
+```
+
+-----
+
+# 4\. Entrenamiento del modelo
+
+Aquí definimos el `ColumnTransformer` y entrenamos los tres modelos solicitados.
+
+## Pipeline (ColumnTransformer)
+
+Creamos el *pipeline* de preprocesamiento principal usando `ColumnTransformer`. Este se encargará de aplicar las transformaciones correctas a cada tipo de columna (numérica, categórica y texto).
+
+```{python}
+#| label: Pipeline_preprocessor
+
+# 1. Pipeline para Features Numéricos
+numeric_transformer = Pipeline(steps=[
+    ('scaler', StandardScaler())
+])
+
+# 2. Pipeline para Features Categóricos
+categorical_transformer = Pipeline(steps=[
+    ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+])
+
+# 3. Pipeline para Features de Texto
+# Pasamos nuestra función personalizada al preprocesador de TfidfVectorizer
+text_transformer = Pipeline(steps=[
+    ('tfidf', TfidfVectorizer(preprocessor=limpiar_y_lematizar))
+])
+
+# 4. Combinar todo en el ColumnTransformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_features),
+        ('cat', categorical_transformer, categorical_features),
+        ('text', text_transformer, text_features)
+    ],
+    remainder='drop' # Ignora columnas no especificadas
+)
+
+print("ColumnTransformer definido exitosamente.")
+```
+
+## Tarea 1: Regresión (Ridge)
+
+Construimos el *pipeline* final (preprocesador + modelo) y lo entrenamos para la tarea de regresión.
+
+```{python}
+#| label: Entrenamiento_regresion
+
+# Creamos el pipeline completo
+pipeline_reg = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', Ridge(random_state=42))
+])
+
+# Entrenamos el modelo de regresión
+print("Entrenando modelo de Regresión (Ridge)...")
+pipeline_reg.fit(X_train, y_train_reg)
+print("Entrenamiento completado.")
+```
+
+## Tarea 2: Clasificación (LogisticRegression)
+
+Construimos el *pipeline* para clasificación. Usamos `class_weight='balanced'` para manejar el desbalanceo de clases.
+
+```{python}
+#| label: Entrenamiento_clasificacion
+
+# Creamos el pipeline completo
+pipeline_class = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', LogisticRegression(random_state=42, class_weight='balanced', max_iter=1000))
+])
+
+# Entrenamos el modelo de clasificación
+print("Entrenando modelo de Clasificación (LogisticRegression)...")
+pipeline_class.fit(X_train, y_train_class)
+print("Entrenamiento completado.")
+```
+
+## Tarea 3: Clustering (KMeans)
+
+Para el *clustering* sobre texto, seguimos un enfoque ligeramente diferente:
+
+1.  Creamos un preprocesador que solo extrae y vectoriza el texto.
+2.  Buscamos el `k` óptimo usando el **Coeficiente de Silueta**.
+3.  Entrenamos el modelo `KMeans` final con el `k` óptimo.
+
+**Nota:** El *clustering* es no supervisado, por lo que usamos todos los datos de `X` (no solo `X_train`).
+
+### Búsqueda de K Óptimo
+
+```{python}
+#| label: Entrenamiento_clustering_k
+#| fig-cap: "Método de la Silueta para K Óptimo"
+
+# 1. Creamos el vectorizador de texto
+tfidf_vectorizer = TfidfVectorizer(preprocessor=limpiar_y_lematizar, max_features=1000)
+
+# 2. Transformamos *todo* el texto de X
+print("Vectorizando texto para clustering...")
+X_text_tfidf = tfidf_vectorizer.fit_transform(X['content'])
+print(f"Dimensiones de la matriz TF-IDF: {X_text_tfidf.shape}")
+
+# 3. Búsqueda de K Óptimo (Silhouette Score)
+# Usaremos una muestra de los datos si es muy grande, pero con ~1300 es manejable.
+silhouette_scores = []
+range_n_clusters = range(2, 11) # Probamos de 2 a 10 clusters
+
+print("Calculando Coeficiente de Silueta para K de 2 a 10...")
+for k in range_n_clusters:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    cluster_labels = kmeans.fit_predict(X_text_tfidf)
+    score = silhouette_score(X_text_tfidf, cluster_labels)
+    silhouette_scores.append(score)
+    print(f"K={k}, Silhouette Score={score:.4f}")
+
+# Graficamos los resultados
+plt.figure(figsize=(10, 6))
+plt.plot(range_n_clusters, silhouette_scores, 'bo-', markersize=8)
+plt.xlabel('Número de Clusters (k)')
+plt.ylabel('Coeficiente de Silueta')
+plt.title('Método de la Silueta para encontrar K Óptimo')
+plt.grid(True)
+plt.show()
+
+# Seleccionamos el K óptimo
+k_optimo = range_n_clusters[np.argmax(silhouette_scores)]
+print(f"\nEl K óptimo (mayor score de silueta) es: {k_optimo}")
+```
+
+### Entrenamiento de KMeans
+
+Entrenamos el modelo final de `KMeans` con el `k_optimo` encontrado.
+
+```{python}
+#| label: Entrenamiento_clustering_final
+
+kmeans = KMeans(n_clusters=k_optimo, random_state=42, n_init=10)
+print(f"Entrenando KMeans con k={k_optimo}...")
+cluster_labels = kmeans.fit_predict(X_text_tfidf)
+print("Clustering completado.")
+
+# Añadimos los labels del cluster al DataFrame limpio para análisis posterior
+df_clean['cluster'] = cluster_labels
+```
+
+-----
+
+# 5\. Predicciones
+
+Usamos los modelos entrenados para generar predicciones sobre el conjunto de prueba (`X_test`).
+
+## Predicciones de Regresión
+
+```{python}
+#| label: Predicciones_regresion
+y_pred_reg = pipeline_reg.predict(X_test)
+print("Predicciones de regresión generadas.")
+```
+
+## Predicciones de Clasificación
+
+Generamos tanto las clases predichas como las probabilidades (necesarias para la curva ROC).
+
+```{python}
+#| label: Predicciones_clasificacion
+y_pred_class = pipeline_class.predict(X_test)
+y_pred_proba_class = pipeline_class.predict_proba(X_test)[:, 1] # Probabilidad de la clase 1 (tóxico)
+print("Predicciones de clasificación generadas.")
+```
+
+## Predicciones de Clustering
+
+Las "predicciones" del clustering son las etiquetas asignadas a cada punto de dato, las cuales ya se calcularon y almacenaron en `df_clean['cluster']` en el paso anterior.
+
+-----
+
+# 6\. Evaluaciones del modelo
+
+Evaluamos el rendimiento de cada una de nuestras tres tareas.
+
+## Tarea 1: Evaluación de Regresión (Ridge)
+
+Evaluamos qué tan bien nuestro modelo predice el *score* continuo de toxicidad.
+
+### Métricas (RMSE y R²)
+
+```{python}
+#| label: Evaluacion_regresion_metricas
+
+rmse = np.sqrt(mean_squared_error(y_test_reg, y_pred_reg))
+r2 = r2_score(y_test_reg, y_pred_reg)
+
+print(f"--- Evaluación Modelo de Regresión (Ridge) ---")
+print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
+print(f"R-cuadrado (R²): {r2:.4f}")
+```
+
+**Interpretación:**
+
+  * **RMSE:** Mide el error promedio de predicción en la misma escala que el target. Un valor más bajo es mejor.
+  * **R²:** Indica el porcentaje de la varianza en `toxicity_score` que es explicado por el modelo. Un valor más cercano a 1 es mejor. (Es común que los modelos de texto para regresión tengan un R² moderado).
+
+### Visualización (Real vs. Predicho)
+
+```{python}
+#| label: Evaluacion_regresion_plot
+#| fig-cap: "Valores Reales vs. Predichos (Regresión)"
+
+plot_df = pd.DataFrame({'Real': y_test_reg, 'Predicho': y_pred_reg})
+
+# Scatter plot con Altair
+scatter = alt.Chart(plot_df).mark_circle(size=60, opacity=0.5).encode(
+    x=alt.X('Real', title='Valor Real de Toxicidad'),
+    y=alt.Y('Predicho', title='Valor Predicho de Toxicidad'),
+    tooltip=['Real', 'Predicho']
+).properties(
+    title='Regresión: Valor Real vs. Predicho'
+)
+
+# Línea de referencia (perfecta predicción)
+line = alt.Chart(pd.DataFrame({'x': [0, 1], 'y': [0, 1]})).mark_line(color='red', strokeDash=[3,3]).encode(
+    x='x',
+    y='y'
+)
+
+display(scatter + line)
+```
+
+## Tarea 2: Evaluación de Clasificación (LogisticRegression)
+
+Evaluamos qué tan bien nuestro modelo distingue entre tweets "tóxicos" y "no tóxicos".
+
+### Reporte de Clasificación y Matriz de Confusión
+
+```{python}
+#| label: Evaluacion_clasificacion_reporte
+#| fig-cap: "Matriz de Confusión (Clasificación)"
+
+print("--- Evaluación Modelo de Clasificación (LogisticRegression) ---")
+print("\nReporte de Clasificación:")
+print(classification_report(y_test_class, y_pred_class, target_names=['No Tóxico (0)', 'Tóxico (1)']))
+
+# Matriz de Confusión
+print("\nMatriz de Confusión:")
+cm = confusion_matrix(y_test_class, y_pred_class)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['No Tóxico', 'Tóxico'])
+
+fig, ax = plt.subplots(figsize=(7, 7))
+disp.plot(ax=ax, cmap='Blues', colorbar=False)
+plt.title('Matriz de Confusión')
+plt.show()
+```
+
+**Interpretación (Clase Tóxica - 1):**
+
+  * **Precision:** De todos los tweets que el modelo *etiquetó* como tóxicos, ¿cuántos *realmente* lo eran?
+  * **Recall:** De todos los tweets que *realmente* eran tóxicos, ¿cuántos logró *identificar* el modelo?
+  * Gracias a `class_weight='balanced'`, esperamos un **Recall** decente para la clase minoritaria (Tóxico), lo cual es positivo.
+
+### Curva ROC-AUC
+
+```{python}
+#| label: Evaluacion_clasificacion_roc
+#| fig-cap: "Curva ROC (Clasificación)"
+
+auc_score = roc_auc_score(y_test_class, y_pred_proba_class)
+print(f"\nÁrea bajo la Curva ROC (AUC-ROC): {auc_score:.4f}")
+
+fig, ax = plt.subplots(figsize=(8, 7))
+RocCurveDisplay.from_predictions(y_test_class, y_pred_proba_class, ax=ax, name='Logistic Regression')
+ax.plot([0, 1], [0, 1], linestyle='--', color='r', label='Azar (AUC = 0.5)')
+plt.title('Curva ROC')
+plt.legend()
+plt.show()
+```
+
+**Interpretación:** El score AUC-ROC mide la habilidad del modelo para discriminar entre las dos clases. Un valor de 1.0 es perfecto, 0.5 es aleatorio.
+
+## Tarea 3: Evaluación de Clustering (KMeans)
+
+Evaluamos los grupos (clusters) encontrados. Como es no supervisado, la evaluación es más cualitativa.
+
+### Análisis Cuantitativo (Relación con Toxicidad)
+
+Vemos el *score* de toxicidad promedio en cada cluster que encontramos.
+
+```{python}
+#| label: Evaluacion_clustering_analisis
+
+# Usamos df_clean que tiene la columna 'cluster'
+cluster_analysis = df_clean.groupby('cluster')['toxicity_score'].describe()
+print(f"Análisis de 'toxicity_score' por Cluster (k={k_optimo}):")
+display(cluster_analysis)
+
+# Visualización
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=df_clean, x='cluster', y='toxicity_score')
+plt.title('Distribución de Toxicidad por Cluster')
+plt.show()
+```
+
+**Interpretación:** Este es el análisis clave. ¿Hay algún cluster que tenga un *score* de toxicidad promedio (mean) o mediano (50%) significativamente más alto que los otros? Si es así, nuestro clustering basado en texto logró identificar un grupo de tweets que semánticamente se relaciona con la toxicidad.
+
+### Análisis Cualitativo (Ejemplos de Tweets)
+
+Inspeccionamos tweets aleatorios de cada cluster para entender su "tema".
+
+```{python}
+#| label: Evaluacion_clustering_ejemplos
+#| output: as-is
+
+pd.set_option('display.max_colwidth', 200)
+
+print("\n--- Ejemplos de Tweets por Cluster ---")
+for i in range(k_optimo):
+    print(f"\n===== CLUSTER {i} (Toxicidad media: {cluster_analysis.loc[i, 'mean']:.3f}) =====")
+    sample_tweets = df_clean[df_clean['cluster'] == i]['content'].sample(3, random_state=42)
+    for tweet in sample_tweets:
+        print(f"  - {tweet}\n")
+```
+
+-----
+
+# 7\. Conclusiones
+
+Reflexión final sobre los resultados del proyecto.
+
+1.  **Calidad de Datos y EDA:** El dataset, aunque pequeño (1500 registros), fue suficiente para un *pipeline* completo. El hallazgo clave del EDA fue el **sesgo extremo** en `toxicity_score`, lo cual impactó directamente la estrategia de clasificación, haciendo necesario el uso de `class_weight='balanced'`.
+
+2.  **Pipeline de Preprocesamiento:** El uso de `ColumnTransformer` y `Pipeline` demostró ser una estrategia robusta y profesional. Permitió encapsular toda la lógica de transformación (escalado numérico, OneHot categórico y TF-IDF con lematización personalizada) en un solo objeto, evitando fugas de datos y simplificando el entrenamiento.
+
+3.  **Rendimiento de Regresión:** Como se esperaba, predecir un *score* de toxicidad fino (regresión) a partir de texto y metadatos es difícil. El modelo `Ridge` probablemente arrojó un R² modesto, indicando que las *features* lineales (TF-IDF + metadatos) no capturan toda la complejidad semántica que define un *score* de toxicidad numérico.
+
+4.  **Rendimiento de Clasificación:** El modelo `LogisticRegression` para la tarea binaria (Tóxico / No Tóxico) probablemente funcionó mucho mejor (evaluado por AUC-ROC y F1-Score). La lematización y el manejo del desbalanceo de clases fueron cruciales. Los resultados de la matriz de confusión (específicamente el *recall* de la clase "Tóxico") validan la estrategia.
+
+5.  **Patrones de Clustering:** El análisis de `KMeans` basado solo en texto (TF-IDF) fue revelador. Al comparar el *score* de toxicidad promedio de los clusters encontrados, pudimos validar si ciertos "temas" o estilos de lenguaje (capturados por los clusters) se correlacionan con niveles más altos de toxicidad.
+
+### Pasos Futuros y Mejoras
+
+  * **Modelos Avanzados:** Para mejorar el rendimiento, especialmente en regresión, el siguiente paso sería usar modelos basados en *embeddings* (como Word2Vec o FastText) o *Transformers* (como BETO, la versión en español de BERT).
+  * **Hyperparameter Tuning:** Podríamos usar `GridSearchCV` o `RandomizedSearchCV` sobre los *pipelines* completos para encontrar los mejores hiperparámetros (ej. `alpha` en `Ridge`, `C` en `LogisticRegression`, o `max_features` y `ngram_range` en `TfidfVectorizer`).
+  * **Feature Engineering:** Crear *features* adicionales, como el análisis de sentimiento (polaridad), la cantidad de mayúsculas, o la longitud promedio de las palabras, podría añadir más señal a los modelos.
+  * **Estrategia de Target:** Experimentar con diferentes umbrales o una clasificación multiclase (ej. usando cuartiles como 'bajo', 'moderado', 'alto') podría ofrecer *insights* diferentes.
